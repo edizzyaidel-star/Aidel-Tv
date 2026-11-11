@@ -244,13 +244,8 @@ const movies = [
   }
 ];
 
-// ========== RENDER ==========
-// ==========================================
-// AIDEL TV - TMDB MOVIE POSTER CONNECTION
-// ==========================================
-
-// 1. ENTER YOUR TMDB API KEY (V3 AUTH)
-const TMDB_API_KEY = "YOUR_V3_API_KEY_HERE";
+// ========== RENDER =========
+const TMDB_API_KEY = "9dbc1b7e75976aa5c66a8bdba4e753ce"
 
 const TMDB_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -398,7 +393,7 @@ async function loadTMDBPosters() {
     !TMDB_API_KEY ||
     TMDB_API_KEY === "9dbc1b7e75976aa5c66a8bdba4e753ce"
   ) {
-    console.error("Please enter your TMDB API key.");
+    console.error("9dbc1b7e75976aa5c66a8bdba4e753ce");
     return;
   }
 
