@@ -1,475 +1,437 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Aidel TV</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #0c0c10; color: white; font-family: system-ui, -apple-system, Arial, sans-serif; }
-  header { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; background: #14141a; position: sticky; top: 0; z-index: 50; }
-  .logo { font-size: 22px; font-weight: 800; color: #ff2a2a; }
-  .logo span { color: white; }
-  .search-box { padding: 10px 16px 6px; }
-  input { width: 100%; padding: 12px 15px; border-radius: 12px; border: none; background: #1c1c24; color: white; font-size: 15px; outline: none; }
-  .hero { margin: 10px 14px; padding: 26px 18px; border-radius: 16px; background: linear-gradient(135deg, #8b0000, #1a1a24); }
-  .hero h1 { font-size: 24px; margin: 6px 0 8px; }
-  .hero p { color: #ddd; font-size: 14px; margin-bottom: 14px; }
-  .btn { background: #e50914; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; }
-  section { padding: 16px 14px 4px; }
-  h2 { font-size: 17px; margin-bottom: 12px; font-weight: 700; }
-  .row { display: flex; gap: 11px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .row::-webkit-scrollbar { display: none; }
-  .card { min-width: 118px; width: 118px; cursor: pointer; }
-  .card img { width: 118px; height: 170px; object-fit: cover; border-radius: 10px; background: #1f1f28; display: block; }
-  .card .title { font-size: 12.5px; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
-  .card .meta { font-size: 11px; color: #999; margin-top: 2px; }
-  nav { position: fixed; bottom: 0; left: 0; right: 0; background: #14141a; display: flex; justify-content: space-around; padding: 10px 0 12px; border-top: 1px solid #222; z-index: 50; }
-  nav button { background: none; border: none; color: #888; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-  nav button.active { color: #ff2a2a; }
-  main { padding-bottom: 75px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aidel TV</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0c0c10;
+      color: #fff;
+      font-family: system-ui, -apple-system, Arial, sans-serif;
+      padding-bottom: 75px;
+    }
 
-  /* Modal */
-  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100; align-items: flex-end; justify-content: center; }
-  .modal.show { display: flex; }
-  .modal-box { background: #16161e; width: 100%; max-width: 480px; border-radius: 20px 20px 0 0; overflow: hidden; max-height: 90vh; overflow-y: auto; position: relative; }
-  .modal-img { width: 100%; height: 240px; object-fit: cover; }
-  .modal-body { padding: 18px 16px 30px; }
-  .modal-body h3 { font-size: 20px; margin-bottom: 4px; }
-  .modal-meta { color: #aaa; font-size: 13px; margin-bottom: 12px; }
-  .modal-desc { font-size: 14px; line-height: 1.55; color: #ccc; margin-bottom: 18px; }
-  .close { position: absolute; top: 12px; right: 14px; background: rgba(0,0,0,0.6); border: none; color: white; width: 34px; height: 34px; border-radius: 50%; font-size: 20px; cursor: pointer; }
-</style>
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: #14141a;
+    }
+    .logo { font-size: 22px; font-weight: 800; color: #ff2a2a; }
+    .logo span { color: #fff; }
+
+    /* Search */
+    .search-box { padding: 10px 14px 6px; }
+    input#search {
+      width: 100%;
+      padding: 12px 15px;
+      border: none;
+      border-radius: 12px;
+      background: #1c1c24;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
+
+    /* Hero */
+    .hero {
+      margin: 10px 14px;
+      padding: 26px 18px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #8b0000, #1a1a24);
+    }
+    .hero .eyebrow { font-size: 12px; letter-spacing: 1px; opacity: 0.85; }
+    .hero h1 { font-size: 24px; margin: 6px 0 8px; }
+    .hero p { color: #ddd; font-size: 14px; margin-bottom: 14px; }
+    .btn {
+      background: #e50914;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Sections */
+    section { padding: 16px 14px 4px; }
+    h2 { font-size: 17px; margin-bottom: 12px; font-weight: 700; }
+    .row {
+      display: flex;
+      gap: 11px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+    }
+    .row::-webkit-scrollbar { display: none; }
+    .empty { color: #777; font-size: 13px; }
+
+    /* Cards */
+    .card { min-width: 118px; width: 118px; cursor: pointer; }
+    .card img {
+      width: 118px;
+      height: 170px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #1f1f28;
+      display: block;
+    }
+    .card .title {
+      font-size: 12.5px;
+      margin-top: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
+    .card .meta { font-size: 11px; color: #999; margin-top: 2px; }
+
+    /* Bottom navigation */
+    nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0 12px;
+      background: #14141a;
+      border-top: 1px solid #222;
+    }
+    nav button {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+    }
+    nav button.active { color: #ff2a2a; }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.92);
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal.show { display: flex; }
+    .modal-box {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 20px 20px 0 0;
+      background: #16161e;
+    }
+    .modal-img { width: 100%; height: 240px; object-fit: cover; background: #1f1f28; }
+    .modal-body { padding: 18px 16px 30px; }
+    .modal-body h3 { font-size: 20px; margin-bottom: 4px; }
+    .modal-meta { color: #aaa; font-size: 13px; margin-bottom: 12px; }
+    .modal-desc { font-size: 14px; line-height: 1.55; color: #ccc; margin-bottom: 18px; }
+    .modal-body .btn { width: 100%; padding: 13px; }
+    .close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      width: 34px;
+      height: 34px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">AIDEL <span>TV</span></div>
-  <div style="font-size:20px;opacity:0.8">☰</div>
-</header>
+  <header>
+    <div class="logo">AIDEL <span>TV</span></div>
+  </header>
 
-<div class="search-box">
-  <input id="search" placeholder="Search movies & series..." oninput="filterMovies()">
-</div>
-
-<main>
-  <div class="hero">
-    <div style="font-size:12px;letter-spacing:1px;opacity:0.85">WELCOME TO AIDEL TV</div>
-    <h1>Unlimited Movies & Series</h1>
-    <p>Nollywood • Hollywood • Comedy • Action</p>
-    <button class="btn" onclick="document.getElementById('trending').scrollIntoView({behavior:'smooth'})">▶ Explore Now</button>
+  <div class="search-box">
+    <input id="search" type="search" placeholder="Search movies & series...">
   </div>
 
-  <section id="trending">
-    <h2>🔥 Trending Now</h2>
-    <div class="row" id="trending-row"></div>
-  </section>
+  <main>
+    <div class="hero">
+      <div class="eyebrow">WELCOME TO AIDEL TV</div>
+      <h1>Unlimited Movies & Series</h1>
+      <p>Nollywood • Hollywood • Comedy • Action</p>
+      <button class="btn" id="explore-btn">▶ Explore Now</button>
+    </div>
 
-  <section>
-    <h2>🇳🇬 Nollywood</h2>
-    <div class="row" id="nollywood-row"></div>
-  </section>
+    <section id="trending">
+      <h2>🔥 Trending Now</h2>
+      <div class="row" id="trending-row"></div>
+    </section>
 
-  <section>
-    <h2>💥 Action</h2>
-    <div class="row" id="action-row"></div>
-  </section>
+    <section id="nollywood">
+      <h2>🇳🇬 Nollywood</h2>
+      <div class="row" id="nollywood-row"></div>
+    </section>
 
-  <section>
-    <h2>😂 Comedy</h2>
-    <div class="row" id="comedy-row"></div>
-  </section>
+    <section id="action">
+      <h2>💥 Action</h2>
+      <div class="row" id="action-row"></div>
+    </section>
 
-  <section>
-    <h2>📺 Popular Series</h2>
-    <div class="row" id="series-row"></div>
-  </section>
-</main>
+    <section id="comedy">
+      <h2>😂 Comedy</h2>
+      <div class="row" id="comedy-row"></div>
+    </section>
 
-<nav>
-  <button class="active" onclick="window.scrollTo({top:0,behavior:'smooth'})">⌂<br>Home</button>
-  <button onclick="document.getElementById('trending').scrollIntoView({behavior:'smooth'})">▶<br>Movies</button>
-  <button onclick="alert('More series coming soon!')">▣<br>Series</button>
-  <button onclick="alert('Account section coming soon!')">●<br>Account</button>
-</nav>
+    <section id="series">
+      <h2>📺 Popular Series</h2>
+      <div class="row" id="series-row"></div>
+    </section>
+  </main>
 
-<!-- Movie Modal -->
-<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal-box">
-    <button class="close" onclick="closeModal()">×</button>
-    <img id="m-img" class="modal-img" src="">
-    <div class="modal-body">
-      <h3 id="m-title"></h3>
-      <div class="modal-meta" id="m-meta"></div>
-      <p class="modal-desc" id="m-desc"></p>
-      <button class="btn" id="m-play" style="width:100%;padding:13px">▶ Watch Trailer</button>
+  <nav>
+    <button class="active" data-target="top">⌂<br>Home</button>
+    <button data-target="trending">▶<br>Movies</button>
+    <button data-target="series">▣<br>Series</button>
+  </nav>
+
+  <!-- Movie details modal -->
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <button class="close" id="close-btn" aria-label="Close">×</button>
+      <img id="m-img" class="modal-img" alt="">
+      <div class="modal-body">
+        <h3 id="m-title"></h3>
+        <div class="modal-meta" id="m-meta"></div>
+        <p class="modal-desc" id="m-desc"></p>
+        <button class="btn" id="m-play">▶ Watch Trailer</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-const movies = [
-  // ===== TRENDING =====
-  {
-    title: "A Tribe Called Judah",
-    year: "2023",
-    genre: "Comedy • Crime",
-    cats: ["trending", "nollywood", "comedy"],
-    poster: "https://images.justwatch.com/poster/314553528/s718/a-tribe-called-judah.jpg",
-    desc: "Five brothers from different mothers unite for one big heist to save their dying mother.",
-    link: "https://www.youtube.com/watch?v=8zQfQfQfQfQ"
-  },
-  {
-    title: "The Black Book",
-    year: "2023",
-    genre: "Action • Thriller",
-    cats: ["trending", "nollywood", "action"],
-    poster: "https://images.justwatch.com/poster/307699505/s718/the-black-book-2023.jpg",
-    desc: "A lawyer seeks justice after a personal tragedy and uncovers a dark conspiracy.",
-    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-  },
-  {
-    title: "Extraction 2",
-    year: "2023",
-    genre: "Action",
-    cats: ["trending", "action"],
-    poster: "https://image.tmdb.org/t/p/w500/7gKI9hpXMcXAnMkaA0x0qZqQzqQ.jpg",
-    desc: "Tyler Rake returns for another high-octane rescue mission.",
-    link: "https://www.youtube.com/watch?v=Y274jZs5s7s"
-  },
-  {
-    title: "John Wick: Chapter 4",
-    year: "2023",
-    genre: "Action",
-    cats: ["trending", "action"],
-    poster: "https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg",
-    desc: "John Wick uncovers a path to defeating The High Table once and for all.",
-    link: "https://www.youtube.com/watch?v=qEVUtrk8_B4"
-  },
-  {
-    title: "Barbie",
-    year: "2023",
-    genre: "Comedy • Fantasy",
-    cats: ["trending", "comedy"],
-    poster: "https://image.tmdb.org/t/p/w500/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg",
-    desc: "Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land.",
-    link: "https://www.youtube.com/watch?v=pBk4NYhWNMM"
-  },
+  <script>
+    // ===== CONFIGURATION =====
+    // Paste your TMDB API key between the quotes below.
+    const TMDB_API_KEY = "PASTE_YOUR_KEY_HERE";
+    const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
+    const POSTER_PLACEHOLDER =
+      "https://placehold.co/300x450/1f1f28/ffffff?text=Poster+Unavailable";
 
-  // ===== NOLLYWOOD =====
-  {
-    title: "King of Boys",
-    year: "2018",
-    genre: "Crime • Drama",
-    cats: ["nollywood", "action"],
-    poster: "https://m.media-amazon.com/images/M/MV5BZjE0YjI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5.jpg",
-    desc: "A powerful businesswoman navigates the dangerous world of Nigerian politics and crime.",
-    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-  },
-  {
-    title: "Aníkúlápó",
-    year: "2022",
-    genre: "Fantasy • Drama",
-    cats: ["nollywood", "trending"],
-    poster: "https://m.media-amazon.com/images/M/MV5BZjE0YjI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5.jpg",
-    desc: "A man discovers a mystical power that allows him to bring the dead back to life.",
-    link: "https://www.youtube.com/watch?v=8zQfQfQfQfQ"
-  },
-  {
-    title: "The Wedding Party",
-    year: "2016",
-    genre: "Comedy • Romance",
-    cats: ["nollywood", "comedy"],
-    poster: "https://m.media-amazon.com/images/M/MV5BZjE0YjI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5.jpg",
-    desc: "A glamorous Lagos wedding full of drama, secrets and laughter.",
-    link: "https://www.youtube.com/watch?v=8zQfQfQfQfQ"
-  },
+    // ===== CATALOG =====
+    // sections: which rows the title appears in
+    const catalog = [
+      { title: "A Tribe Called Judah", year: 2023, type: "movie", genre: "Comedy • Crime",
+        sections: ["trending", "nollywood", "comedy"],
+        desc: "Five brothers from different mothers unite for one big heist to save their dying mother." },
+      { title: "The Black Book", year: 2023, type: "movie", genre: "Action • Thriller",
+        sections: ["trending", "nollywood", "action"],
+        desc: "A lawyer seeks justice after a personal tragedy and uncovers a dark conspiracy." },
+      { title: "King of Boys", year: 2018, type: "movie", genre: "Crime • Drama",
+        sections: ["nollywood", "action"],
+        desc: "A powerful businesswoman navigates the dangerous world of Nigerian politics and crime." },
+      { title: "Aníkúlápó", year: 2022, type: "movie", genre: "Fantasy • Drama",
+        sections: ["nollywood", "trending"],
+        desc: "A man discovers a mystical power that allows him to bring the dead back to life." },
+      { title: "The Wedding Party", year: 2016, type: "movie", genre: "Comedy • Romance",
+        sections: ["nollywood", "comedy"],
+        desc: "A glamorous Lagos wedding full of drama, secrets and laughter." },
+      { title: "Extraction 2", year: 2023, type: "movie", genre: "Action",
+        sections: ["trending", "action"],
+        desc: "Tyler Rake returns for another high-octane rescue mission." },
+      { title: "John Wick: Chapter 4", year: 2023, type: "movie", genre: "Action",
+        sections: ["trending", "action"],
+        desc: "John Wick uncovers a path to defeating The High Table once and for all." },
+      { title: "Barbie", year: 2023, type: "movie", genre: "Comedy • Fantasy",
+        sections: ["trending", "comedy"],
+        desc: "Barbie and Ken are having the time of their lives in the colorful world of Barbie Land." },
+      { title: "Mission: Impossible – Dead Reckoning", year: 2023, type: "movie", genre: "Action",
+        sections: ["action", "trending"],
+        desc: "Ethan Hunt and his team face their most dangerous mission yet." },
+      { title: "Fast X", year: 2023, type: "movie", genre: "Action",
+        sections: ["action"],
+        desc: "Dom Toretto and his family are targeted by the vengeful son of drug kingpin Hernan Reyes." },
+      { title: "The Equalizer 3", year: 2023, type: "movie", genre: "Action • Thriller",
+        sections: ["action"],
+        desc: "Robert McCall finds himself in Southern Italy and helps protect his friends from the local mafia." },
+      { title: "Stranger Things", year: 2016, type: "tv", genre: "Sci-Fi • Horror",
+        sections: ["series", "trending"],
+        desc: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments and supernatural forces." },
+      { title: "The Last of Us", year: 2023, type: "tv", genre: "Drama • Action",
+        sections: ["series"],
+        desc: "Joel and Ellie navigate a post-apocalyptic world while being hunted by infected and other survivors." },
+      { title: "House of the Dragon", year: 2022, type: "tv", genre: "Fantasy • Drama",
+        sections: ["series"],
+        desc: "The story of House Targaryen set 200 years before the events of Game of Thrones." }
+    ];
 
-  // ===== ACTION =====
-  {
-    title: "Mission: Impossible – Dead Reckoning",
-    year: "2023",
-    genre: "Action",
-    cats: ["action", "trending"],
-    poster: "https://image.tmdb.org/t/p/w500/NNxYkU70HPurnNCSiCjYAmacwm.jpg",
-    desc: "Ethan Hunt and his team face their most dangerous mission yet.",
-    link: "https://www.youtube.com/watch?v=avz06PDqDbM"
-  },
-  {
-    title: "Fast X",
-    year: "2023",
-    genre: "Action",
-    cats: ["action"],
-    poster: "https://image.tmdb.org/t/p/w500/fiVW06jE7z9YnO4trhaMEdcl5C.jpg",
-    desc: "Dom Toretto and his family are targeted by the vengeful son of drug kingpin Hernan Reyes.",
-    link: "https://www.youtube.com/watch?v=32RAq6JzY-w"
-  },
-  {
-    title: "The Equalizer 3",
-    year: "2023",
-    genre: "Action • Thriller",
-    cats: ["action"],
-    poster: "https://image.tmdb.org/t/p/w500/b0Ej6fnXAP8fK75h9QdQqJqJqJq.jpg",
-    desc: "Robert McCall finds himself in Southern Italy and helps protect his friends from the local mafia.",
-    link: "https://www.youtube.com/watch?v=19kYqk7d2jA"
-  },
+    // ===== POSTERS =====
+    // Looks up each title on TMDB and stores the poster URL on the item.
+    async function fetchPoster(item) {
+      if (!TMDB_API_KEY || TMDB_API_KEY === "a7d2938484965708730e68b1f62e5236" {
+        item.poster = POSTER_PLACEHOLDER;
+        return;
+      }
 
-  // ===== SERIES =====
-  {
-    title: "Stranger Things",
-    year: "2016–",
-    genre: "Sci-Fi • Horror",
-    cats: ["series", "trending"],
-    poster: "https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGkgD.jpg",
-    desc: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments and supernatural forces.",
-    link: "https://www.youtube.com/watch?v=b9EkMc79ZSU"
-  },
-  {
-    title: "The Last of Us",
-    year: "2023",
-    genre: "Drama • Action",
-    cats: ["series"],
-    poster: "https://image.tmdb.org/t/p/w500/uKvVjKrxZUIH2k4qJqJqJqJqJqJ.jpg",
-    desc: "Joel and Ellie navigate a post-apocalyptic world while being hunted by infected and other survivors.",
-    link: "https://www.youtube.com/watch?v=uLtkt8BonwM"
-  },
-  {
-    title: "House of the Dragon",
-    year: "2022–",
-    genre: "Fantasy • Drama",
-    cats: ["series"],
-    poster: "https://image.tmdb.org/t/p/w500/z2yahl2uefxDCl0nogcRBstwruJ.jpg",
-    desc: "The story of House Targaryen set 200 years before the events of Game of Thrones.",
-    link: "https://www.youtube.com/watch?v=DotnJ7tTA34"
-  }
-];
+      try {
+        const kind = item.type === "tv" ? "tv" : "movie";
+        const params = new URLSearchParams({
+          api_key: TMDB_API_KEY,
+          query: item.title,
+          include_adult: "false"
+        });
+        params.set(kind === "tv" ? "first_air_date_year" : "year", item.year);
 
-// ========== RENDER =========
-const TMDB_API_KEY = "9dbc1b7e75976aa5c66a8bdba4e753ce"
+        const res = await fetch(`https://api.themoviedb.org/3/search/${kind}?${params}`);
+        if (!res.ok) throw new Error("TMDB responded " + res.status);
 
-const TMDB_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
-
-const POSTER_PLACEHOLDER =
-  "https://placehold.co/300x450/1f1f28/ffffff?text=Poster+Unavailable";
-
-
-// 2. SEARCH TMDB FOR THE CORRECT POSTER
-async function getMoviePoster(movie) {
-  try {
-    // Detect whether the item is a TV series
-    const isSeries = movie.cats.includes("series");
-
-    const mediaType = isSeries ? "tv" : "movie";
-
-    const searchParams = new URLSearchParams({
-      api_key: TMDB_API_KEY,
-      query: movie.title,
-      include_adult: "false"
-    });
-
-    // Search using the movie's release year
-    const year = parseInt(movie.year, 10);
-
-    if (Number.isFinite(year)) {
-      searchParams.set(
-        isSeries ? "first_air_date_year" : "year",
-        year
-      );
-    }
-
-    const response = await fetch(
-      `https://api.themoviedb.org/3/search/${mediaType}?${searchParams}`
-    );
-
-    if (!response.ok) {
-      throw new Error("TMDB error: " + response.status);
-    }
-
-    const data = await response.json();
-
-    if (data.results && data.results.length > 0) {
-
-      // Prefer a result that has an official poster
-      const result = data.results.find(
-        item => item.poster_path
-      );
-
-      if (result) {
-        movie.poster =
-          TMDB_IMAGE_URL + result.poster_path;
-
-        return movie.poster;
+        const data = await res.json();
+        const hit = (data.results || []).find(r => r.poster_path);
+        item.poster = hit ? TMDB_IMAGE_BASE + hit.poster_path : POSTER_PLACEHOLDER;
+      } catch (err) {
+        console.warn("Poster lookup failed for " + item.title, err);
+        item.poster = POSTER_PLACEHOLDER;
       }
     }
 
-    movie.poster = POSTER_PLACEHOLDER;
+    // ===== RENDERING =====
+    const rows = {
+      trending: document.getElementById("trending-row"),
+      nollywood: document.getElementById("nollywood-row"),
+      action: document.getElementById("action-row"),
+      comedy: document.getElementById("comedy-row"),
+      series: document.getElementById("series-row")
+    };
 
-    return movie.poster;
+    function createCard(item) {
+      const card = document.createElement("div");
+      card.className = "card";
 
-  } catch (error) {
-    console.error(
-      "Unable to load poster for " + movie.title,
-      error
-    );
+      const img = document.createElement("img");
+      img.src = item.poster || POSTER_PLACEHOLDER;
+      img.alt = item.title + " poster";
+      img.loading = "lazy";
+      img.onerror = function () {
+        this.onerror = null;
+        this.src = POSTER_PLACEHOLDER;
+      };
 
-    movie.poster = POSTER_PLACEHOLDER;
+      const title = document.createElement("div");
+      title.className = "title";
+      title.textContent = item.title;
 
-    return movie.poster;
-  }
-}
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = item.year;
 
+      card.append(img, title, meta);
+      card.addEventListener("click", () => openModal(item));
+      return card;
+    }
 
-// 3. CREATE MOVIE POSTER CARDS
-function createCard(movie) {
+    function render() {
+      Object.values(rows).forEach(row => (row.innerHTML = ""));
 
-  const card = document.createElement("div");
-  card.className = "card";
+      catalog.forEach(item => {
+        item.sections.forEach(section => {
+          if (rows[section]) rows[section].appendChild(createCard(item));
+        });
+      });
 
-  const img = document.createElement("img");
+      // Show a note in any empty row
+      Object.values(rows).forEach(row => {
+        if (!row.children.length) {
+          row.innerHTML = '<p class="empty">Nothing here yet.</p>';
+        }
+      });
+    }
 
-  img.src = movie.poster || POSTER_PLACEHOLDER;
-  img.alt = movie.title + " official movie poster";
-  img.loading = "lazy";
-
-  img.onerror = function() {
-    this.onerror = null;
-    this.src = POSTER_PLACEHOLDER;
-  };
-
-  const title = document.createElement("div");
-  title.className = "title";
-  title.textContent = movie.title;
-
-  const meta = document.createElement("div");
-  meta.className = "meta";
-  meta.textContent = movie.year;
-
-  card.appendChild(img);
-  card.appendChild(title);
-  card.appendChild(meta);
-
-  card.onclick = () => openModal(movie);
-
-  return card;
-}
-
-
-// 4. DISPLAY MOVIES IN THEIR CATEGORIES
-function render() {
-
-  const sections = {
-    trending: document.getElementById("trending-row"),
-    nollywood: document.getElementById("nollywood-row"),
-    action: document.getElementById("action-row"),
-    comedy: document.getElementById("comedy-row"),
-    series: document.getElementById("series-row")
-  };
-
-  Object.values(sections).forEach(section => {
-    if (section) section.innerHTML = "";
-  });
-
-  movies.forEach(movie => {
-
-    movie.cats.forEach(category => {
-
-      if (sections[category]) {
-        sections[category].appendChild(
-          createCard(movie)
-        );
-      }
-
+    // ===== SEARCH =====
+    document.getElementById("search").addEventListener("input", e => {
+      const query = e.target.value.trim().toLowerCase();
+      document.querySelectorAll(".card").forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(query) ? "" : "none";
+      });
     });
 
-  });
+    // ===== MODAL =====
+    const modal = document.getElementById("modal");
 
-}
+    function openModal(item) {
+      const img = document.getElementById("m-img");
+      img.src = item.poster || POSTER_PLACEHOLDER;
+      img.onerror = function () {
+        this.onerror = null;
+        this.src = POSTER_PLACEHOLDER;
+      };
 
+      document.getElementById("m-title").textContent = item.title;
+      document.getElementById("m-meta").textContent = `${item.year} • ${item.genre}`;
+      document.getElementById("m-desc").textContent = item.desc;
 
-// 5. LOAD ALL MOVIE POSTERS FROM TMDB
-async function loadTMDBPosters() {
+      // Opens a YouTube search for the official trailer
+      document.getElementById("m-play").onclick = () => {
+        const q = encodeURIComponent(`${item.title} ${item.year} official trailer`);
+        window.open(`https://www.youtube.com/results?search_query=${q}`, "_blank", "noopener");
+      };
 
-  if (
-    !TMDB_API_KEY ||
-    TMDB_API_KEY === "9dbc1b7e75976aa5c66a8bdba4e753ce"
-  ) {
-    console.error("9dbc1b7e75976aa5c66a8bdba4e753ce");
-    return;
-  }
+      modal.classList.add("show");
+    }
 
-  // Show movie cards immediately
-  render();
+    function closeModal() {
+      modal.classList.remove("show");
+    }
 
-  // Find posters for every movie and series
-  await Promise.all(
-    movies.map(movie => getMoviePoster(movie))
-  );
+    document.getElementById("close-btn").addEventListener("click", closeModal);
+    modal.addEventListener("click", e => {
+      if (e.target === modal) closeModal();
+    });
 
-  // Refresh the cards with their posters
-  render();
+    // ===== NAVIGATION =====
+    function scrollToTarget(target) {
+      if (target === "top") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        document.getElementById(target).scrollIntoView({ behavior: "smooth" });
+      }
+    }
 
-  console.log("AIDEL TV: Movie posters loaded!");
+    document.getElementById("explore-btn").addEventListener("click", () => scrollToTarget("trending"));
 
-}
+    document.querySelectorAll("nav button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        scrollToTarget(btn.dataset.target);
+      });
+    });
 
+    // ===== START =====
+    async function start() {
+      catalog.forEach(item => (item.poster = POSTER_PLACEHOLDER));
+      render();                                    // show cards right away
 
-// 6. SEARCH MOVIES
-function filterMovies() {
+      await Promise.all(catalog.map(fetchPoster)); // then swap in real posters
+      render();
+    }
 
-  const search = document
-    .getElementById("search")
-    .value.toLowerCase();
-
-  document.querySelectorAll(".card").forEach(card => {
-
-    card.style.display =
-      card.innerText.toLowerCase().includes(search)
-        ? "block"
-        : "none";
-
-  });
-
-}
-
-
-// 7. OPEN MOVIE DETAILS
-function openModal(movie) {
-
-  const image = document.getElementById("m-img");
-
-  image.src = movie.poster || POSTER_PLACEHOLDER;
-
-  image.onerror = function() {
-    this.onerror = null;
-    this.src = POSTER_PLACEHOLDER;
-  };
-
-  document.getElementById("m-title").textContent =
-    movie.title;
-
-  document.getElementById("m-meta").textContent =
-    movie.year + " • " + movie.genre;
-
-  document.getElementById("m-desc").textContent =
-    movie.desc;
-
-  document.getElementById("m-play").onclick = () => {
-    window.open(movie.link, "_blank");
-  };
-
-  document.getElementById("modal").classList.add("show");
-
-}
-
-
-// 8. CLOSE MOVIE DETAILS
-function closeModal() {
-
-  document.getElementById("modal")
-    .classList.remove("show");
-
-}
-
-
-// 9. START AIDEL TV
-loadTMDBPosters();
+    start();
+  </script>
+</body>
+ </html>
