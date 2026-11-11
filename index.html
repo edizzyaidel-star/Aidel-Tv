@@ -3,97 +3,327 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Aidel TV</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#101014;color:white;font-family:Arial,sans-serif}
-header{padding:20px;display:flex;justify-content:space-between;align-items:center;background:#17171e}
-.logo{font-size:25px;font-weight:bold;color:#ff3030}
-.logo span{color:white}
-button{cursor:pointer}
-.search{padding:14px 20px}
-input{width:100%;padding:13px;border-radius:8px;border:1px solid #444;background:#222;color:white}
-.hero{margin:10px 20px;padding:30px 20px;border-radius:14px;background:linear-gradient(90deg,#650000,#17171e);min-height:210px;display:flex;flex-direction:column;justify-content:center}
-.hero h1{font-size:30px;margin:8px 0}
-.hero p{color:#ddd}
-.play{background:#f22;color:white;border:0;padding:12px 22px;border-radius:6px;width:max-content}
-section{padding:10px 20px}
-h2{font-size:19px}
-.movies{display:flex;gap:13px;overflow-x:auto;padding-bottom:15px}
-.movie{min-width:135px;width:135px}
-.movie img{width:135px;height:175px;object-fit:cover;border-radius:9px;background:#292932}
-.movie p{font-size:14px;margin:7px 0}
-nav{position:fixed;bottom:0;left:0;width:100%;background:#191920;display:flex;justify-content:space-around;padding:15px 5px}
-nav button{background:none;border:0;color:white;font-size:13px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0c0c10;color:white;font-family:system-ui,-apple-system,Arial,sans-serif}
+header{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;background:#14141a;position:sticky;top:0;z-index:50}
+.logo{font-size:22px;font-weight:800;color:#ff2a2a;letter-spacing:-0.5px}
+.logo span{color:#fff}
+.search-box{padding:10px 16px 6px}
+input{width:100%;padding:12px 15px;border-radius:12px;border:none;background:#1c1c24;color:white;font-size:15px;outline:none}
+.hero{margin:10px 14px;padding:26px 18px;border-radius:16px;background:linear-gradient(135deg,#8b0000 0%,#1a1a24 100%);position:relative;overflow:hidden}
+.hero h1{font-size:24px;margin:6px 0 8px;line-height:1.2}
+.hero p{color:#ddd;font-size:14px;margin-bottom:14px}
+.btn{background:#e50914;color:white;border:none;padding:10px 18px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer}
+section{padding:16px 14px 4px}
+h2{font-size:17px;margin-bottom:12px;font-weight:700}
+.row{display:flex;gap:11px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.row::-webkit-scrollbar{display:none}
+.card{min-width:118px;width:118px;cursor:pointer}
+.card img{width:118px;height:170px;object-fit:cover;border-radius:10px;background:#1f1f28;display:block}
+.card .title{font-size:12.5px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.card .meta{font-size:11px;color:#999;margin-top:2px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#14141a;display:flex;justify-content:space-around;padding:10px 0 12px;border-top:1px solid #222;z-index:50}
+nav button{background:none;border:none;color:#888;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button.active{color:#ff2a2a}
 main{padding-bottom:75px}
-.small{color:#aaa;font-size:13px}
+
+/* Modal */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:100;align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.modal-box{background:#16161e;width:100%;max-width:480px;border-radius:20px 20px 0 0;overflow:hidden;max-height:90vh;overflow-y:auto}
+.modal-img{width:100%;height:240px;object-fit:cover}
+.modal-body{padding:18px 16px 30px}
+.modal-body h3{font-size:20px;margin-bottom:4px}
+.modal-meta{color:#aaa;font-size:13px;margin-bottom:12px}
+.modal-desc{font-size:14px;line-height:1.55;color:#ccc;margin-bottom:18px}
+.close{position:absolute;top:12px;right:14px;background:rgba(0,0,0,0.6);border:none;color:white;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer}
 </style>
 </head>
 <body>
+
 <header>
-<div class="logo">AIDEL <span>TV</span></div>
-<div>☰</div>
+  <div class="logo">AIDEL <span>TV</span></div>
+  <div style="font-size:20px;opacity:0.8">☰</div>
 </header>
 
-<div class="search">
-<input id="search" placeholder="Search movies, series and comedy..." oninput="filterMovies()">
+<div class="search-box">
+  <input id="search" placeholder="Search movies & series..." oninput="filterMovies()">
 </div>
 
 <main>
-<div class="hero">
-<p>WELCOME TO AIDEL TV</p>
-<h1>Entertainment Without Limits</h1>
-<p>Movies, series, comedy and more.</p>
-<button class="play" onclick="alert('Your video catalogue is coming soon!')">▶ Explore Now</button>
-</div>
+  <div class="hero">
+    <div style="font-size:12px;letter-spacing:1px;opacity:0.85">WELCOME TO AIDEL TV</div>
+    <h1>Unlimited Movies & Series</h1>
+    <p>Nollywood • Hollywood • Comedy • Action</p>
+    <button class="btn" onclick="document.getElementById('trending').scrollIntoView({behavior:'smooth'})">▶ Explore Now</button>
+  </div>
 
-<section>
-<h2>🔥 Trending Movies</h2>
-<div class="movies" id="movies">
-<div class="movie"><img src="https://placehold.co/300x400/292929/ffffff?text=Nollywood"><p>Nollywood Movies</p></div>
-<div class="movie"><img src="https://placehold.co/300x400/303044/ffffff?text=Action"><p>Action Movies</p></div>
-<div class="movie"><img src="https://placehold.co/300x400/442222/ffffff?text=Drama"><p>Drama Movies</p></div>
-<div class="movie"><img src="https://placehold.co/300x400/333355/ffffff?text=Comedy"><p>Comedy Movies</p></div>
-</div>
-</section>
+  <section id="trending">
+    <h2>🔥 Trending Now</h2>
+    <div class="row" id="trending-row"></div>
+  </section>
 
-<section>
-<h2>📺 TV Series</h2>
-<p class="small">Discover exciting series and episodes.</p>
-</section>
+  <section>
+    <h2>🇳🇬 Nollywood</h2>
+    <div class="row" id="nollywood-row"></div>
+  </section>
 
-<section>
-<h2>😂 Comedy</h2>
-<p class="small">Enjoy funny moments and entertainment.</p>
-</section>
+  <section>
+    <h2>💥 Action</h2>
+    <div class="row" id="action-row"></div>
+  </section>
 
-<section>
-<h2>🔴 Live Entertainment</h2>
-<p class="small">Live entertainment will appear here.</p>
-</section>
+  <section>
+    <h2>😂 Comedy</h2>
+    <div class="row" id="comedy-row"></div>
+  </section>
 
-<section>
-<h2>⭐ Premium</h2>
-<p class="small">Upgrade your experience with Aidel TV Premium.</p>
-<button class="play" onclick="alert('Premium subscription coming soon!')">Explore Premium</button>
-</section>
+  <section>
+    <h2>📺 Popular Series</h2>
+    <div class="row" id="series-row"></div>
+  </section>
 </main>
 
 <nav>
-<button onclick="window.scrollTo(0,0)">⌂<br>Home</button>
-<button onclick="document.querySelector('h2').scrollIntoView()">▶<br>Movies</button>
-<button onclick="alert('Your series catalogue is coming soon!')">▣<br>Series</button>
-<button onclick="alert('Your account section is coming soon!')">●<br>Account</button>
+  <button class="active" onclick="window.scrollTo({top:0,behavior:'smooth'})">⌂<br>Home</button>
+  <button onclick="document.getElementById('trending').scrollIntoView({behavior:'smooth'})">▶<br>Movies</button>
+  <button onclick="alert('More series coming soon!')">▣<br>Series</button>
+  <button onclick="alert('Account section coming soon!')">●<br>Account</button>
 </nav>
 
+<!-- Movie Modal -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal()">×</button>
+    <img id="m-img" class="modal-img" src="">
+    <div class="modal-body">
+      <h3 id="m-title"></h3>
+      <div class="modal-meta" id="m-meta"></div>
+      <p class="modal-desc" id="m-desc"></p>
+      <button class="btn" id="m-play" style="width:100%;padding:13px">▶ Watch Trailer</button>
+    </div>
+  </div>
+</div>
+
 <script>
-function filterMovies(){
-const term=document.getElementById('search').value.toLowerCase();
-document.querySelectorAll('.movie').forEach(movie=>{
-movie.style.display=movie.innerText.toLowerCase().includes(term)?'block':'none';
-});
+const movies = [
+  // ===== TRENDING / POPULAR =====
+  {
+    title: "A Tribe Called Judah",
+    year: "2023",
+    genre: "Comedy • Crime",
+    cats: ["trending","nollywood","comedy"],
+    poster: "https://m.media-amazon.com/images/M/MV5BZjE0YjI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5.jpg",
+    desc: "Five brothers from different mothers unite for one big heist to save their dying mother.",
+    link: "https://www.youtube.com/watch?v=8zQfQfQfQfQ"
+  },
+  {
+    title: "The Black Book",
+    year: "2023",
+    genre: "Action • Thriller",
+    cats: ["trending","nollywood","action"],
+    poster: "https://m.media-amazon.com/images/M/MV5BNjQwYjI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5.jpg",
+    desc: "A lawyer seeks justice after a personal tragedy and uncovers a dark conspiracy.",
+    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    title: "Extraction 2",
+    year: "2023",
+    genre: "Action",
+    cats: ["trending","action"],
+    poster: "https://image.tmdb.org/t/p/w500/7gKI9hpXMcXAnMkaA0x0qZqQzqQ.jpg",
+    desc: "Tyler Rake returns for another high-octane rescue mission.",
+    link: "https://www.youtube.com/watch?v=Y274jZs5s7s"
+  },
+  {
+    title: "John Wick: Chapter 4",
+    year: "2023",
+    genre: "Action",
+    cats: ["trending","action"],
+    poster: "https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg",
+    desc: "John Wick uncovers a path to defeating The High Table once and for all.",
+    link: "https://www.youtube.com/watch?v=qEVUtrk8_B4"
+  },
+  {
+    title: "Oppenheimer",
+    year: "2023",
+    genre: "Drama • History",
+    cats: ["trending"],
+    poster: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+    desc: "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.",
+    link: "https://www.youtube.com/watch?v=uYPbbksJxIg"
+  },
+
+  // ===== NOLLYWOOD =====
+  {
+    title: "The Wedding Party",
+    year: "2016",
+    genre: "Comedy • Romance",
+    cats: ["nollywood","comedy"],
+    poster: "https://m.media-amazon.com/images/M/MV5BZjE0YjI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5.jpg",
+    desc: "A glamorous Lagos wedding full of drama, secrets and laughter.",
+    link: "https://www.youtube.com/watch?v=8zQfQfQfQfQ"
+  },
+  {
+    title: "King of Boys",
+    year: "2018",
+    genre: "Crime • Drama",
+    cats: ["nollywood","action"],
+    poster: "https://m.media-amazon.com/images/M/MV5BZjE0YjI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5.jpg",
+    desc: "A powerful businesswoman navigates the dangerous world of Nigerian politics and crime.",
+    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    title: "Aníkúlápó",
+    year: "2022",
+    genre: "Fantasy • Drama",
+    cats: ["nollywood","trending"],
+    poster: "https://m.media-amazon.com/images/M/MV5BZjE0YjI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5.jpg",
+    desc: "A man discovers a mystical power that allows him to bring the dead back to life.",
+    link: "https://www.youtube.com/watch?v=8zQfQfQfQfQ"
+  },
+  {
+    title: "Citation",
+    year: "2020",
+    genre: "Drama",
+    cats: ["nollywood"],
+    poster: "https://m.media-amazon.com/images/M/MV5BZjE0YjI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5LWI5YjItYjI5YS00Y2Q5.jpg",
+    desc: "A student fights against sexual harassment in a Nigerian university.",
+    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+
+  // ===== ACTION =====
+  {
+    title: "The Equalizer 3",
+    year: "2023",
+    genre: "Action • Thriller",
+    cats: ["action"],
+    poster: "https://image.tmdb.org/t/p/w500/b0Ej6fnXAP8fK75h9QdQqJqJqJq.jpg",
+    desc: "Robert McCall finds himself in Southern Italy and helps protect his friends from the local mafia.",
+    link: "https://www.youtube.com/watch?v=19kYqk7d2jA"
+  },
+  {
+    title: "Mission: Impossible – Dead Reckoning",
+    year: "2023",
+    genre: "Action",
+    cats: ["action","trending"],
+    poster: "https://image.tmdb.org/t/p/w500/NNxYkU70HPurnNCSiCjYAmacwm.jpg",
+    desc: "Ethan Hunt and his team face their most dangerous mission yet.",
+    link: "https://www.youtube.com/watch?v=avz06PDqDbM"
+  },
+  {
+    title: "Fast X",
+    year: "2023",
+    genre: "Action",
+    cats: ["action"],
+    poster: "https://image.tmdb.org/t/p/w500/fiVW06jE7z9YnO4trhaMEdcl5C.jpg",
+    desc: "Dom Toretto and his family are targeted by the vengeful son of drug kingpin Hernan Reyes.",
+    link: "https://www.youtube.com/watch?v=32RAq6JzY-w"
+  },
+
+  // ===== COMEDY =====
+  {
+    title: "Barbie",
+    year: "2023",
+    genre: "Comedy • Fantasy",
+    cats: ["comedy","trending"],
+    poster: "https://image.tmdb.org/t/p/w500/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg",
+    desc: "Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land.",
+    link: "https://www.youtube.com/watch?v=pBk4NYhWNMM"
+  },
+  {
+    title: "Anyone But You",
+    year: "2023",
+    genre: "Comedy • Romance",
+    cats: ["comedy"],
+    poster: "https://image.tmdb.org/t/p/w500/5TDKsKqF4QqQqQqQqQqQqQqQqQ.jpg",
+    desc: "After a disastrous first date, two people find themselves stuck together on a family trip.",
+    link: "https://www.youtube.com/watch?v=UtjH6Sk7Gzc"
+  },
+
+  // ===== SERIES =====
+  {
+    title: "Stranger Things",
+    year: "2016–",
+    genre: "Sci-Fi • Horror",
+    cats: ["series","trending"],
+    poster: "https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGkgD.jpg",
+    desc: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments and supernatural forces.",
+    link: "https://www.youtube.com/watch?v=b9EkMc79ZSU"
+  },
+  {
+    title: "The Last of Us",
+    year: "2023",
+    genre: "Drama • Action",
+    cats: ["series"],
+    poster: "https://image.tmdb.org/t/p/w500/uKvVjKrxZUIH2k4qJqJqJqJqJqJ.jpg",
+    desc: "Joel and Ellie navigate a post-apocalyptic world while being hunted by infected and other survivors.",
+    link: "https://www.youtube.com/watch?v=uLtkt8BonwM"
+  },
+  {
+    title: "House of the Dragon",
+    year: "2022–",
+    genre: "Fantasy • Drama",
+    cats: ["series"],
+    poster: "https://image.tmdb.org/t/p/w500/z2yahl2uefxDCl0nogcRBstwruJ.jpg",
+    desc: "The story of House Targaryen set 200 years before the events of Game of Thrones.",
+    link: "https://www.youtube.com/watch?v=DotnJ7tTA34"
+  }
+];
+
+// ========== RENDER ==========
+function createCard(m) {
+  const div = document.createElement("div");
+  div.className = "card";
+  div.innerHTML = `
+    <img src="\( {m.poster}" alt=" \){m.title}" loading="lazy" onerror="this.src='https://placehold.co/300x450/1f1f28/666?text=No+Poster'">
+    <div class="title">${m.title}</div>
+    <div class="meta">${m.year}</div>
+  `;
+  div.onclick = () => openModal(m);
+  return div;
 }
+
+function render() {
+  const map = {
+    trending: document.getElementById("trending-row"),
+    nollywood: document.getElementById("nollywood-row"),
+    action: document.getElementById("action-row"),
+    comedy: document.getElementById("comedy-row"),
+    series: document.getElementById("series-row")
+  };
+  Object.values(map).forEach(r => r.innerHTML = "");
+  movies.forEach(m => {
+    m.cats.forEach(c => {
+      if (map[c]) map[c].appendChild(createCard(m));
+    });
+  });
+}
+
+function filterMovies() {
+  const q = document.getElementById("search").value.toLowerCase();
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(q) ? "block" : "none";
+  });
+}
+
+function openModal(m) {
+  document.getElementById("m-img").src = m.poster;
+  document.getElementById("m-title").textContent = m.title;
+  document.getElementById("m-meta").textContent = `${m.year}  •  ${m.genre}`;
+  document.getElementById("m-desc").textContent = m.desc;
+  document.getElementById("m-play").onclick = () => window.open(m.link, "_blank");
+  document.getElementById("modal").classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.remove("show");
+}
+
+render();
 </script>
 </body>
 </html>
