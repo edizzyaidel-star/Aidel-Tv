@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aidel TV</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101014;color:white;font-family:Arial,sans-serif}
+header{padding:20px;display:flex;justify-content:space-between;align-items:center;background:#17171e}
+.logo{font-size:25px;font-weight:bold;color:#ff3030}
+.logo span{color:white}
+button{cursor:pointer}
+.search{padding:14px 20px}
+input{width:100%;padding:13px;border-radius:8px;border:1px solid #444;background:#222;color:white}
+.hero{margin:10px 20px;padding:30px 20px;border-radius:14px;background:linear-gradient(90deg,#650000,#17171e);min-height:210px;display:flex;flex-direction:column;justify-content:center}
+.hero h1{font-size:30px;margin:8px 0}
+.hero p{color:#ddd}
+.play{background:#f22;color:white;border:0;padding:12px 22px;border-radius:6px;width:max-content}
+section{padding:10px 20px}
+h2{font-size:19px}
+.movies{display:flex;gap:13px;overflow-x:auto;padding-bottom:15px}
+.movie{min-width:135px;width:135px}
+.movie img{width:135px;height:175px;object-fit:cover;border-radius:9px;background:#292932}
+.movie p{font-size:14px;margin:7px 0}
+nav{position:fixed;bottom:0;left:0;width:100%;background:#191920;display:flex;justify-content:space-around;padding:15px 5px}
+nav button{background:none;border:0;color:white;font-size:13px}
+main{padding-bottom:75px}
+.small{color:#aaa;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">AIDEL <span>TV</span></div>
+<div>☰</div>
+</header>
+
+<div class="search">
+<input id="search" placeholder="Search movies, series and comedy..." oninput="filterMovies()">
+</div>
+
+<main>
+<div class="hero">
+<p>WELCOME TO AIDEL TV</p>
+<h1>Entertainment Without Limits</h1>
+<p>Movies, series, comedy and more.</p>
+<button class="play" onclick="alert('Your video catalogue is coming soon!')">▶ Explore Now</button>
+</div>
+
+<section>
+<h2>🔥 Trending Movies</h2>
+<div class="movies" id="movies">
+<div class="movie"><img src="https://placehold.co/300x400/292929/ffffff?text=Nollywood"><p>Nollywood Movies</p></div>
+<div class="movie"><img src="https://placehold.co/300x400/303044/ffffff?text=Action"><p>Action Movies</p></div>
+<div class="movie"><img src="https://placehold.co/300x400/442222/ffffff?text=Drama"><p>Drama Movies</p></div>
+<div class="movie"><img src="https://placehold.co/300x400/333355/ffffff?text=Comedy"><p>Comedy Movies</p></div>
+</div>
+</section>
+
+<section>
+<h2>📺 TV Series</h2>
+<p class="small">Discover exciting series and episodes.</p>
+</section>
+
+<section>
+<h2>😂 Comedy</h2>
+<p class="small">Enjoy funny moments and entertainment.</p>
+</section>
+
+<section>
+<h2>🔴 Live Entertainment</h2>
+<p class="small">Live entertainment will appear here.</p>
+</section>
+
+<section>
+<h2>⭐ Premium</h2>
+<p class="small">Upgrade your experience with Aidel TV Premium.</p>
+<button class="play" onclick="alert('Premium subscription coming soon!')">Explore Premium</button>
+</section>
+</main>
+
+<nav>
+<button onclick="window.scrollTo(0,0)">⌂<br>Home</button>
+<button onclick="document.querySelector('h2').scrollIntoView()">▶<br>Movies</button>
+<button onclick="alert('Your series catalogue is coming soon!')">▣<br>Series</button>
+<button onclick="alert('Your account section is coming soon!')">●<br>Account</button>
+</nav>
+
+<script>
+function filterMovies(){
+const term=document.getElementById('search').value.toLowerCase();
+document.querySelectorAll('.movie').forEach(movie=>{
+movie.style.display=movie.innerText.toLowerCase().includes(term)?'block':'none';
+});
+}
+</script>
+</body>
+</html>
