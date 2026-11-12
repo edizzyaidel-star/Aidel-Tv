@@ -910,6 +910,19 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 window.aidelSupabase = supabase;
 
+  
+window.aidelSupabase = supabase;
+
+const { data, error } = await supabase
+  .from('movies')
+  .select('id')
+  .limit(1);
+
+if (error) {
+  alert('Supabase connection failed: ' + error.message);
+} else {
+  alert('AIDEL TV is successfully connected to Supabase!');
+}
 console.log('AIDEL TV Supabase connected successfully!');
 </script>
   
