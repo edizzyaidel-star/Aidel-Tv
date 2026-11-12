@@ -898,5 +898,20 @@ document.addEventListener("click", event => {
 loadHome();
 
 </script>
+
+  
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://nbvznasgshojxjsgchds.supabase.co';
+const SUPABASE_KEY = ' sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+window.aidelSupabase = supabase;
+
+console.log('AIDEL TV Supabase connected successfully!');
+</script>
+  
 </body>
 </html>
