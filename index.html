@@ -45,6 +45,98 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* ===== PURPLE WELCOME SCREEN ===== */
+    #aidel-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: #050408;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: aidelFadeOut .8s ease 3s forwards;
+    }
+
+    .aidel-logo {
+      position: relative;
+      text-align: center;
+      animation: aidelGlow 1.5s ease-in-out infinite alternate;
+    }
+
+    .aidel-name {
+      color: #a855f7;
+      font-size: clamp(48px, 13vw, 85px);
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-shadow: 0 0 15px #9333ea;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .aidel-a {
+      color: #d8b4fe;
+    }
+
+    .aidel-tv {
+      position: absolute;
+      top: -17px;
+      right: 3px;
+      color: #c084fc;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .aidel-tagline {
+      color: #c084fc;
+      letter-spacing: 4px;
+      font-size: 11px;
+      margin-top: 22px;
+    }
+
+    .aidel-loader {
+      width: 90px;
+      height: 3px;
+      background: #2e1744;
+      margin-top: 25px;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .aidel-loader::after {
+      content: "";
+      display: block;
+      width: 40%;
+      height: 100%;
+      background: #a855f7;
+      animation: aidelLoad 1s infinite;
+    }
+
+    @keyframes aidelGlow {
+      from { transform: scale(.96); opacity: .8; }
+      to { transform: scale(1.04); opacity: 1; }
+    }
+
+    @keyframes aidelLoad {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(250%); }
+    }
+
+    @keyframes aidelFadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #aidel-intro {
+        animation-duration: .1s;
+        animation-delay: 1s;
+      }
+    }
+
+    /* ===== HEADER ===== */
     header {
       position: sticky;
       top: 0;
@@ -143,6 +235,7 @@
       font-size: 16px;
     }
 
+    /* ===== HERO ===== */
     .hero-section {
       position: relative;
       height: 62vh;
@@ -673,6 +766,18 @@
 </head>
 <body>
 
+<!-- ===== PURPLE WELCOME SCREEN ===== -->
+<div id="aidel-intro">
+  <div class="aidel-logo">
+    <div class="aidel-name">
+      <span class="aidel-a">A</span>IDEL
+    </div>
+    <div class="aidel-tv">▣ TV</div>
+  </div>
+  <p class="aidel-tagline">WATCH ANYTIME, ANYWHERE</p>
+  <div class="aidel-loader"></div>
+</div>
+
 <header>
   <a class="logo" href="#">
     <div class="logo-badge">A</div>
@@ -1176,6 +1281,12 @@ $("heroSection").addEventListener("mouseenter", () => clearInterval(heroInterval
 $("heroSection").addEventListener("mouseleave", startHeroInterval);
 
 loadHome();
+
+// Remove welcome screen after animation
+setTimeout(function() {
+  const intro = document.getElementById("aidel-intro");
+  if (intro) intro.remove();
+}, 3900);
 </script>
 
 <!-- Supabase Connection -->
