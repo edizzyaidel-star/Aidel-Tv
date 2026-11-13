@@ -1,275 +1,688 @@
-HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#09090d">
-<title>AIDEL TV — Movies, Series & Entertainment</title>
-<meta name="description" content="Discover trending movies, Nollywood films, TV series and entertainment on AIDEL TV.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <title>AIDEL TV — Movies, Series & Entertainment</title>
+  <meta name="description" content="Discover trending movies, Nollywood films, TV series and entertainment on AIDEL TV.">
+  
+  <!-- Modern fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 
-<style>
-:root {
-  --bg:#09090d;
-  --panel:#15151d;
-  --red:#e50914;
-  --white:#fff;
-  --muted:#aaa;
-  --border:rgba(255,255,255,.1);
-}
-* {box-sizing:border-box}
-html {scroll-behavior:smooth}
-body {
-  margin:0;
-  background:var(--bg);
-  color:white;
-  font-family:Arial,Helvetica,sans-serif;
-  overflow-x:hidden;
-}
-button,input {font:inherit}
-button {cursor:pointer}
+  <style>
+    :root {
+      --bg: #000000;
+      --bg-elevated: #0a0a0f;
+      --panel: #121218;
+      --card: #16161f;
+      --red: #e50914;
+      --red-glow: #ff1a2a;
+      --red-soft: rgba(229, 9, 20, 0.25);
+      --white: #ffffff;
+      --muted: #8a8a9a;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f0f0f5;
+    }
 
-header {
-  min-height:70px;
-  padding:12px 5%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:rgba(9,9,13,.97);
-  border-bottom:1px solid var(--border);
-}
-.logo {
-  font-size:25px;
-  font-weight:900;
-  color:white;
-  text-decoration:none;
-  white-space:nowrap;
-}
-.logo span {color:var(--red)}
-nav {display:flex;gap:22px;align-items:center}
-nav a {color:#ddd;text-decoration:none;font-size:14px}
-nav a:hover {color:var(--red)}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-.search {
-  display:flex;
-  width:min(270px,35vw);
-  background:#202029;
-  border:1px solid var(--border);
-  border-radius:25px;
-  overflow:hidden;
-}
-.search input {
-  width:100%;
-  min-width:0;
-  padding:11px 14px;
-  color:white;
-  background:transparent;
-  border:0;
-  outline:none;
-}
-.search button {
-  padding:0 14px;
-  color:white;
-  background:var(--red);
-  border:0;
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-.hero {
-  min-height:500px;
-  height:68vh;
-  max-height:720px;
-  position:relative;
-  display:flex;
-  align-items:end;
-  padding:60px 7%;
-  background:
-    linear-gradient(90deg,#09090d 0%,rgba(9,9,13,.82) 35%,transparent 100%),
-    linear-gradient(0deg,#09090d 0%,transparent 65%);
-  background-size:cover;
-  background-position:center 25%;
-}
-.hero-content {max-width:580px;position:relative;z-index:2}
-.eyebrow {
-  color:#ff4650;
-  font-size:12px;
-  font-weight:bold;
-  letter-spacing:3px;
-  text-transform:uppercase;
-}
-.hero h1 {
-  font-size:clamp(36px,6vw,66px);
-  line-height:1.02;
-  margin:14px 0;
-}
-.hero p {
-  color:#ccc;
-  line-height:1.65;
-  max-width:520px;
-  font-size:15px;
-}
-.hero-meta {color:#ddd;font-size:13px}
-.hero-actions {display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
-.btn {border:0;padding:13px 23px;border-radius:5px;font-weight:bold}
-.btn-primary {background:var(--red);color:white}
-.btn-secondary {background:#ffffff20;color:white}
-.btn:hover {filter:brightness(1.15)}
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
 
-main {padding:5px 5% 50px}
-.section {margin:35px 0 42px}
-.section-heading {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:16px;
-}
-.section-heading h2 {margin:0;font-size:21px}
-.section-heading span {color:var(--red);font-size:12px;font-weight:bold}
+    /* ===== HEADER ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 5%;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
 
-.movie-row {
-  display:grid;
-  grid-auto-flow:column;
-  grid-auto-columns:155px;
-  gap:15px;
-  overflow-x:auto;
-  padding:3px 2px 15px;
-  scrollbar-width:thin;
-  scrollbar-color:#444 transparent;
-}
-.movie-card {min-width:0;cursor:pointer;transition:transform .2s}
-.movie-card:hover {transform:translateY(-5px)}
-.poster-wrap {
-  position:relative;
-  aspect-ratio:2/3;
-  background:#202029;
-  border-radius:8px;
-  overflow:hidden;
-}
-.poster {width:100%;height:100%;object-fit:cover;display:block}
-.rating {
-  position:absolute;
-  left:7px;
-  top:7px;
-  padding:5px 7px;
-  border-radius:4px;
-  background:rgba(0,0,0,.8);
-  font-size:11px;
-  font-weight:bold;
-}
-.movie-card h3 {margin:9px 0 4px;font-size:13px;line-height:1.35}
-.movie-card small {color:var(--muted)}
-.status {
-  padding:18px;
-  color:#bbb;
-  background:var(--panel);
-  border-radius:8px;
-  font-size:14px;
-}
-.status.error {color:#ff9b9b}
-.status button {
-  margin-left:8px;
-  border:0;
-  color:white;
-  background:var(--red);
-  padding:8px 12px;
-  border-radius:4px;
-}
-#searchResults {display:none}
-#searchResults.active {display:block}
-#searchGrid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(135px,1fr));
-  gap:18px;
-}
+    .logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: white;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-.modal {
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:100;
-  background:rgba(0,0,0,.9);
-  overflow-y:auto;
-  padding:25px 12px;
-}
-.modal.open {display:block}
-.modal-box {
-  max-width:850px;
-  margin:20px auto;
-  background:#17171f;
-  border-radius:12px;
-  overflow:hidden;
-  position:relative;
-}
-.modal-backdrop {
-  min-height:230px;
-  background-size:cover;
-  background-position:center;
-  display:flex;
-  align-items:end;
-  padding:25px;
-}
-.modal-backdrop h2 {
-  margin:0;
-  font-size:clamp(25px,5vw,42px);
-  text-shadow:0 2px 8px black;
-}
-.modal-body {padding:25px}
-.modal-body p {color:#ccc;line-height:1.7}
-.close {
-  position:absolute;
-  right:13px;
-  top:13px;
-  z-index:3;
-  width:38px;
-  height:38px;
-  border:0;
-  border-radius:50%;
-  background:var(--red);
-  color:white;
-  font-size:22px;
-}
-.trailer {
-  width:100%;
-  aspect-ratio:16/9;
-  border:0;
-  margin-top:18px;
-  background:black;
-}
-footer {
-  padding:35px 5%;
-  border-top:1px solid var(--border);
-  color:#999;
-  font-size:13px;
-  line-height:1.7;
-  text-align:center;
-}
-footer strong {color:white}
+    .logo-badge {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #e50914, #b00710);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 20px;
+      color: white;
+      box-shadow: 0 0 20px rgba(229, 9, 20, 0.45);
+    }
 
-@media(max-width:700px) {
-  header {padding:12px 4%;flex-wrap:wrap}
-  .logo {font-size:22px}
-  nav {order:3;width:100%;justify-content:space-between;gap:8px}
-  nav a {font-size:12px}
-  .search {width:48%}
-  .search input {padding:9px;font-size:12px}
-  .hero {min-height:470px;height:65vh;padding:35px 5%}
-  .hero p {font-size:13px}
-  main {padding-left:4%;padding-right:4%}
-  .movie-row {grid-auto-columns:125px;gap:12px}
-  .section-heading h2 {font-size:18px}
-  #searchGrid {grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-</style>
+    .logo span {
+      color: var(--red);
+    }
+
+    nav {
+      display: flex;
+      gap: 22px;
+      align-items: center;
+    }
+
+    nav a {
+      color: #c0c0cc;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--red);
+    }
+
+    .search {
+      display: flex;
+      width: min(280px, 38vw);
+      background: #15151d;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .search:focus-within {
+      border-color: rgba(229, 9, 20, 0.5);
+    }
+
+    .search input {
+      width: 100%;
+      padding: 11px 16px;
+      color: white;
+      background: transparent;
+      border: 0;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .search input::placeholder {
+      color: #666;
+    }
+
+    .search button {
+      padding: 0 16px;
+      color: white;
+      background: var(--red);
+      border: 0;
+      font-size: 16px;
+    }
+
+    /* ===== HERO / FEATURED CAROUSEL ===== */
+    .hero-section {
+      position: relative;
+      height: 62vh;
+      min-height: 420px;
+      max-height: 640px;
+      overflow: hidden;
+    }
+
+    .hero-slider {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1s ease;
+      background-size: cover;
+      background-position: center 20%;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .hero-slide.active {
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .hero-slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, #000 0%, rgba(0,0,0,0.85) 40%, transparent 75%),
+        linear-gradient(0deg, #000 0%, transparent 55%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      max-width: 560px;
+      padding: 50px 6%;
+    }
+
+    .eyebrow {
+      color: var(--red-glow);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .hero-content h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(32px, 5.5vw, 56px);
+      font-weight: 800;
+      line-height: 1.05;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+    }
+
+    .hero-meta {
+      color: #ccc;
+      font-size: 14px;
+      margin-bottom: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-meta .rating-pill {
+      background: rgba(229, 9, 20, 0.2);
+      color: #ff6b75;
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .hero-content p {
+      color: #b8b8c4;
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 480px;
+      margin-bottom: 24px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      padding: 13px 26px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: white;
+      box-shadow: 0 4px 20px rgba(229, 9, 20, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: #ff1a2a;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-dots {
+      position: absolute;
+      bottom: 22px;
+      left: 6%;
+      z-index: 5;
+      display: flex;
+      gap: 8px;
+    }
+
+    .hero-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      border: 0;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .hero-dot.active {
+      background: var(--red);
+      width: 22px;
+      border-radius: 4px;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      padding: 10px 5% 60px;
+    }
+
+    .section {
+      margin: 36px 0 44px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .section-heading h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .section-heading .tag {
+      color: var(--red);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .movie-row {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 4px 2px 18px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .movie-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .movie-card {
+      flex: 0 0 148px;
+      scroll-snap-align: start;
+      cursor: pointer;
+      transition: transform 0.25s ease;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .poster-wrap {
+      position: relative;
+      aspect-ratio: 2 / 3;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--card);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .poster-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, transparent 40%);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .movie-card:hover .poster-wrap::after {
+      opacity: 1;
+    }
+
+    .poster {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .movie-card:hover .poster {
+      transform: scale(1.06);
+    }
+
+    .rating {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      padding: 4px 7px;
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.75);
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffd700;
+      z-index: 2;
+      backdrop-filter: blur(4px);
+    }
+
+    .play-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      width: 42px;
+      height: 42px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.25s;
+      z-index: 2;
+      box-shadow: 0 4px 16px rgba(229, 9, 20, 0.5);
+    }
+
+    .play-icon::after {
+      content: "";
+      width: 0;
+      height: 0;
+      border-left: 12px solid white;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      margin-left: 3px;
+    }
+
+    .movie-card:hover .play-icon {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .movie-card h3 {
+      margin: 10px 0 3px;
+      font-size: 13.5px;
+      font-weight: 600;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .movie-card small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status {
+      padding: 20px;
+      color: #999;
+      background: var(--panel);
+      border-radius: 10px;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    .status.error {
+      color: #ff9b9b;
+    }
+
+    .status button {
+      margin-left: 10px;
+      border: 0;
+      color: white;
+      background: var(--red);
+      padding: 7px 14px;
+      border-radius: 5px;
+      font-weight: 600;
+    }
+
+    #searchResults {
+      display: none;
+    }
+
+    #searchResults.active {
+      display: block;
+    }
+
+    #searchGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 18px;
+    }
+
+    /* ===== MODAL ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.92);
+      overflow-y: auto;
+      padding: 20px 12px;
+    }
+
+    .modal.open {
+      display: block;
+    }
+
+    .modal-box {
+      max-width: 820px;
+      margin: 20px auto;
+      background: #0e0e14;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    }
+
+    .modal-backdrop {
+      min-height: 260px;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: flex-end;
+      padding: 28px;
+      position: relative;
+    }
+
+    .modal-backdrop::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, #0e0e14 0%, transparent 60%);
+    }
+
+    .modal-backdrop h2 {
+      position: relative;
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(26px, 5vw, 40px);
+      font-weight: 800;
+      text-shadow: 0 2px 12px black;
+    }
+
+    .modal-body {
+      padding: 28px;
+    }
+
+    .modal-body p {
+      color: #b8b8c4;
+      line-height: 1.7;
+      margin-top: 12px;
+    }
+
+    .close {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      z-index: 5;
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--red);
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(229, 9, 20, 0.4);
+    }
+
+    .trailer {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: 0;
+      margin-top: 20px;
+      background: black;
+      border-radius: 8px;
+    }
+
+    footer {
+      padding: 40px 5%;
+      border-top: 1px solid var(--border);
+      color: #777;
+      font-size: 13px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    footer strong {
+      color: white;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    @media (max-width: 720px) {
+      header {
+        padding: 12px 4%;
+        flex-wrap: wrap;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .logo-badge {
+        width: 32px;
+        height: 32px;
+        font-size: 17px;
+      }
+
+      nav {
+        order: 3;
+        width: 100%;
+        justify-content: space-between;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      nav a {
+        font-size: 12.5px;
+      }
+
+      .search {
+        width: 52%;
+      }
+
+      .search input {
+        padding: 9px 12px;
+        font-size: 13px;
+      }
+
+      .hero-section {
+        height: 58vh;
+        min-height: 380px;
+      }
+
+      .hero-content {
+        padding: 36px 5%;
+      }
+
+      .hero-content h1 {
+        font-size: 28px;
+      }
+
+      .hero-content p {
+        font-size: 13.5px;
+        -webkit-line-clamp: 2;
+      }
+
+      main {
+        padding-left: 4%;
+        padding-right: 4%;
+      }
+
+      .movie-card {
+        flex: 0 0 128px;
+      }
+
+      .section-heading h2 {
+        font-size: 18px;
+      }
+
+      #searchGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .glow-card .poster-wrap {
+      box-shadow: 0 0 0 1px rgba(229, 9, 20, 0.15), 0 8px 28px rgba(0,0,0,0.55);
+    }
+  </style>
 </head>
-
 <body>
 
 <header>
-  <a class="logo" href="#">AIDEL<span>TV</span></a>
+  <a class="logo" href="#">
+    <div class="logo-badge">A</div>
+    AIDEL<span>TV</span>
+  </a>
 
   <nav>
     <a href="#">Home</a>
@@ -284,35 +697,26 @@ footer strong {color:white}
   </form>
 </header>
 
-<section class="hero" id="hero">
-  <div class="hero-content">
-    <div class="eyebrow">Welcome to AIDEL TV</div>
-    <h1 id="heroTitle">Your Entertainment Starts Here</h1>
-    <div class="hero-meta" id="heroMeta">Movies • Series • Nollywood</div>
-    <p id="heroOverview">Discover trending movies, popular television series and exciting Nollywood entertainment.</p>
-    <div class="hero-actions">
-      <button class="btn btn-primary" id="heroExplore">Explore Movies</button>
-      <button class="btn btn-secondary" id="heroDetails" hidden>More Information</button>
-    </div>
-  </div>
+<!-- Interchanging Featured Movies -->
+<section class="hero-section" id="heroSection">
+  <div class="hero-slider" id="heroSlider"></div>
+  <div class="hero-dots" id="heroDots"></div>
 </section>
 
 <main>
-
   <section id="searchResults" class="section">
     <div class="section-heading">
       <h2>Search Results</h2>
-      <span id="searchCount"></span>
+      <span class="tag" id="searchCount"></span>
     </div>
     <div id="searchGrid"></div>
   </section>
 
   <div id="sections">
-
     <section class="section" id="trending">
       <div class="section-heading">
-        <h2>Trending Now</h2>
-        <span>HOT THIS WEEK</span>
+        <h2>Popular Movies</h2>
+        <span class="tag">Hot This Week</span>
       </div>
       <div class="movie-row" id="trendingRow">
         <div class="status">Loading movies...</div>
@@ -322,7 +726,7 @@ footer strong {color:white}
     <section class="section" id="nollywood">
       <div class="section-heading">
         <h2>Nollywood Movies</h2>
-        <span>MADE IN NIGERIA</span>
+        <span class="tag">Made in Nigeria</span>
       </div>
       <div class="movie-row" id="nollywoodRow">
         <div class="status">Loading Nollywood...</div>
@@ -332,7 +736,7 @@ footer strong {color:white}
     <section class="section" id="action">
       <div class="section-heading">
         <h2>Action & Adventure</h2>
-        <span>NON-STOP ACTION</span>
+        <span class="tag">Non-stop Action</span>
       </div>
       <div class="movie-row" id="actionRow">
         <div class="status">Loading movies...</div>
@@ -342,7 +746,7 @@ footer strong {color:white}
     <section class="section" id="comedy">
       <div class="section-heading">
         <h2>Comedy</h2>
-        <span>TIME TO LAUGH</span>
+        <span class="tag">Time to Laugh</span>
       </div>
       <div class="movie-row" id="comedyRow">
         <div class="status">Loading movies...</div>
@@ -352,7 +756,7 @@ footer strong {color:white}
     <section class="section" id="series">
       <div class="section-heading">
         <h2>Popular TV Series</h2>
-        <span>TOP SERIES</span>
+        <span class="tag">Top Series</span>
       </div>
       <div class="movie-row" id="seriesRow">
         <div class="status">Loading series...</div>
@@ -362,16 +766,16 @@ footer strong {color:white}
     <section class="section" id="topRated">
       <div class="section-heading">
         <h2>Top Rated Movies</h2>
-        <span>VIEWER FAVOURITES</span>
+        <span class="tag">Viewer Favourites</span>
       </div>
       <div class="movie-row" id="topRatedRow">
         <div class="status">Loading movies...</div>
       </div>
     </section>
-
   </div>
 </main>
 
+<!-- Detail Modal -->
 <div class="modal" id="movieModal" aria-hidden="true">
   <div class="modal-box">
     <button class="close" id="closeModal" aria-label="Close">×</button>
@@ -379,7 +783,7 @@ footer strong {color:white}
       <h2 id="modalTitle"></h2>
     </div>
     <div class="modal-body">
-      <div id="modalMeta"></div>
+      <div id="modalMeta" style="color:#aaa;font-size:14px;"></div>
       <p id="modalOverview"></p>
       <div id="trailerArea"></div>
     </div>
@@ -397,35 +801,28 @@ footer strong {color:white}
 <script>
 "use strict";
 
-/* =========================================================
-   1. PASTE YOUR NEW TMDB API KEY (v3 AUTH) BETWEEN THESE QUOTES.
-   2. DO NOT PASTE THE API READ ACCESS TOKEN.
-   3. KEEP THE QUOTATION MARKS.
-========================================================= */
-
 const TMDB_API_KEY = "b780fe2deb5463314e4fa32ef70e42c4";
-
-/* REPLACE THE PLACEHOLDER ABOVE WITH YOUR OWN KEY */
-
 const API_BASE = "https://api.themoviedb.org/3";
 const IMAGE_BASE = "https://image.tmdb.org/t/p/";
 
 const FALLBACK_POSTER =
   "data:image/svg+xml;charset=UTF-8," +
   encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450"><rect width="100%" height="100%" fill="#202029"/><text x="50%" y="50%" fill="#aaa" font-size="22" text-anchor="middle">AIDEL TV</text></svg>'
+    '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450"><rect width="100%" height="100%" fill="#16161f"/><text x="50%" y="50%" fill="#666" font-size="20" text-anchor="middle" font-family="sans-serif">AIDEL TV</text></svg>'
   );
 
 const $ = id => document.getElementById(id);
-let heroMovie = null;
+let heroMovies = [];
+let currentHeroIndex = 0;
+let heroInterval = null;
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
   })[c]);
 }
 
@@ -434,18 +831,11 @@ function imageURL(path, size = "w500") {
 }
 
 async function tmdb(path, params = {}) {
-
-  if (
-    !TMDB_API_KEY ||
-    TMDB_API_KEY === "PASTE_YOUR_NEW_TMDB_V3_API_KEY_HERE"
-  ) {
-    throw new Error(
-      "Please add your TMDB API Key (v3 Auth) in the TMDB_API_KEY line."
-    );
+  if (!TMDB_API_KEY || TMDB_API_KEY === "PASTE_YOUR_NEW_TMDB_V3_API_KEY_HERE") {
+    throw new Error("Please add your TMDB API Key (v3 Auth) in the TMDB_API_KEY line.");
   }
 
   const url = new URL(API_BASE + path);
-
   url.searchParams.set("api_key", TMDB_API_KEY);
   url.searchParams.set("language", "en-US");
 
@@ -456,9 +846,7 @@ async function tmdb(path, params = {}) {
   });
 
   const response = await fetch(url.toString());
-
   let data;
-
   try {
     data = await response.json();
   } catch (_) {
@@ -466,11 +854,8 @@ async function tmdb(path, params = {}) {
   }
 
   if (!response.ok) {
-    throw new Error(
-      data.status_message || ("TMDB request failed (" + response.status + ").")
-    );
+    throw new Error(data.status_message || ("TMDB request failed (" + response.status + ")."));
   }
-
   return data;
 }
 
@@ -494,18 +879,17 @@ function makeCard(item, media) {
   const year = escapeHTML(getYear(item));
 
   return `
-    <article class="movie-card"
+    <article class="movie-card glow-card"
       tabindex="0"
       role="button"
       data-movie-id="${Number(item.id)}"
       data-media="${media}"
       aria-label="View ${title}">
-
       <div class="poster-wrap">
-        <img class="poster" src="${poster}" alt="${title}" loading="lazy">
+        <img class="poster" src="\( {poster}" alt=" \){title}" loading="lazy">
         <span class="rating">★ ${rating}</span>
+        <div class="play-icon"></div>
       </div>
-
       <h3>${title}</h3>
       <small>${year}</small>
     </article>
@@ -513,393 +897,304 @@ function makeCard(item, media) {
 }
 
 function renderRow(element, results, media = "movie") {
-
   const items = (results || [])
-    .filter(item =>
-      item &&
-      item.id &&
-      item.poster_path &&
-      item.media_type !== "person"
-    )
+    .filter(item => item && item.id && item.poster_path && item.media_type !== "person")
     .slice(0, 20);
 
   if (!items.length) {
-    element.innerHTML =
-      '<div class="status">No titles found in this category.</div>';
+    element.innerHTML = '<div class="status">No titles found in this category.</div>';
     return;
   }
 
   element.innerHTML = items
-    .map(item =>
-      makeCard(item, media === "all" ? getMedia(item) : media)
-    )
+    .map(item => makeCard(item, media === "all" ? getMedia(item) : media))
     .join("");
 
   element.querySelectorAll(".poster").forEach(img => {
     img.addEventListener("error", () => {
       img.src = FALLBACK_POSTER;
-    }, {once:true});
+    }, { once: true });
   });
 }
 
 function showError(element, error, retry) {
-
   element.innerHTML = `
     <div class="status error">
       ${escapeHTML(error.message || "Something went wrong.")}
       <button type="button" class="retry-button">Retry</button>
     </div>
   `;
-
   element.querySelector(".retry-button").addEventListener("click", retry);
 }
 
 async function loadSection(rowId, path, params = {}, media = "movie") {
-
   const element = $(rowId);
-
   try {
     const data = await tmdb(path, params);
     renderRow(element, data.results, media);
   } catch (error) {
-    showError(element, error, () =>
-      loadSection(rowId, path, params, media)
-    );
+    showError(element, error, () => loadSection(rowId, path, params, media));
     console.error(rowId, error);
   }
 }
 
-async function loadHero() {
+/* ===== INTERCHANGING HERO ===== */
+function renderHeroSlides(movies) {
+  const slider = $("heroSlider");
+  const dots = $("heroDots");
 
+  if (!movies.length) return;
+
+  heroMovies = movies.slice(0, 6);
+
+  slider.innerHTML = heroMovies.map((movie, i) => {
+    const backdrop = imageURL(movie.backdrop_path || movie.poster_path, "original");
+    const title = escapeHTML(getTitle(movie));
+    const overview = escapeHTML(movie.overview || "Discover this title on AIDEL TV.");
+    const rating = Number(movie.vote_average || 0).toFixed(1);
+    const year = getYear(movie);
+
+    return `
+      <div class="hero-slide ${i === 0 ? 'active' : ''}" 
+           style="background-image:url('${backdrop}')"
+           data-index="${i}">
+        <div class="hero-content">
+          <div class="eyebrow">Featured on AIDEL TV</div>
+          <h1>${title}</h1>
+          <div class="hero-meta">
+            <span class="rating-pill">★ ${rating}</span>
+            <span>${year}</span>
+            <span>• MOVIE</span>
+          </div>
+          <p>${overview}</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="openDetails(${movie.id}, 'movie')">Watch Now</button>
+            <button class="btn btn-secondary" onclick="openDetails(${movie.id}, 'movie')">More Info</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  dots.innerHTML = heroMovies.map((_, i) =>
+    `<button class="hero-dot \( {i === 0 ? 'active' : ''}" data-index=" \){i}" aria-label="Go to slide ${i + 1}"></button>`
+  ).join("");
+
+  dots.querySelectorAll(".hero-dot").forEach(dot => {
+    dot.addEventListener("click", () => {
+      goToHeroSlide(Number(dot.dataset.index));
+      resetHeroInterval();
+    });
+  });
+
+  startHeroInterval();
+}
+
+function goToHeroSlide(index) {
+  const slides = document.querySelectorAll(".hero-slide");
+  const dots = document.querySelectorAll(".hero-dot");
+  if (!slides.length) return;
+
+  slides[currentHeroIndex].classList.remove("active");
+  dots[currentHeroIndex].classList.remove("active");
+
+  currentHeroIndex = index;
+  if (currentHeroIndex >= slides.length) currentHeroIndex = 0;
+  if (currentHeroIndex < 0) currentHeroIndex = slides.length - 1;
+
+  slides[currentHeroIndex].classList.add("active");
+  dots[currentHeroIndex].classList.add("active");
+}
+
+function nextHeroSlide() {
+  goToHeroSlide(currentHeroIndex + 1);
+}
+
+function startHeroInterval() {
+  clearInterval(heroInterval);
+  heroInterval = setInterval(nextHeroSlide, 5500);
+}
+
+function resetHeroInterval() {
+  startHeroInterval();
+}
+
+async function loadHero() {
   try {
     const data = await tmdb("/trending/movie/week");
-
-    const movie = (data.results || []).find(item =>
-      item.backdrop_path || item.poster_path
-    );
-
-    if (!movie) return;
-
-    heroMovie = movie;
-
-    $("heroTitle").textContent = getTitle(movie);
-
-    $("heroMeta").textContent =
-      "★ " + Number(movie.vote_average || 0).toFixed(1) +
-      " • " + getYear(movie) + " • MOVIE";
-
-    $("heroOverview").textContent =
-      movie.overview || "Discover this title on AIDEL TV.";
-
-    const backdrop = imageURL(
-      movie.backdrop_path || movie.poster_path,
-      "original"
-    );
-
-    $("hero").style.backgroundImage =
-      "linear-gradient(90deg,#09090d 0%,rgba(9,9,13,.82) 35%,transparent 100%),linear-gradient(0deg,#09090d 0%,transparent 65%),url('" +
-      backdrop + "')";
-
-    $("heroDetails").hidden = false;
-
+    const movies = (data.results || []).filter(m => m.backdrop_path || m.poster_path);
+    renderHeroSlides(movies);
   } catch (error) {
     console.error("Hero:", error);
   }
 }
 
 async function loadHome() {
-
   await Promise.all([
-
     loadHero(),
-
-    loadSection(
-      "trendingRow",
-      "/trending/all/week",
-      {},
-      "all"
-    ),
-
-    loadSection(
-      "nollywoodRow",
-      "/discover/movie",
-      {
-        with_origin_country:"NG",
-        sort_by:"popularity.desc",
-        include_adult:"false"
-      }
-    ),
-
-    loadSection(
-      "actionRow",
-      "/discover/movie",
-      {
-        with_genres:"28",
-        sort_by:"popularity.desc",
-        include_adult:"false"
-      }
-    ),
-
-    loadSection(
-      "comedyRow",
-      "/discover/movie",
-      {
-        with_genres:"35",
-        sort_by:"popularity.desc",
-        include_adult:"false"
-      }
-    ),
-
-    loadSection(
-      "seriesRow",
-      "/tv/popular",
-      {},
-      "tv"
-    ),
-
-    loadSection(
-      "topRatedRow",
-      "/movie/top_rated",
-      {
-        include_adult:"false"
-      }
-    )
-
+    loadSection("trendingRow", "/trending/all/week", {}, "all"),
+    loadSection("nollywoodRow", "/discover/movie", {
+      with_origin_country: "NG",
+      sort_by: "popularity.desc",
+      include_adult: "false"
+    }),
+    loadSection("actionRow", "/discover/movie", {
+      with_genres: "28",
+      sort_by: "popularity.desc",
+      include_adult: "false"
+    }),
+    loadSection("comedyRow", "/discover/movie", {
+      with_genres: "35",
+      sort_by: "popularity.desc",
+      include_adult: "false"
+    }),
+    loadSection("seriesRow", "/tv/popular", {}, "tv"),
+    loadSection("topRatedRow", "/movie/top_rated", {
+      include_adult: "false"
+    })
   ]);
 }
 
 async function searchMovies(query) {
-
   const section = $("searchResults");
   const grid = $("searchGrid");
 
   section.classList.add("active");
   $("sections").style.display = "none";
   $("searchCount").textContent = "Searching...";
-
-  grid.innerHTML =
-    '<div class="status">Searching TMDB...</div>';
-
-  section.scrollIntoView({behavior:"smooth"});
+  grid.innerHTML = '<div class="status">Searching TMDB...</div>';
+  section.scrollIntoView({ behavior: "smooth" });
 
   try {
-
-    const data = await tmdb(
-      "/search/multi",
-      {
-        query,
-        include_adult:"false"
-      }
-    );
+    const data = await tmdb("/search/multi", {
+      query,
+      include_adult: "false"
+    });
 
     const items = (data.results || []).filter(item =>
-      item.media_type !== "person" &&
-      item.poster_path &&
-      item.id
+      item.media_type !== "person" && item.poster_path && item.id
     );
 
     $("searchCount").textContent = items.length + " results";
 
     if (!items.length) {
-      grid.innerHTML =
-        '<div class="status">No movies or series found. Try another search.</div>';
+      grid.innerHTML = '<div class="status">No movies or series found. Try another search.</div>';
       return;
     }
 
-    grid.innerHTML = items
-      .map(item => makeCard(item, getMedia(item)))
-      .join("");
+    grid.innerHTML = items.map(item => makeCard(item, getMedia(item))).join("");
 
     grid.querySelectorAll(".poster").forEach(img => {
       img.addEventListener("error", () => {
         img.src = FALLBACK_POSTER;
-      }, {once:true});
+      }, { once: true });
     });
-
   } catch (error) {
-
     $("searchCount").textContent = "Search error";
-
     showError(grid, error, () => searchMovies(query));
   }
 }
 
 async function openDetails(id, media) {
-
   $("movieModal").classList.add("open");
-  $("movieModal").setAttribute("aria-hidden","false");
+  $("movieModal").setAttribute("aria-hidden", "false");
 
   $("modalTitle").textContent = "Loading...";
-  $("modalOverview").textContent =
-    "Getting movie information...";
-
+  $("modalOverview").textContent = "Getting movie information...";
   $("modalMeta").textContent = "";
   $("modalBackdrop").style.backgroundImage = "none";
   $("trailerArea").innerHTML = "";
-
   document.body.style.overflow = "hidden";
 
   try {
-
     const [details, videos] = await Promise.all([
-
       tmdb("/" + media + "/" + id),
-
       tmdb("/" + media + "/" + id + "/videos")
-
     ]);
 
     $("modalTitle").textContent = getTitle(details);
-
-    $("modalOverview").textContent =
-      details.overview || "No description is available.";
-
+    $("modalOverview").textContent = details.overview || "No description is available.";
     $("modalMeta").textContent =
-      getYear(details) +
-      " • ★ " +
-      Number(details.vote_average || 0).toFixed(1) +
-      " • " +
-      (media === "tv" ? "TV SERIES" : "MOVIE");
+      getYear(details) + " • ★ " + Number(details.vote_average || 0).toFixed(1) +
+      " • " + (media === "tv" ? "TV SERIES" : "MOVIE");
 
-    const backdrop = imageURL(
-      details.backdrop_path || details.poster_path,
-      "w1280"
-    );
-
+    const backdrop = imageURL(details.backdrop_path || details.poster_path, "w1280");
     $("modalBackdrop").style.backgroundImage =
-      "linear-gradient(0deg,rgba(0,0,0,.65),transparent),url('" +
-      backdrop + "')";
+      "linear-gradient(0deg,rgba(0,0,0,.7),transparent),url('" + backdrop + "')";
 
     const trailer = (videos.results || []).find(v =>
-      v.site === "YouTube" &&
-      (v.type === "Trailer" || v.type === "Teaser")
+      v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
     );
 
     if (trailer) {
-
       const frame = document.createElement("iframe");
-
       frame.className = "trailer";
-
-      frame.src =
-        "https://www.youtube-nocookie.com/embed/" +
-        encodeURIComponent(trailer.key);
-
+      frame.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(trailer.key);
       frame.title = "Movie trailer";
-
-      frame.allow =
-        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-
+      frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
       frame.allowFullscreen = true;
-
       $("trailerArea").appendChild(frame);
-
     } else {
-
-      $("trailerArea").innerHTML =
-        "<p>No official trailer is available on TMDB for this title.</p>";
-
+      $("trailerArea").innerHTML = "<p style='color:#888;margin-top:16px;'>No official trailer is available on TMDB for this title.</p>";
     }
-
   } catch (error) {
-
     $("modalTitle").textContent = "Unable to load details";
     $("modalOverview").textContent = error.message;
-
   }
 }
 
 function closeModal() {
-
   $("movieModal").classList.remove("open");
-
-  $("movieModal").setAttribute("aria-hidden","true");
-
+  $("movieModal").setAttribute("aria-hidden", "true");
   $("trailerArea").innerHTML = "";
-
   document.body.style.overflow = "";
 }
 
+/* Event listeners */
 $("searchForm").addEventListener("submit", event => {
-
   event.preventDefault();
-
   const query = $("searchInput").value.trim();
-
   if (query) searchMovies(query);
-
 });
 
 $("searchInput").addEventListener("input", event => {
-
   if (!event.target.value.trim()) {
-
     $("searchResults").classList.remove("active");
-
     $("sections").style.display = "";
-
     $("searchCount").textContent = "";
-
     $("searchGrid").innerHTML = "";
-
   }
-
-});
-
-$("heroExplore").addEventListener("click", () => {
-
-  $("trending").scrollIntoView({behavior:"smooth"});
-
-});
-
-$("heroDetails").addEventListener("click", () => {
-
-  if (heroMovie) openDetails(heroMovie.id, "movie");
-
 });
 
 $("closeModal").addEventListener("click", closeModal);
 
 $("movieModal").addEventListener("click", event => {
-
   if (event.target === $("movieModal")) closeModal();
-
 });
 
 document.addEventListener("keydown", event => {
-
   if (event.key === "Escape") closeModal();
-
-  if (
-    (event.key === "Enter" || event.key === " ") &&
-    event.target.closest(".movie-card")
-  ) {
-
+  if ((event.key === "Enter" || event.key === " ") && event.target.closest(".movie-card")) {
     event.preventDefault();
-
     const card = event.target.closest(".movie-card");
-
     openDetails(card.dataset.movieId, card.dataset.media);
-
   }
-
 });
 
 document.addEventListener("click", event => {
-
   const card = event.target.closest(".movie-card");
-
   if (card) {
     openDetails(card.dataset.movieId, card.dataset.media);
   }
-
 });
 
-loadHome();
+$("heroSection").addEventListener("mouseenter", () => clearInterval(heroInterval));
+$("heroSection").addEventListener("mouseleave", startHeroInterval);
 
+loadHome();
 </script>
 
-  
+<!-- Supabase Connection -->
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
@@ -910,7 +1205,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 window.aidelSupabase = supabase;
 
-  const { error } = await supabase
+const { error } = await supabase
   .from('movies')
   .select('id')
   .limit(1);
@@ -919,23 +1214,22 @@ if (error) {
   console.error('Supabase error:', error.message);
 } else {
   console.log('AIDEL TV Supabase connected!');
-  }
+}
 
-  
 window.aidelSupabase = supabase;
 
-const { data, error } = await supabase
+const { data, error: error2 } = await supabase
   .from('movies')
   .select('id')
   .limit(1);
 
-if (error) {
-  alert('Supabase connection failed: ' + error.message);
+if (error2) {
+  alert('Supabase connection failed: ' + error2.message);
 } else {
   alert('AIDEL TV is successfully connected to Supabase!');
 }
 console.log('AIDEL TV Supabase connected successfully!');
 </script>
-  
+
 </body>
 </html>
