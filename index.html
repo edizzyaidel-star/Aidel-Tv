@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#000000">
   <title>AIDEL TV — Movies, Series & Entertainment</title>
   <meta name="description" content="Discover trending movies, Nollywood films, TV series and entertainment on AIDEL TV.">
@@ -45,49 +45,68 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ===== BANNER WELCOME SCREEN ===== */
-    #aidel-intro {
-      position: fixed;
-      inset: 0;
-      z-index: 999999;
-      background: #050408;
-      background-image: radial-gradient(circle at center, #260000 0%, #050408 85%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      animation: aidelFadeOut .8s ease 3.2s forwards;
-    }
+<!-- ===== BANNER WELCOME SCREEN ===== -->
+<div id="aidel-intro">
+  <div class="welcome-banner-box">
+    <!-- Make sure IMG-20261113-WA0001.jpg is uploaded in the exact same folder as this index.html file -->
+    <img 
+      src="IMG-20261113-WA0001.jpg" 
+      alt="AIDEL TV - Watch Anytime, Anywhere"
+      onerror="this.style.display='none'; document.getElementById('banner-fallback').style.display='block';"
+    >
+    <div id="banner-fallback">
+      <h1 style="font-family:'Outfit',sans-serif; font-size:48px; font-weight:900; color:#fff; letter-spacing:2px;">
+        AIDEL <span style="color:#e50914;">TV</span>
+      </h1>
+      <p style="color:#ccc; letter-spacing:3px; font-size:12px; margin-top:8px;">WATCH ANYTIME, ANYWHERE</p>
+    </div>
+  </div>
+  <div class="aidel-loader"></div>
+  <button type="button" class="skip-intro-btn" onclick="document.getElementById('aidel-intro').remove()">
+    Enter AIDEL TV →
+  </button>
+</div>
 
-    .welcome-banner-box {
-      max-width: 920px;
-      width: 100%;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 15px 50px rgba(229, 9, 20, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+    .aidel-logo {
+      position: relative;
+      text-align: center;
       animation: aidelGlow 1.5s ease-in-out infinite alternate;
     }
 
-    .welcome-banner-box img {
-      width: 100%;
-      height: auto;
-      display: block;
+    .aidel-name {
+      color: #a855f7;
+      font-size: clamp(48px, 13vw, 85px);
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-shadow: 0 0 15px #9333ea;
+      font-family: 'Outfit', sans-serif;
     }
 
-    #banner-fallback {
-      display: none;
-      padding: 60px 20px;
-      text-align: center;
-      background: radial-gradient(circle, #3a0000 0%, #050408 100%);
+    .aidel-a {
+      color: #d8b4fe;
+    }
+
+    .aidel-tv {
+      position: absolute;
+      top: -17px;
+      right: 3px;
+      color: #c084fc;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .aidel-tagline {
+      color: #c084fc;
+      letter-spacing: 4px;
+      font-size: 11px;
+      margin-top: 22px;
     }
 
     .aidel-loader {
-      width: 120px;
+      width: 90px;
       height: 3px;
-      background: rgba(255, 255, 255, 0.15);
-      margin-top: 26px;
+      background: #2e1744;
+      margin-top: 25px;
       overflow: hidden;
       border-radius: 10px;
     }
@@ -95,34 +114,15 @@
     .aidel-loader::after {
       content: "";
       display: block;
-      width: 45%;
+      width: 40%;
       height: 100%;
-      background: var(--red);
+      background: #a855f7;
       animation: aidelLoad 1s infinite;
     }
 
-    .skip-intro-btn {
-      margin-top: 18px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #cccccc;
-      padding: 7px 18px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .skip-intro-btn:hover {
-      background: var(--red);
-      border-color: var(--red);
-      color: #ffffff;
-    }
-
     @keyframes aidelGlow {
-      from { transform: scale(.985); opacity: .92; }
-      to { transform: scale(1.01); opacity: 1; }
+      from { transform: scale(.96); opacity: .8; }
+      to { transform: scale(1.04); opacity: 1; }
     }
 
     @keyframes aidelLoad {
@@ -242,7 +242,6 @@
       background: var(--red);
       border: 0;
       font-size: 16px;
-      cursor: pointer;
     }
 
     /* ===== HERO ===== */
@@ -577,7 +576,6 @@
       padding: 7px 14px;
       border-radius: 5px;
       font-weight: 600;
-      cursor: pointer;
     }
 
     #searchResults {
@@ -777,26 +775,16 @@
 </head>
 <body>
 
-<!-- ===== BANNER WELCOME SCREEN ===== -->
+<!-- ===== PURPLE WELCOME SCREEN ===== -->
 <div id="aidel-intro">
-  <div class="welcome-banner-box">
-    <!-- Make sure IMG-20261113-WA0001.jpg is uploaded in the exact same folder as this index.html file -->
-    <img 
-      src="IMG-20261113-WA0001.jpg" 
-      alt="AIDEL TV - Watch Anytime, Anywhere"
-      onerror="this.style.display='none'; document.getElementById('banner-fallback').style.display='block';"
-    >
-    <div id="banner-fallback">
-      <h1 style="font-family:'Outfit',sans-serif; font-size:48px; font-weight:900; color:#fff; letter-spacing:2px;">
-        AIDEL <span style="color:#e50914;">TV</span>
-      </h1>
-      <p style="color:#ccc; letter-spacing:3px; font-size:12px; margin-top:8px;">WATCH ANYTIME, ANYWHERE</p>
+  <div class="aidel-logo">
+    <div class="aidel-name">
+      <span class="aidel-a">A</span>IDEL
     </div>
+    <div class="aidel-tv">▣ TV</div>
   </div>
+  <p class="aidel-tagline">WATCH ANYTIME, ANYWHERE</p>
   <div class="aidel-loader"></div>
-  <button type="button" class="skip-intro-btn" onclick="document.getElementById('aidel-intro').remove()">
-    Enter AIDEL TV →
-  </button>
 </div>
 
 <header>
@@ -937,11 +925,11 @@ let heroInterval = null;
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&": "&",
-    "<": "<",
-    ">": ">",
-    '"': """,
-    "'": "'"
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
   })[c]);
 }
 
@@ -1038,7 +1026,7 @@ function renderRow(element, results, media = "movie") {
 function showError(element, error, retry) {
   element.innerHTML = `
     <div class="status error">
-      ${escapeHTML(error.message || "Network error: Unable to reach TMDB.")}
+      ${escapeHTML(error.message || "Something went wrong.")}
       <button type="button" class="retry-button">Retry</button>
     </div>
   `;
@@ -1094,7 +1082,7 @@ function renderHeroSlides(movies) {
   }).join("");
 
   dots.innerHTML = heroMovies.map((_, i) =>
-    `<button class="hero-dot ${i === 0 ? 'active' : ''}" data-index="${i}" aria-label="Go to slide ${i + 1}"></button>`
+    `<button class="hero-dot \( {i === 0 ? 'active' : ''}" data-index=" \){i}" aria-label="Go to slide ${i + 1}"></button>`
   ).join("");
 
   dots.querySelectorAll(".hero-dot").forEach(dot => {
@@ -1303,11 +1291,11 @@ $("heroSection").addEventListener("mouseleave", startHeroInterval);
 
 loadHome();
 
-// Remove welcome screen after animation completes
+// Remove welcome screen after animation
 setTimeout(function() {
   const intro = document.getElementById("aidel-intro");
   if (intro) intro.remove();
-}, 4000);
+}, 3900);
 </script>
 
 <!-- Supabase Connection -->
@@ -1318,7 +1306,19 @@ const SUPABASE_URL = 'https://nbvznasgshojxjsgchds.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
 window.aidelSupabase = supabase;
+
+const { error } = await supabase
+  .from('movies')
+  .select('id')
+  .limit(1);
+
+if (error) {
+  console.error('Supabase error:', error.message);
+} else {
+  console.log('AIDEL TV Supabase connected!');
+}
 </script>
 
 </body>
