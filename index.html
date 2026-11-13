@@ -47,19 +47,16 @@ button{cursor:pointer}
   justify-content:center;
   transition:opacity .8s ease,visibility .8s ease
 }
-
 #aidel-intro.hide{
   opacity:0;
   visibility:hidden;
   pointer-events:none
 }
-
 .intro-content{
   text-align:center;
   width:90%;
   max-width:700px
 }
-
 .intro-content img{
   display:block;
   width:100%;
@@ -68,7 +65,6 @@ button{cursor:pointer}
   margin:auto;
   animation:introGlow 1.8s ease-in-out infinite alternate
 }
-
 .welcome-text{
   color:#fff;
   font-family:Outfit,sans-serif;
@@ -80,7 +76,6 @@ button{cursor:pointer}
   text-shadow:0 0 15px #a855f7,0 0 30px #7e22ce;
   animation:welcomeGlow 1.5s ease-in-out infinite alternate
 }
-
 .intro-loader{
   width:100px;
   height:3px;
@@ -89,7 +84,6 @@ button{cursor:pointer}
   margin:25px auto 0;
   overflow:hidden
 }
-
 .intro-loader:after{
   content:"";
   display:block;
@@ -98,17 +92,14 @@ button{cursor:pointer}
   background:#b66aff;
   animation:loader 1s infinite
 }
-
 @keyframes loader{
   from{transform:translateX(-100%)}
   to{transform:translateX(260%)}
 }
-
 @keyframes introGlow{
   from{filter:drop-shadow(0 0 5px #7e22ce)}
   to{filter:drop-shadow(0 0 22px #a855f7)}
 }
-
 @keyframes welcomeGlow{
   from{opacity:.7}
   to{opacity:1}
@@ -128,7 +119,6 @@ header{
   backdrop-filter:blur(18px);
   border-bottom:1px solid var(--border)
 }
-
 .logo{
   display:flex;
   align-items:center;
@@ -137,7 +127,6 @@ header{
   text-decoration:none;
   font:800 25px Outfit,sans-serif
 }
-
 .logo-badge{
   width:36px;
   height:36px;
@@ -147,29 +136,15 @@ header{
   background:linear-gradient(135deg,#e50914,#8c0710);
   box-shadow:0 0 18px #e5091455
 }
-
 .logo span{color:var(--red)}
-
-nav{
-  display:flex;
-  gap:20px;
-  align-items:center
-}
-
+nav{display:flex;gap:20px;align-items:center}
 nav a{
   color:#ccc;
   text-decoration:none;
   font-size:13px
 }
-
 nav a:hover{color:var(--red)}
-
-.header-actions{
-  display:flex;
-  align-items:center;
-  gap:9px
-}
-
+.header-actions{display:flex;align-items:center;gap:9px}
 .search{
   display:flex;
   width:min(250px,30vw);
@@ -178,7 +153,6 @@ nav a:hover{color:var(--red)}
   background:#17171e;
   overflow:hidden
 }
-
 .search input{
   width:100%;
   min-width:0;
@@ -188,14 +162,12 @@ nav a:hover{color:var(--red)}
   border:0;
   outline:0
 }
-
 .search button{
   background:var(--red);
   color:white;
   border:0;
   padding:0 14px
 }
-
 .small-btn{
   border:1px solid var(--border);
   background:#1a1a22;
@@ -204,7 +176,6 @@ nav a:hover{color:var(--red)}
   padding:9px 13px;
   font-size:12px
 }
-
 .small-btn:hover{border-color:var(--red)}
 #accountButton{
   background:var(--red);
@@ -219,7 +190,6 @@ nav a:hover{color:var(--red)}
   max-height:650px;
   overflow:hidden
 }
-
 .hero-slide{
   position:absolute;
   inset:0;
@@ -230,12 +200,7 @@ nav a:hover{color:var(--red)}
   align-items:flex-end;
   transition:opacity 1s
 }
-
-.hero-slide.active{
-  opacity:1;
-  z-index:2
-}
-
+.hero-slide.active{opacity:1;z-index:2}
 .hero-slide:before{
   content:"";
   position:absolute;
@@ -244,14 +209,12 @@ nav a:hover{color:var(--red)}
     linear-gradient(90deg,#000 0%,rgba(0,0,0,.83) 38%,transparent 80%),
     linear-gradient(0deg,#08080c 0%,transparent 65%)
 }
-
 .hero-content{
   position:relative;
   z-index:3;
   padding:45px 6%;
   max-width:620px
 }
-
 .eyebrow{
   color:#ff4550;
   font-size:12px;
@@ -259,12 +222,10 @@ nav a:hover{color:var(--red)}
   letter-spacing:2px;
   margin-bottom:10px
 }
-
 .hero-content h1{
   font:800 clamp(32px,5.5vw,58px)/1.05 Outfit,sans-serif;
   margin-bottom:12px
 }
-
 .hero-meta{
   display:flex;
   gap:12px;
@@ -273,14 +234,12 @@ nav a:hover{color:var(--red)}
   font-size:13px;
   margin-bottom:14px
 }
-
 .rating-pill{
   color:#ffb84d;
   background:#392313;
   padding:3px 9px;
   border-radius:5px
 }
-
 .hero-content p{
   color:#c5c5ce;
   font-size:14px;
@@ -292,13 +251,7 @@ nav a:hover{color:var(--red)}
   -webkit-box-orient:vertical;
   overflow:hidden
 }
-
-.hero-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap
-}
-
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
 .btn{
   border:0;
   border-radius:6px;
@@ -306,22 +259,9 @@ nav a:hover{color:var(--red)}
   font-weight:700;
   font-size:13px
 }
-
-.btn-primary{
-  background:var(--red);
-  color:white
-}
-
-.btn-secondary{
-  background:#ffffff22;
-  color:white
-}
-
-.btn:disabled{
-  opacity:.45;
-  cursor:not-allowed
-}
-
+.btn-primary{background:var(--red);color:white}
+.btn-secondary{background:#ffffff22;color:white}
+.btn:disabled{opacity:.45;cursor:not-allowed}
 .hero-dots{
   position:absolute;
   bottom:18px;
@@ -330,7 +270,6 @@ nav a:hover{color:var(--red)}
   display:flex;
   gap:8px
 }
-
 .hero-dot{
   width:8px;
   height:8px;
@@ -338,28 +277,18 @@ nav a:hover{color:var(--red)}
   border-radius:8px;
   background:#ffffff55
 }
-
-.hero-dot.active{
-  width:23px;
-  background:var(--red)
-}
+.hero-dot.active{width:23px;background:var(--red)}
 
 /* CONTENT */
 main{padding:10px 5% 60px}
-
 .section{margin:35px 0 42px}
-
 .section-heading{
   display:flex;
   justify-content:space-between;
   align-items:center;
   margin-bottom:17px
 }
-
-.section-heading h2{
-  font:700 22px Outfit,sans-serif
-}
-
+.section-heading h2{font:700 22px Outfit,sans-serif}
 .tag{
   font-size:10px;
   color:var(--red);
@@ -367,7 +296,6 @@ main{padding:10px 5% 60px}
   letter-spacing:1px;
   text-transform:uppercase
 }
-
 .movie-row{
   display:flex;
   gap:14px;
@@ -376,18 +304,14 @@ main{padding:10px 5% 60px}
   scrollbar-width:none;
   scroll-snap-type:x mandatory
 }
-
 .movie-row::-webkit-scrollbar{display:none}
-
 .movie-card{
   flex:0 0 148px;
   cursor:pointer;
   scroll-snap-align:start;
   transition:transform .25s
 }
-
 .movie-card:hover{transform:translateY(-5px)}
-
 .poster-wrap{
   position:relative;
   aspect-ratio:2/3;
@@ -396,14 +320,12 @@ main{padding:10px 5% 60px}
   background:var(--card);
   box-shadow:0 8px 24px #0008
 }
-
 .poster{
   width:100%;
   height:100%;
   object-fit:cover;
   display:block
 }
-
 .rating{
   position:absolute;
   top:8px;
@@ -415,7 +337,6 @@ main{padding:10px 5% 60px}
   font-size:11px;
   border-radius:5px
 }
-
 .play-icon{
   position:absolute;
   top:50%;
@@ -430,7 +351,6 @@ main{padding:10px 5% 60px}
   opacity:0;
   transition:.2s
 }
-
 .play-icon:after{
   content:"";
   margin-left:4px;
@@ -438,21 +358,28 @@ main{padding:10px 5% 60px}
   border-top:7px solid transparent;
   border-bottom:7px solid transparent
 }
-
 .movie-card:hover .play-icon{opacity:1}
-
 .movie-card h3{
   font-size:13px;
   margin:9px 0 3px;
   font-weight:600;
   line-height:1.35
 }
-
 .movie-card small{
+  display:block;
   font-size:11px;
   color:var(--muted)
 }
 
+/* NEW SERIES SEASON LABEL */
+.season-info{
+  display:block;
+  margin-top:5px;
+  color:#c084fc!important;
+  font-size:11px!important;
+  font-weight:700;
+  line-height:1.4
+}
 .status{
   padding:20px;
   background:var(--panel);
@@ -461,9 +388,7 @@ main{padding:10px 5% 60px}
   font-size:13px;
   min-width:100%
 }
-
 .status.error{color:#ff9b9b}
-
 .retry-button{
   background:var(--red);
   border:0;
@@ -476,7 +401,6 @@ main{padding:10px 5% 60px}
 /* SEARCH RESULTS */
 #searchResults{display:none}
 #searchResults.active{display:block}
-
 #searchGrid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(135px,1fr));
@@ -493,9 +417,7 @@ main{padding:10px 5% 60px}
   overflow-y:auto;
   padding:20px 12px
 }
-
 .modal.open{display:block}
-
 .modal-box{
   position:relative;
   max-width:820px;
@@ -505,7 +427,6 @@ main{padding:10px 5% 60px}
   border-radius:15px;
   overflow:hidden
 }
-
 .close{
   position:absolute;
   right:13px;
@@ -519,7 +440,6 @@ main{padding:10px 5% 60px}
   color:white;
   font-size:23px
 }
-
 .modal-backdrop{
   min-height:260px;
   background-size:cover;
@@ -529,39 +449,20 @@ main{padding:10px 5% 60px}
   padding:27px;
   position:relative
 }
-
 .modal-backdrop:before{
   content:"";
   position:absolute;
   inset:0;
   background:linear-gradient(0deg,#101017,transparent 80%)
 }
-
 .modal-backdrop h2{
   position:relative;
   font:800 clamp(25px,5vw,40px) Outfit,sans-serif
 }
-
 .modal-body{padding:25px}
-
-.modal-body p{
-  color:#bbb;
-  line-height:1.7;
-  margin-top:12px
-}
-
-.modal-meta{
-  color:#aaa;
-  font-size:13px
-}
-
-.modal-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:18px
-}
-
+.modal-body p{color:#bbb;line-height:1.7;margin-top:12px}
+.modal-meta{color:#aaa;font-size:13px}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
 .trailer{
   width:100%;
   aspect-ratio:16/9;
@@ -570,7 +471,6 @@ main{padding:10px 5% 60px}
   border-radius:8px;
   background:#000
 }
-
 .form-box{
   max-width:430px;
   margin:35px auto;
@@ -580,18 +480,8 @@ main{padding:10px 5% 60px}
   border-radius:15px;
   position:relative
 }
-
-.form-box h2{
-  font:700 25px Outfit,sans-serif;
-  margin-bottom:7px
-}
-
-.form-box p{
-  font-size:13px;
-  color:#999;
-  margin-bottom:18px
-}
-
+.form-box h2{font:700 25px Outfit,sans-serif;margin-bottom:7px}
+.form-box p{font-size:13px;color:#999;margin-bottom:18px}
 .form-box input{
   width:100%;
   padding:13px;
@@ -602,14 +492,8 @@ main{padding:10px 5% 60px}
   color:white;
   outline:0
 }
-
 .form-box input:focus{border-color:var(--purple)}
-
-.form-box .btn{
-  width:100%;
-  margin-top:10px
-}
-
+.form-box .btn{width:100%;margin-top:10px}
 .form-link{
   color:#c084fc;
   background:none;
@@ -617,19 +501,8 @@ main{padding:10px 5% 60px}
   margin-top:16px;
   font-size:13px
 }
-
-.form-message{
-  font-size:12px;
-  color:#ff9b9b;
-  margin-top:12px
-}
-
-#profileInfo{
-  color:#bbb;
-  font-size:13px;
-  margin:10px 0
-}
-
+.form-message{font-size:12px;color:#ff9b9b;margin-top:12px}
+#profileInfo{color:#bbb;font-size:13px;margin:10px 0}
 footer{
   border-top:1px solid var(--border);
   padding:38px 5%;
@@ -638,75 +511,37 @@ footer{
   font-size:12px;
   line-height:1.8
 }
-
-footer strong{
-  font:800 20px Outfit;
-  color:white
-}
+footer strong{font:800 20px Outfit;color:white}
 
 /* MOBILE */
 @media(max-width:760px){
-  header{
-    padding:11px 4%;
-    flex-wrap:wrap;
-    gap:10px
-  }
-
+  header{padding:11px 4%;flex-wrap:wrap;gap:10px}
   .logo{font-size:21px}
   .logo-badge{width:31px;height:31px}
-
   nav{
     order:3;
     width:100%;
     justify-content:space-between;
     gap:5px
   }
-
   nav a{font-size:11px}
-
   .header-actions{margin-left:auto}
-
   .search{width:42vw}
-
-  .search input{
-    padding:9px;
-    font-size:12px
-  }
-
-  .small-btn{
-    padding:8px 10px;
-    font-size:11px
-  }
-
-  .hero-section{
-    height:57vh;
-    min-height:370px
-  }
-
+  .search input{padding:9px;font-size:12px}
+  .small-btn{padding:8px 10px;font-size:11px}
+  .hero-section{height:57vh;min-height:370px}
   .hero-content{padding:30px 5%}
   .hero-content h1{font-size:29px}
-
   .hero-content p{
     font-size:12px;
     -webkit-line-clamp:2
   }
-
-  main{
-    padding-left:4%;
-    padding-right:4%
-  }
-
+  main{padding-left:4%;padding-right:4%}
   .movie-card{flex-basis:128px}
-
   .section-heading h2{font-size:18px}
-
-  #searchGrid{
-    grid-template-columns:repeat(2,minmax(0,1fr))
-  }
-
+  #searchGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .welcome-text{letter-spacing:6px}
 }
-
 @media(prefers-reduced-motion:reduce){
   *,*:before,*:after{
     scroll-behavior:auto!important;
@@ -722,30 +557,21 @@ footer strong{
 <!-- AIDEL TV WELCOME SCREEN -->
 <div id="aidel-intro">
   <div class="intro-content">
-
     <img
       src="IMG-20261113-WA0002.jpg"
       alt="AIDEL TV Logo"
       onerror="this.style.display='none';document.getElementById('introFallback').style.display='block'"
     >
-
-    <div
-      id="introFallback"
-      style="display:none;color:#b66aff;font:900 48px Outfit"
-    >
+    <div id="introFallback" style="display:none;color:#b66aff;font:900 48px Outfit">
       AIDEL TV
     </div>
-
     <h1 class="welcome-text">WELCOME</h1>
-
     <div class="intro-loader"></div>
-
   </div>
 </div>
 
 <!-- HEADER -->
 <header>
-
   <a class="logo" href="#">
     <div class="logo-badge">A</div>
     AIDEL<span>TV</span>
@@ -760,19 +586,11 @@ footer strong{
   </nav>
 
   <div class="header-actions">
-
     <form class="search" id="searchForm">
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="Search movies..."
-        aria-label="Search movies"
-      >
+      <input id="searchInput" type="search" placeholder="Search movies..." aria-label="Search movies">
       <button type="submit">⌕</button>
     </form>
-
     <button class="small-btn" id="accountButton">Sign In</button>
-
   </div>
 </header>
 
@@ -784,7 +602,6 @@ footer strong{
 
 <!-- MAIN CONTENT -->
 <main>
-
   <section class="section" id="searchResults">
     <div class="section-heading">
       <h2>Search Results</h2>
@@ -800,9 +617,7 @@ footer strong{
         <h2>Trending Movies & Series</h2>
         <span class="tag">Hot This Week</span>
       </div>
-      <div class="movie-row" id="trendingRow">
-        <div class="status">Loading...</div>
-      </div>
+      <div class="movie-row" id="trendingRow"><div class="status">Loading...</div></div>
     </section>
 
     <section class="section" id="nollywood">
@@ -810,9 +625,7 @@ footer strong{
         <h2>Nollywood Movies</h2>
         <span class="tag">Made in Nigeria</span>
       </div>
-      <div class="movie-row" id="nollywoodRow">
-        <div class="status">Loading...</div>
-      </div>
+      <div class="movie-row" id="nollywoodRow"><div class="status">Loading...</div></div>
     </section>
 
     <section class="section" id="action">
@@ -820,9 +633,7 @@ footer strong{
         <h2>Action & Adventure</h2>
         <span class="tag">Non-stop Action</span>
       </div>
-      <div class="movie-row" id="actionRow">
-        <div class="status">Loading...</div>
-      </div>
+      <div class="movie-row" id="actionRow"><div class="status">Loading...</div></div>
     </section>
 
     <section class="section" id="comedy">
@@ -830,9 +641,7 @@ footer strong{
         <h2>Comedy</h2>
         <span class="tag">Time to Laugh</span>
       </div>
-      <div class="movie-row" id="comedyRow">
-        <div class="status">Loading...</div>
-      </div>
+      <div class="movie-row" id="comedyRow"><div class="status">Loading...</div></div>
     </section>
 
     <section class="section" id="series">
@@ -840,9 +649,7 @@ footer strong{
         <h2>Popular TV Series</h2>
         <span class="tag">Top Series</span>
       </div>
-      <div class="movie-row" id="seriesRow">
-        <div class="status">Loading...</div>
-      </div>
+      <div class="movie-row" id="seriesRow"><div class="status">Loading...</div></div>
     </section>
 
     <section class="section" id="topRated">
@@ -850,9 +657,7 @@ footer strong{
         <h2>Top Rated Movies</h2>
         <span class="tag">Viewer Favourites</span>
       </div>
-      <div class="movie-row" id="topRatedRow">
-        <div class="status">Loading...</div>
-      </div>
+      <div class="movie-row" id="topRatedRow"><div class="status">Loading...</div></div>
     </section>
 
     <section class="section" id="myWatchlist">
@@ -861,9 +666,7 @@ footer strong{
         <span class="tag">Saved Titles</span>
       </div>
       <div class="movie-row" id="watchlistRow">
-        <div class="status">
-          Sign in and save movies to build your list.
-        </div>
+        <div class="status">Sign in and save movies to build your list.</div>
       </div>
     </section>
 
@@ -873,132 +676,59 @@ footer strong{
 <!-- MOVIE DETAILS -->
 <div class="modal" id="movieModal" aria-hidden="true">
   <div class="modal-box">
-
     <button class="close" id="closeMovie" aria-label="Close">×</button>
-
     <div class="modal-backdrop" id="modalBackdrop">
       <h2 id="modalTitle"></h2>
     </div>
-
     <div class="modal-body">
-
       <div class="modal-meta" id="modalMeta"></div>
-
       <p id="modalOverview"></p>
-
       <div class="modal-actions">
-        <button class="btn btn-primary" id="watchlistButton">
-          ＋ My Watchlist
-        </button>
-
-        <button class="btn btn-secondary" id="downloadButton" disabled>
-          Download unavailable
-        </button>
+        <button class="btn btn-primary" id="watchlistButton">＋ My Watchlist</button>
+        <button class="btn btn-secondary" id="downloadButton" disabled>Download unavailable</button>
       </div>
-
       <div id="downloadMessage" style="font-size:12px;color:#888;margin-top:9px">
         Official download links will appear here when AIDEL TV has permission to distribute a title.
       </div>
-
       <div id="trailerArea"></div>
-
     </div>
   </div>
 </div>
 
 <!-- SIGN IN / SIGN UP -->
 <div class="modal" id="authModal" aria-hidden="true">
-
   <div class="form-box">
-
     <button class="close" id="closeAuth">×</button>
-
     <h2 id="authTitle">Welcome to AIDEL TV</h2>
-
-    <p id="authDescription">
-      Sign in to access your account and watchlist.
-    </p>
+    <p id="authDescription">Sign in to access your account and watchlist.</p>
 
     <form id="authForm">
-
-      <input
-        id="displayName"
-        type="text"
-        placeholder="Your name"
-        autocomplete="name"
-        style="display:none"
-      >
-
-      <input
-        id="authEmail"
-        type="email"
-        placeholder="Email address"
-        autocomplete="email"
-        required
-      >
-
-      <input
-        id="authPassword"
-        type="password"
-        placeholder="Password"
-        autocomplete="current-password"
-        minlength="6"
-        required
-      >
-
-      <button class="btn btn-primary" type="submit" id="authSubmit">
-        Sign In
-      </button>
-
+      <input id="displayName" type="text" placeholder="Your name" autocomplete="name" style="display:none">
+      <input id="authEmail" type="email" placeholder="Email address" autocomplete="email" required>
+      <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password" minlength="6" required>
+      <button class="btn btn-primary" type="submit" id="authSubmit">Sign In</button>
     </form>
 
     <div class="form-message" id="authMessage"></div>
-
-    <button class="form-link" id="authSwitch">
-      New to AIDEL TV? Create an account
-    </button>
-
+    <button class="form-link" id="authSwitch">New to AIDEL TV? Create an account</button>
   </div>
 </div>
 
 <!-- PROFILE -->
 <div class="modal" id="profileModal" aria-hidden="true">
-
   <div class="form-box">
-
     <button class="close" id="closeProfile">×</button>
-
     <h2>My Profile</h2>
-
     <p>Manage your AIDEL TV account.</p>
-
     <div id="profileInfo"></div>
 
     <form id="profileForm">
-
-      <input
-        id="profileName"
-        type="text"
-        placeholder="Display name"
-        required
-      >
-
-      <button class="btn btn-primary" type="submit">
-        Save Profile
-      </button>
-
+      <input id="profileName" type="text" placeholder="Display name" required>
+      <button class="btn btn-primary" type="submit">Save Profile</button>
     </form>
 
     <div class="form-message" id="profileMessage"></div>
-
-    <button
-      class="btn btn-secondary"
-      id="signOutButton"
-      style="width:100%;margin-top:15px"
-    >
-      Sign Out
-    </button>
-
+    <button class="btn btn-secondary" id="signOutButton" style="width:100%;margin-top:15px">Sign Out</button>
   </div>
 </div>
 
@@ -1016,8 +746,8 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 "use strict";
 
-/* CONNECTION SETTINGS */
-const TMDB_API_KEY = "b780fe2deb5463314e4fa32ef70e42c4";
+/* CONNECTION SETTINGS — YOUR ORIGINAL KEYS PRESERVED */
+const TMDB_API_KEY = "b780fe2deb546331e4fa32ef70e42c4";
 const API_BASE = "https://api.themoviedb.org/3";
 const IMAGE_BASE = "https://image.tmdb.org/t/p/";
 
@@ -1025,7 +755,6 @@ const SUPABASE_URL = "https://nbvznasgshojxjsgchds.supabase.co";
 const SUPABASE_KEY = "sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej";
 
 const supabase = createClient(SUPABASE_URL,SUPABASE_KEY);
-
 window.aidelSupabase = supabase;
 
 const $ = id => document.getElementById(id);
@@ -1043,6 +772,9 @@ let currentHeroIndex = 0;
 let heroInterval = null;
 let currentDetails = null;
 let authMode = "login";
+
+/* Prevent old search requests from changing new search results */
+let activeSearchRequest = 0;
 
 /* AUTHORISED DOWNLOAD LINKS ONLY */
 const DOWNLOAD_LINKS = {};
@@ -1158,11 +890,15 @@ function toggleWatchlist(item,media) {
 }
 
 /* MOVIE CARDS */
-function makeCard(item,media) {
+function makeCard(item,media,showSeasonInfo=false) {
   const title = escapeHTML(getTitle(item));
   const poster = imageURL(item.poster_path);
   const rating = Number(item.vote_average || 0).toFixed(1);
   const year = escapeHTML(getYear(item));
+
+  const seasonHTML = media === "tv" && showSeasonInfo
+    ? `<small class="season-info" id="season-${Number(item.id)}">Loading season information...</small>`
+    : "";
 
   return `
     <article class="movie-card"
@@ -1173,7 +909,6 @@ function makeCard(item,media) {
       aria-label="View ${title}">
 
       <div class="poster-wrap">
-
         <img
           class="poster"
           src="${poster}"
@@ -1181,18 +916,72 @@ function makeCard(item,media) {
           loading="lazy"
           onerror="this.onerror=null;this.src='${FALLBACK_POSTER}'"
         >
-
         <span class="rating">★ ${rating}</span>
-
         <div class="play-icon"></div>
-
       </div>
 
       <h3>${title}</h3>
       <small>${year}</small>
-
+      ${seasonHTML}
     </article>
   `;
+}
+
+/*
+  NEW FEATURE:
+  Fetch the full TV details for searched TV titles.
+  TMDB's TV details endpoint provides number_of_seasons
+  and number_of_episodes.
+*/
+async function loadSearchSeasonCounts(items,requestId) {
+  const tvItems = items.filter(item =>
+    getMedia(item) === "tv" && item.id
+  );
+
+  /* Process in small batches to avoid too many requests at once */
+  const batchSize = 5;
+
+  for(let start=0;start<tvItems.length;start+=batchSize) {
+    if(requestId !== activeSearchRequest) return;
+
+    const batch = tvItems.slice(start,start+batchSize);
+
+    await Promise.all(batch.map(async item => {
+      try {
+        const details = await tmdb("/tv/" + item.id);
+
+        if(requestId !== activeSearchRequest) return;
+
+        const seasonElement = $("season-" + Number(item.id));
+
+        if(!seasonElement) return;
+
+        const seasons = details.number_of_seasons;
+        const episodes = details.number_of_episodes;
+
+        if(typeof seasons === "number") {
+          seasonElement.textContent =
+            seasons + (seasons === 1 ? " Season" : " Seasons") +
+            (typeof episodes === "number"
+              ? " • " + episodes + " Episodes"
+              : "");
+        } else {
+          seasonElement.textContent = "Season information unavailable";
+        }
+
+      } catch(error) {
+        if(requestId !== activeSearchRequest) return;
+
+        const seasonElement = $("season-" + Number(item.id));
+
+        if(seasonElement) {
+          seasonElement.textContent = "Season information unavailable";
+        }
+
+        console.warn("Season information could not be loaded:",item.id,error);
+      }
+    }));
+  }
 }
 
 function renderRow(element,results,media="movie") {
@@ -1254,39 +1043,24 @@ function renderHeroSlides(movies) {
     const overview = escapeHTML(
       movie.overview || "Discover this title on AIDEL TV."
     );
-
     const rating = Number(movie.vote_average || 0).toFixed(1);
 
     return `
-      <div
-        class="hero-slide ${i === 0 ? "active" : ""}"
-        style="background-image:url('${backdrop}')"
-      >
-
+      <div class="hero-slide ${i === 0 ? "active" : ""}"
+        style="background-image:url('${backdrop}')">
         <div class="hero-content">
-
           <div class="eyebrow">FEATURED ON AIDEL TV</div>
-
           <h1>${title}</h1>
-
           <div class="hero-meta">
             <span class="rating-pill">★ ${rating}</span>
             <span>${escapeHTML(getYear(movie))}</span>
             <span>• MOVIE</span>
           </div>
-
           <p>${overview}</p>
-
           <div class="hero-actions">
-            <button class="btn btn-primary" data-hero-id="${movie.id}">
-              More Info
-            </button>
-
-            <button class="btn btn-secondary" data-hero-save="${movie.id}">
-              ＋ My List
-            </button>
+            <button class="btn btn-primary" data-hero-id="${movie.id}">More Info</button>
+            <button class="btn btn-secondary" data-hero-save="${movie.id}">＋ My List</button>
           </div>
-
         </div>
       </div>
     `;
@@ -1314,7 +1088,6 @@ function renderHeroSlides(movies) {
       const movie = heroMovies.find(x =>
         String(x.id) === button.dataset.heroSave
       );
-
       if(movie) toggleWatchlist(movie,"movie");
     });
   });
@@ -1341,7 +1114,6 @@ function goToHeroSlide(index) {
 
 function startHeroInterval() {
   clearInterval(heroInterval);
-
   heroInterval = setInterval(() => {
     goToHeroSlide(currentHeroIndex + 1);
   },5500);
@@ -1350,7 +1122,6 @@ function startHeroInterval() {
 async function loadHero() {
   try {
     const data = await tmdb("/trending/movie/week");
-
     renderHeroSlides(
       (data.results || []).filter(m =>
         m.backdrop_path || m.poster_path
@@ -1366,60 +1137,38 @@ async function loadHome() {
   await Promise.all([
     loadHero(),
 
-    loadSection(
-      "trendingRow",
-      "/trending/all/week",
-      {},
-      "all"
-    ),
+    loadSection("trendingRow","/trending/all/week",{},"all"),
 
-    loadSection(
-      "nollywoodRow",
-      "/discover/movie",
-      {
-        with_origin_country:"NG",
-        sort_by:"popularity.desc",
-        include_adult:"false"
-      }
-    ),
+    loadSection("nollywoodRow","/discover/movie",{
+      with_origin_country:"NG",
+      sort_by:"popularity.desc",
+      include_adult:"false"
+    }),
 
-    loadSection(
-      "actionRow",
-      "/discover/movie",
-      {
-        with_genres:"28",
-        sort_by:"popularity.desc",
-        include_adult:"false"
-      }
-    ),
+    loadSection("actionRow","/discover/movie",{
+      with_genres:"28",
+      sort_by:"popularity.desc",
+      include_adult:"false"
+    }),
 
-    loadSection(
-      "comedyRow",
-      "/discover/movie",
-      {
-        with_genres:"35",
-        sort_by:"popularity.desc",
-        include_adult:"false"
-      }
-    ),
+    loadSection("comedyRow","/discover/movie",{
+      with_genres:"35",
+      sort_by:"popularity.desc",
+      include_adult:"false"
+    }),
 
-    loadSection(
-      "seriesRow",
-      "/tv/popular",
-      {},
-      "tv"
-    ),
+    loadSection("seriesRow","/tv/popular",{},"tv"),
 
-    loadSection(
-      "topRatedRow",
-      "/movie/top_rated",
-      {include_adult:"false"}
-    )
+    loadSection("topRatedRow","/movie/top_rated",{
+      include_adult:"false"
+    })
   ]);
 }
 
 /* SEARCH */
 async function searchMovies(query) {
+  const requestId = ++activeSearchRequest;
+
   $("searchResults").classList.add("active");
   $("sections").style.display = "none";
   $("searchCount").textContent = "Searching...";
@@ -1433,6 +1182,9 @@ async function searchMovies(query) {
       query,
       include_adult:"false"
     });
+
+    /* Ignore an older search if a newer one has started */
+    if(requestId !== activeSearchRequest) return;
 
     const items = (data.results || []).filter(item =>
       item.media_type !== "person" &&
@@ -1449,10 +1201,15 @@ async function searchMovies(query) {
     }
 
     $("searchGrid").innerHTML = items.map(item =>
-      makeCard(item,getMedia(item))
+      makeCard(item,getMedia(item),true)
     ).join("");
 
+    /* Load total seasons for all TV series in these search results */
+    loadSearchSeasonCounts(items,requestId);
+
   } catch(error) {
+    if(requestId !== activeSearchRequest) return;
+
     $("searchCount").textContent = "Search error";
 
     showError(
@@ -1463,19 +1220,20 @@ async function searchMovies(query) {
   }
 }
 
-/* MOVIE DETAILS */
+/* MOVIE AND SERIES DETAILS */
 async function openDetails(id,media) {
   $("movieModal").classList.add("open");
   $("movieModal").setAttribute("aria-hidden","false");
   document.body.style.overflow = "hidden";
 
   $("modalTitle").textContent = "Loading...";
-  $("modalOverview").textContent = "Getting movie information...";
+  $("modalOverview").textContent = "Getting title information...";
   $("modalMeta").textContent = "";
   $("modalBackdrop").style.backgroundImage = "none";
   $("trailerArea").innerHTML = "";
   $("downloadButton").disabled = true;
   $("downloadButton").textContent = "Download unavailable";
+  $("downloadButton").onclick = null;
 
   currentDetails = null;
 
@@ -1492,12 +1250,34 @@ async function openDetails(id,media) {
     $("modalOverview").textContent =
       details.overview || "No description is available.";
 
-    $("modalMeta").textContent =
+    const basicInfo =
       getYear(details) +
       " • ★ " +
-      Number(details.vote_average || 0).toFixed(1) +
-      " • " +
-      (media === "tv" ? "TV SERIES" : "MOVIE");
+      Number(details.vote_average || 0).toFixed(1);
+
+    if(media === "tv") {
+      const seasons = details.number_of_seasons;
+      const episodes = details.number_of_episodes;
+
+      let seriesInfo = " • TV SERIES";
+
+      if(typeof seasons === "number") {
+        seriesInfo += " • " + seasons +
+          (seasons === 1 ? " SEASON" : " SEASONS");
+      } else {
+        seriesInfo += " • SEASON COUNT UNAVAILABLE";
+      }
+
+      if(typeof episodes === "number") {
+        seriesInfo += " • " + episodes +
+          (episodes === 1 ? " EPISODE" : " EPISODES");
+      }
+
+      $("modalMeta").textContent = basicInfo + seriesInfo;
+
+    } else {
+      $("modalMeta").textContent = basicInfo + " • MOVIE";
+    }
 
     const backdrop = imageURL(
       details.backdrop_path || details.poster_path,
@@ -1510,6 +1290,7 @@ async function openDetails(id,media) {
 
     updateWatchlistButton();
 
+    /* Download availability is separate from season information */
     const downloadUrl =
       DOWNLOAD_LINKS[media + ":" + details.id];
 
@@ -1537,16 +1318,12 @@ async function openDetails(id,media) {
       const frame = document.createElement("iframe");
 
       frame.className = "trailer";
-
       frame.src =
         "https://www.youtube-nocookie.com/embed/" +
         encodeURIComponent(trailer.key);
-
-      frame.title = "Movie trailer";
-
+      frame.title = "Movie or series trailer";
       frame.allow =
         "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-
       frame.allowFullscreen = true;
 
       $("trailerArea").appendChild(frame);
@@ -1603,7 +1380,8 @@ function renderWatchlist() {
       name:item.title,
       poster_path:item.poster_path,
       vote_average:item.vote_average,
-      release_date:item.release_date
+      release_date:item.release_date,
+      first_air_date:item.media === "tv" ? item.release_date : undefined
     },item.media)
   ).join("");
 }
@@ -1633,9 +1411,7 @@ function setAuthMode(mode) {
     ? "Join AIDEL TV and start building your watchlist."
     : "Sign in to access your AIDEL TV account.";
 
-  $("displayName").style.display =
-    signup ? "block" : "none";
-
+  $("displayName").style.display = signup ? "block" : "none";
   $("displayName").required = signup;
 
   $("authPassword").autocomplete =
@@ -1703,7 +1479,6 @@ $("authForm").addEventListener("submit",async event => {
   } catch(error) {
     $("authMessage").textContent =
       error.message || "Authentication failed.";
-
   } finally {
     $("authSubmit").disabled = false;
   }
@@ -1736,7 +1511,6 @@ async function openProfile() {
     if(!error && data?.display_name) {
       $("profileName").value = data.display_name;
     }
-
   } catch(error) {
     console.error("Profile read:",error);
   }
@@ -1748,7 +1522,6 @@ $("profileForm").addEventListener("submit",async event => {
   if(!currentUser) return;
 
   const displayName = $("profileName").value.trim();
-
   if(!displayName) return;
 
   $("profileMessage").textContent = "Saving profile...";
@@ -1800,7 +1573,6 @@ $("signOutButton").addEventListener("click",async () => {
   }
 
   $("profileModal").classList.remove("open");
-
   await refreshAccount();
 });
 
@@ -1818,12 +1590,12 @@ $("searchForm").addEventListener("submit",event => {
   event.preventDefault();
 
   const query = $("searchInput").value.trim();
-
   if(query) searchMovies(query);
 });
 
 $("searchInput").addEventListener("input",event => {
   if(!event.target.value.trim()) {
+    activeSearchRequest++;
     $("searchResults").classList.remove("active");
     $("sections").style.display = "";
     $("searchCount").textContent = "";
@@ -1845,6 +1617,7 @@ $("closeAuth").addEventListener("click",closeAuth);
 
 $("closeProfile").addEventListener("click",() => {
   $("profileModal").classList.remove("open");
+  document.body.style.overflow = "";
 });
 
 ["movieModal","authModal","profileModal"].forEach(id => {
@@ -1858,7 +1631,6 @@ $("closeProfile").addEventListener("click",() => {
 
 document.addEventListener("click",event => {
   const card = event.target.closest(".movie-card");
-
   if(!card) return;
 
   openDetails(card.dataset.id,card.dataset.media);
@@ -1869,6 +1641,7 @@ document.addEventListener("keydown",event => {
     closeMovieModal();
     closeAuth();
     $("profileModal").classList.remove("open");
+    document.body.style.overflow = "";
   }
 
   if(
@@ -1876,7 +1649,6 @@ document.addEventListener("keydown",event => {
     event.target.matches(".movie-card")
   ) {
     event.preventDefault();
-
     openDetails(
       event.target.dataset.id,
       event.target.dataset.media
@@ -1892,7 +1664,6 @@ $("heroSection").addEventListener("mouseleave",startHeroInterval);
 
 /* START WEBSITE */
 await refreshAccount();
-
 loadHome();
 
 /* WELCOME SCREEN DISAPPEARS AFTER 3 SECONDS */
