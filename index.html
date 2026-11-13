@@ -45,28 +45,21 @@
       -webkit-font-smoothing: antialiased;
     }
 
-<-- ===== BANNER WELCOME SCREEN ===== -->
-<div id="aidel-intro">
-  <div class="welcome-banner-box">
-    <!-- Make sure IMG-20261113-WA0001.jpg is uploaded in the exact same folder as this index.html file -->
-    <img 
-      src="IMG-20261113-WA0001.jpg" 
-      alt="AIDEL TV - Watch Anytime, Anywhere"
-      onerror="this.style.display='none'; document.getElementById('banner-fallback').style.display='block';"
-    >
-    <div id="banner-fallback">
-      <h1 style="font-family:'Outfit',sans-serif; font-size:48px; font-weight:900; color:#fff; letter-spacing:2px;">
-        AIDEL <span style="color:#e50914;">TV</span>
-      </h1>
-      <p style="color:#ccc; letter-spacing:3px; font-size:12px; margin-top:8px;">WATCH ANYTIME, ANYWHERE</p>
-    </div>
-  </div>
-  <div class="aidel-loader"></div>
-  <button type="button" class="skip-intro-btn" onclick="document.getElementById('aidel-intro').remove()">
-    Welcome to AIDEL TV →
-  </button>
-</div>
-
+/* ===== BANNER WELCOME SCREEN ===== */
+    #aidel-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: #050408;
+      background-image: radial-gradient(circle at center, #260000 0%, #050408 85%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      animation: aidelFadeOut .8s ease 3.2s forwards;
+      
+    }
     .aidel-logo {
       position: relative;
       text-align: center;
