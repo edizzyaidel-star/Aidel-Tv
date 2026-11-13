@@ -23,259 +23,732 @@
   --muted:#9292a2;
   --border:rgba(255,255,255,.09);
 }
+
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
-  background:var(--bg);color:var(--text);
+  background:var(--bg);
+  color:var(--text);
   font-family:Inter,Arial,sans-serif;
-  overflow-x:hidden;line-height:1.5
+  overflow-x:hidden;
+  line-height:1.5
 }
 button,input{font:inherit}
 button{cursor:pointer}
 
 /* WELCOME SCREEN */
 #aidel-intro{
-  position:fixed;inset:0;z-index:99999;
-  background:#050408;display:flex;
-  align-items:center;justify-content:center;
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:#050408;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   transition:opacity .8s ease,visibility .8s ease
 }
-#aidel-intro.hide{opacity:0;visibility:hidden;pointer-events:none}
-.intro-content{text-align:center;width:90%;max-width:700px}
+
+#aidel-intro.hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none
+}
+
+.intro-content{
+  text-align:center;
+  width:90%;
+  max-width:700px
+}
+
 .intro-content img{
-  display:block;width:100%;max-height:65vh;
-  object-fit:contain;margin:auto;
+  display:block;
+  width:100%;
+  max-height:60vh;
+  object-fit:contain;
+  margin:auto;
   animation:introGlow 1.8s ease-in-out infinite alternate
 }
+
+.welcome-text{
+  color:#fff;
+  font-family:Outfit,sans-serif;
+  font-size:clamp(25px,5vw,38px);
+  font-weight:800;
+  letter-spacing:8px;
+  margin-top:20px;
+  text-align:center;
+  text-shadow:0 0 15px #a855f7,0 0 30px #7e22ce;
+  animation:welcomeGlow 1.5s ease-in-out infinite alternate
+}
+
 .intro-loader{
-  width:100px;height:3px;background:#32164b;
-  border-radius:10px;margin:25px auto 0;overflow:hidden
+  width:100px;
+  height:3px;
+  background:#32164b;
+  border-radius:10px;
+  margin:25px auto 0;
+  overflow:hidden
 }
+
 .intro-loader:after{
-  content:"";display:block;width:40%;height:100%;
-  background:#b66aff;animation:loader 1s infinite
+  content:"";
+  display:block;
+  width:40%;
+  height:100%;
+  background:#b66aff;
+  animation:loader 1s infinite
 }
-@keyframes loader{from{transform:translateX(-100%)}to{transform:translateX(260%)}}
-@keyframes introGlow{from{filter:drop-shadow(0 0 5px #7e22ce)}to{filter:drop-shadow(0 0 22px #a855f7)}}
+
+@keyframes loader{
+  from{transform:translateX(-100%)}
+  to{transform:translateX(260%)}
+}
+
+@keyframes introGlow{
+  from{filter:drop-shadow(0 0 5px #7e22ce)}
+  to{filter:drop-shadow(0 0 22px #a855f7)}
+}
+
+@keyframes welcomeGlow{
+  from{opacity:.7}
+  to{opacity:1}
+}
 
 /* HEADER */
 header{
-  position:sticky;top:0;z-index:50;
-  display:flex;align-items:center;justify-content:space-between;
-  gap:16px;padding:13px 5%;
-  background:rgba(5,5,8,.95);backdrop-filter:blur(18px);
+  position:sticky;
+  top:0;
+  z-index:50;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:13px 5%;
+  background:rgba(5,5,8,.95);
+  backdrop-filter:blur(18px);
   border-bottom:1px solid var(--border)
 }
+
 .logo{
-  display:flex;align-items:center;gap:8px;
-  color:white;text-decoration:none;font:800 25px Outfit,sans-serif
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:white;
+  text-decoration:none;
+  font:800 25px Outfit,sans-serif
 }
+
 .logo-badge{
-  width:36px;height:36px;border-radius:10px;
-  display:grid;place-items:center;background:linear-gradient(135deg,#e50914,#8c0710);
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#e50914,#8c0710);
   box-shadow:0 0 18px #e5091455
 }
+
 .logo span{color:var(--red)}
-nav{display:flex;gap:20px;align-items:center}
-nav a{color:#ccc;text-decoration:none;font-size:13px}
+
+nav{
+  display:flex;
+  gap:20px;
+  align-items:center
+}
+
+nav a{
+  color:#ccc;
+  text-decoration:none;
+  font-size:13px
+}
+
 nav a:hover{color:var(--red)}
-.header-actions{display:flex;align-items:center;gap:9px}
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:9px
+}
+
 .search{
-  display:flex;width:min(250px,30vw);
-  border:1px solid var(--border);border-radius:25px;
-  background:#17171e;overflow:hidden
+  display:flex;
+  width:min(250px,30vw);
+  border:1px solid var(--border);
+  border-radius:25px;
+  background:#17171e;
+  overflow:hidden
 }
+
 .search input{
-  width:100%;min-width:0;padding:10px 13px;
-  color:white;background:transparent;border:0;outline:0
+  width:100%;
+  min-width:0;
+  padding:10px 13px;
+  color:white;
+  background:transparent;
+  border:0;
+  outline:0
 }
-.search button{background:var(--red);color:white;border:0;padding:0 14px}
+
+.search button{
+  background:var(--red);
+  color:white;
+  border:0;
+  padding:0 14px
+}
+
 .small-btn{
-  border:1px solid var(--border);background:#1a1a22;
-  color:white;border-radius:20px;padding:9px 13px;font-size:12px
+  border:1px solid var(--border);
+  background:#1a1a22;
+  color:white;
+  border-radius:20px;
+  padding:9px 13px;
+  font-size:12px
 }
+
 .small-btn:hover{border-color:var(--red)}
-#accountButton{background:var(--red);border-color:var(--red)}
+#accountButton{
+  background:var(--red);
+  border-color:var(--red)
+}
 
 /* HERO */
 .hero-section{
-  position:relative;height:62vh;min-height:420px;
-  max-height:650px;overflow:hidden
+  position:relative;
+  height:62vh;
+  min-height:420px;
+  max-height:650px;
+  overflow:hidden
 }
+
 .hero-slide{
-  position:absolute;inset:0;opacity:0;
-  background-size:cover;background-position:center 25%;
-  display:flex;align-items:flex-end;transition:opacity 1s
+  position:absolute;
+  inset:0;
+  opacity:0;
+  background-size:cover;
+  background-position:center 25%;
+  display:flex;
+  align-items:flex-end;
+  transition:opacity 1s
 }
-.hero-slide.active{opacity:1;z-index:2}
+
+.hero-slide.active{
+  opacity:1;
+  z-index:2
+}
+
 .hero-slide:before{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,#000 0%,rgba(0,0,0,.83) 38%,transparent 80%),
-  linear-gradient(0deg,#08080c 0%,transparent 65%)
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,#000 0%,rgba(0,0,0,.83) 38%,transparent 80%),
+    linear-gradient(0deg,#08080c 0%,transparent 65%)
 }
-.hero-content{position:relative;z-index:3;padding:45px 6%;max-width:620px}
-.eyebrow{color:#ff4550;font-size:12px;font-weight:800;letter-spacing:2px;margin-bottom:10px}
-.hero-content h1{font:800 clamp(32px,5.5vw,58px)/1.05 Outfit,sans-serif;margin-bottom:12px}
-.hero-meta{display:flex;gap:12px;flex-wrap:wrap;color:#ccc;font-size:13px;margin-bottom:14px}
-.rating-pill{color:#ffb84d;background:#392313;padding:3px 9px;border-radius:5px}
+
+.hero-content{
+  position:relative;
+  z-index:3;
+  padding:45px 6%;
+  max-width:620px
+}
+
+.eyebrow{
+  color:#ff4550;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:2px;
+  margin-bottom:10px
+}
+
+.hero-content h1{
+  font:800 clamp(32px,5.5vw,58px)/1.05 Outfit,sans-serif;
+  margin-bottom:12px
+}
+
+.hero-meta{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  color:#ccc;
+  font-size:13px;
+  margin-bottom:14px
+}
+
+.rating-pill{
+  color:#ffb84d;
+  background:#392313;
+  padding:3px 9px;
+  border-radius:5px
+}
+
 .hero-content p{
-  color:#c5c5ce;font-size:14px;line-height:1.7;
-  max-width:480px;margin-bottom:22px;
-  display:-webkit-box;-webkit-line-clamp:3;
-  -webkit-box-orient:vertical;overflow:hidden
+  color:#c5c5ce;
+  font-size:14px;
+  line-height:1.7;
+  max-width:480px;
+  margin-bottom:22px;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden
 }
-.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+.hero-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap
+}
+
 .btn{
-  border:0;border-radius:6px;padding:12px 22px;
-  font-weight:700;font-size:13px
+  border:0;
+  border-radius:6px;
+  padding:12px 22px;
+  font-weight:700;
+  font-size:13px
 }
-.btn-primary{background:var(--red);color:white}
-.btn-secondary{background:#ffffff22;color:white}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.hero-dots{position:absolute;bottom:18px;left:6%;z-index:5;display:flex;gap:8px}
-.hero-dot{width:8px;height:8px;border:0;border-radius:8px;background:#ffffff55}
-.hero-dot.active{width:23px;background:var(--red)}
+
+.btn-primary{
+  background:var(--red);
+  color:white
+}
+
+.btn-secondary{
+  background:#ffffff22;
+  color:white
+}
+
+.btn:disabled{
+  opacity:.45;
+  cursor:not-allowed
+}
+
+.hero-dots{
+  position:absolute;
+  bottom:18px;
+  left:6%;
+  z-index:5;
+  display:flex;
+  gap:8px
+}
+
+.hero-dot{
+  width:8px;
+  height:8px;
+  border:0;
+  border-radius:8px;
+  background:#ffffff55
+}
+
+.hero-dot.active{
+  width:23px;
+  background:var(--red)
+}
 
 /* CONTENT */
 main{padding:10px 5% 60px}
+
 .section{margin:35px 0 42px}
-.section-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
-.section-heading h2{font:700 22px Outfit,sans-serif}
-.tag{font-size:10px;color:var(--red);font-weight:800;letter-spacing:1px;text-transform:uppercase}
-.movie-row{
-  display:flex;gap:14px;overflow-x:auto;padding:5px 2px 17px;
-  scrollbar-width:none;scroll-snap-type:x mandatory
+
+.section-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:17px
 }
+
+.section-heading h2{
+  font:700 22px Outfit,sans-serif
+}
+
+.tag{
+  font-size:10px;
+  color:var(--red);
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase
+}
+
+.movie-row{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  padding:5px 2px 17px;
+  scrollbar-width:none;
+  scroll-snap-type:x mandatory
+}
+
 .movie-row::-webkit-scrollbar{display:none}
+
 .movie-card{
-  flex:0 0 148px;cursor:pointer;scroll-snap-align:start;
+  flex:0 0 148px;
+  cursor:pointer;
+  scroll-snap-align:start;
   transition:transform .25s
 }
+
 .movie-card:hover{transform:translateY(-5px)}
+
 .poster-wrap{
-  position:relative;aspect-ratio:2/3;
-  border-radius:9px;overflow:hidden;background:var(--card);
+  position:relative;
+  aspect-ratio:2/3;
+  border-radius:9px;
+  overflow:hidden;
+  background:var(--card);
   box-shadow:0 8px 24px #0008
 }
-.poster{width:100%;height:100%;object-fit:cover;display:block}
+
+.poster{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block
+}
+
 .rating{
-  position:absolute;top:8px;left:8px;z-index:2;
-  background:#000c;color:#ffd45c;padding:4px 7px;
-  font-size:11px;border-radius:5px
+  position:absolute;
+  top:8px;
+  left:8px;
+  z-index:2;
+  background:#000c;
+  color:#ffd45c;
+  padding:4px 7px;
+  font-size:11px;
+  border-radius:5px
 }
+
 .play-icon{
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:43px;height:43px;background:var(--red);border-radius:50%;
-  display:grid;place-items:center;opacity:0;transition:.2s
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:43px;
+  height:43px;
+  background:var(--red);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  opacity:0;
+  transition:.2s
 }
+
 .play-icon:after{
-  content:"";margin-left:4px;border-left:12px solid white;
-  border-top:7px solid transparent;border-bottom:7px solid transparent
+  content:"";
+  margin-left:4px;
+  border-left:12px solid white;
+  border-top:7px solid transparent;
+  border-bottom:7px solid transparent
 }
+
 .movie-card:hover .play-icon{opacity:1}
-.movie-card h3{font-size:13px;margin:9px 0 3px;font-weight:600;line-height:1.35}
-.movie-card small{font-size:11px;color:var(--muted)}
-.status{padding:20px;background:var(--panel);border-radius:9px;color:#aaa;font-size:13px;min-width:100%}
+
+.movie-card h3{
+  font-size:13px;
+  margin:9px 0 3px;
+  font-weight:600;
+  line-height:1.35
+}
+
+.movie-card small{
+  font-size:11px;
+  color:var(--muted)
+}
+
+.status{
+  padding:20px;
+  background:var(--panel);
+  border-radius:9px;
+  color:#aaa;
+  font-size:13px;
+  min-width:100%
+}
+
 .status.error{color:#ff9b9b}
-.retry-button{background:var(--red);border:0;color:white;padding:7px 12px;border-radius:5px;margin-left:8px}
+
+.retry-button{
+  background:var(--red);
+  border:0;
+  color:white;
+  padding:7px 12px;
+  border-radius:5px;
+  margin-left:8px
+}
 
 /* SEARCH RESULTS */
 #searchResults{display:none}
 #searchResults.active{display:block}
-#searchGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:17px}
+
+#searchGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(135px,1fr));
+  gap:17px
+}
 
 /* MODALS */
 .modal{
-  display:none;position:fixed;inset:0;z-index:200;
-  background:#000e;overflow-y:auto;padding:20px 12px
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:#000e;
+  overflow-y:auto;
+  padding:20px 12px
 }
+
 .modal.open{display:block}
+
 .modal-box{
-  position:relative;max-width:820px;margin:20px auto;
-  background:#101017;border:1px solid var(--border);
-  border-radius:15px;overflow:hidden
+  position:relative;
+  max-width:820px;
+  margin:20px auto;
+  background:#101017;
+  border:1px solid var(--border);
+  border-radius:15px;
+  overflow:hidden
 }
+
 .close{
-  position:absolute;right:13px;top:13px;z-index:5;
-  width:39px;height:39px;border:0;border-radius:50%;
-  background:var(--red);color:white;font-size:23px
+  position:absolute;
+  right:13px;
+  top:13px;
+  z-index:5;
+  width:39px;
+  height:39px;
+  border:0;
+  border-radius:50%;
+  background:var(--red);
+  color:white;
+  font-size:23px
 }
+
 .modal-backdrop{
-  min-height:260px;background-size:cover;background-position:center;
-  display:flex;align-items:flex-end;padding:27px;position:relative
+  min-height:260px;
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  align-items:flex-end;
+  padding:27px;
+  position:relative
 }
+
 .modal-backdrop:before{
-  content:"";position:absolute;inset:0;
+  content:"";
+  position:absolute;
+  inset:0;
   background:linear-gradient(0deg,#101017,transparent 80%)
 }
-.modal-backdrop h2{position:relative;font:800 clamp(25px,5vw,40px) Outfit,sans-serif}
-.modal-body{padding:25px}
-.modal-body p{color:#bbb;line-height:1.7;margin-top:12px}
-.modal-meta{color:#aaa;font-size:13px}
-.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-.trailer{width:100%;aspect-ratio:16/9;border:0;margin-top:20px;border-radius:8px;background:#000}
-.form-box{
-  max-width:430px;margin:35px auto;background:#11111a;
-  padding:28px;border:1px solid var(--border);border-radius:15px;position:relative
-}
-.form-box h2{font:700 25px Outfit,sans-serif;margin-bottom:7px}
-.form-box p{font-size:13px;color:#999;margin-bottom:18px}
-.form-box input{
-  width:100%;padding:13px;margin:7px 0;
-  border-radius:7px;border:1px solid var(--border);
-  background:#1a1a24;color:white;outline:0
-}
-.form-box input:focus{border-color:var(--purple)}
-.form-box .btn{width:100%;margin-top:10px}
-.form-link{color:#c084fc;background:none;border:0;margin-top:16px;font-size:13px}
-.form-message{font-size:12px;color:#ff9b9b;margin-top:12px}
-#profileInfo{color:#bbb;font-size:13px;margin:10px 0}
-footer{
-  border-top:1px solid var(--border);padding:38px 5%;
-  color:#777;text-align:center;font-size:12px;line-height:1.8
-}
-footer strong{font:800 20px Outfit;color:white}
 
+.modal-backdrop h2{
+  position:relative;
+  font:800 clamp(25px,5vw,40px) Outfit,sans-serif
+}
+
+.modal-body{padding:25px}
+
+.modal-body p{
+  color:#bbb;
+  line-height:1.7;
+  margin-top:12px
+}
+
+.modal-meta{
+  color:#aaa;
+  font-size:13px
+}
+
+.modal-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px
+}
+
+.trailer{
+  width:100%;
+  aspect-ratio:16/9;
+  border:0;
+  margin-top:20px;
+  border-radius:8px;
+  background:#000
+}
+
+.form-box{
+  max-width:430px;
+  margin:35px auto;
+  background:#11111a;
+  padding:28px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  position:relative
+}
+
+.form-box h2{
+  font:700 25px Outfit,sans-serif;
+  margin-bottom:7px
+}
+
+.form-box p{
+  font-size:13px;
+  color:#999;
+  margin-bottom:18px
+}
+
+.form-box input{
+  width:100%;
+  padding:13px;
+  margin:7px 0;
+  border-radius:7px;
+  border:1px solid var(--border);
+  background:#1a1a24;
+  color:white;
+  outline:0
+}
+
+.form-box input:focus{border-color:var(--purple)}
+
+.form-box .btn{
+  width:100%;
+  margin-top:10px
+}
+
+.form-link{
+  color:#c084fc;
+  background:none;
+  border:0;
+  margin-top:16px;
+  font-size:13px
+}
+
+.form-message{
+  font-size:12px;
+  color:#ff9b9b;
+  margin-top:12px
+}
+
+#profileInfo{
+  color:#bbb;
+  font-size:13px;
+  margin:10px 0
+}
+
+footer{
+  border-top:1px solid var(--border);
+  padding:38px 5%;
+  color:#777;
+  text-align:center;
+  font-size:12px;
+  line-height:1.8
+}
+
+footer strong{
+  font:800 20px Outfit;
+  color:white
+}
+
+/* MOBILE */
 @media(max-width:760px){
-  header{padding:11px 4%;flex-wrap:wrap;gap:10px}
+  header{
+    padding:11px 4%;
+    flex-wrap:wrap;
+    gap:10px
+  }
+
   .logo{font-size:21px}
   .logo-badge{width:31px;height:31px}
-  nav{order:3;width:100%;justify-content:space-between;gap:5px}
+
+  nav{
+    order:3;
+    width:100%;
+    justify-content:space-between;
+    gap:5px
+  }
+
   nav a{font-size:11px}
+
   .header-actions{margin-left:auto}
+
   .search{width:42vw}
-  .search input{padding:9px;font-size:12px}
-  .small-btn{padding:8px 10px;font-size:11px}
-  .hero-section{height:57vh;min-height:370px}
+
+  .search input{
+    padding:9px;
+    font-size:12px
+  }
+
+  .small-btn{
+    padding:8px 10px;
+    font-size:11px
+  }
+
+  .hero-section{
+    height:57vh;
+    min-height:370px
+  }
+
   .hero-content{padding:30px 5%}
   .hero-content h1{font-size:29px}
-  .hero-content p{font-size:12px;-webkit-line-clamp:2}
-  main{padding-left:4%;padding-right:4%}
+
+  .hero-content p{
+    font-size:12px;
+    -webkit-line-clamp:2
+  }
+
+  main{
+    padding-left:4%;
+    padding-right:4%
+  }
+
   .movie-card{flex-basis:128px}
+
   .section-heading h2{font-size:18px}
-  #searchGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+  #searchGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr))
+  }
+
+  .welcome-text{letter-spacing:6px}
 }
+
 @media(prefers-reduced-motion:reduce){
-  *,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+  *,*:before,*:after{
+    scroll-behavior:auto!important;
+    animation:none!important;
+    transition:none!important
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- WELCOME SCREEN: IMAGE MUST BE IN THE SAME FOLDER AS index.html -->
+<!-- AIDEL TV WELCOME SCREEN -->
 <div id="aidel-intro">
   <div class="intro-content">
-    <img src="IMG-20261113-WA0001.jpg" alt="AIDEL TV"
-         onerror="this.style.display='none';document.getElementById('introFallback').style.display='block'">
-    <div id="introFallback" style="display:none;color:#b66aff;font:900 48px Outfit">AIDEL TV</div>
+
+    <img
+      src="IMG-20261113-WA0001.jpg"
+      alt="AIDEL TV Logo"
+      onerror="this.style.display='none';document.getElementById('introFallback').style.display='block'"
+    >
+
+    <div
+      id="introFallback"
+      style="display:none;color:#b66aff;font:900 48px Outfit"
+    >
+      AIDEL TV
+    </div>
+
+    <h1 class="welcome-text">WELCOME</h1>
+
     <div class="intro-loader"></div>
+
   </div>
 </div>
 
+<!-- HEADER -->
 <header>
+
   <a class="logo" href="#">
-    <div class="logo-badge">A</div>AIDEL<span>TV</span>
+    <div class="logo-badge">A</div>
+    AIDEL<span>TV</span>
   </a>
 
   <nav>
@@ -287,20 +760,31 @@ footer strong{font:800 20px Outfit;color:white}
   </nav>
 
   <div class="header-actions">
+
     <form class="search" id="searchForm">
-      <input id="searchInput" type="search" placeholder="Search movies..." aria-label="Search movies">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search movies..."
+        aria-label="Search movies"
+      >
       <button type="submit">⌕</button>
     </form>
+
     <button class="small-btn" id="accountButton">Sign In</button>
+
   </div>
 </header>
 
+<!-- HERO SLIDER -->
 <section class="hero-section" id="heroSection">
   <div id="heroSlider"></div>
   <div class="hero-dots" id="heroDots"></div>
 </section>
 
+<!-- MAIN CONTENT -->
 <main>
+
   <section class="section" id="searchResults">
     <div class="section-heading">
       <h2>Search Results</h2>
@@ -310,99 +794,215 @@ footer strong{font:800 20px Outfit;color:white}
   </section>
 
   <div id="sections">
+
     <section class="section" id="trending">
-      <div class="section-heading"><h2>Trending Movies & Series</h2><span class="tag">Hot This Week</span></div>
-      <div class="movie-row" id="trendingRow"><div class="status">Loading...</div></div>
+      <div class="section-heading">
+        <h2>Trending Movies & Series</h2>
+        <span class="tag">Hot This Week</span>
+      </div>
+      <div class="movie-row" id="trendingRow">
+        <div class="status">Loading...</div>
+      </div>
     </section>
 
     <section class="section" id="nollywood">
-      <div class="section-heading"><h2>Nollywood Movies</h2><span class="tag">Made in Nigeria</span></div>
-      <div class="movie-row" id="nollywoodRow"><div class="status">Loading...</div></div>
+      <div class="section-heading">
+        <h2>Nollywood Movies</h2>
+        <span class="tag">Made in Nigeria</span>
+      </div>
+      <div class="movie-row" id="nollywoodRow">
+        <div class="status">Loading...</div>
+      </div>
     </section>
 
     <section class="section" id="action">
-      <div class="section-heading"><h2>Action & Adventure</h2><span class="tag">Non-stop Action</span></div>
-      <div class="movie-row" id="actionRow"><div class="status">Loading...</div></div>
+      <div class="section-heading">
+        <h2>Action & Adventure</h2>
+        <span class="tag">Non-stop Action</span>
+      </div>
+      <div class="movie-row" id="actionRow">
+        <div class="status">Loading...</div>
+      </div>
     </section>
 
     <section class="section" id="comedy">
-      <div class="section-heading"><h2>Comedy</h2><span class="tag">Time to Laugh</span></div>
-      <div class="movie-row" id="comedyRow"><div class="status">Loading...</div></div>
+      <div class="section-heading">
+        <h2>Comedy</h2>
+        <span class="tag">Time to Laugh</span>
+      </div>
+      <div class="movie-row" id="comedyRow">
+        <div class="status">Loading...</div>
+      </div>
     </section>
 
     <section class="section" id="series">
-      <div class="section-heading"><h2>Popular TV Series</h2><span class="tag">Top Series</span></div>
-      <div class="movie-row" id="seriesRow"><div class="status">Loading...</div></div>
+      <div class="section-heading">
+        <h2>Popular TV Series</h2>
+        <span class="tag">Top Series</span>
+      </div>
+      <div class="movie-row" id="seriesRow">
+        <div class="status">Loading...</div>
+      </div>
     </section>
 
     <section class="section" id="topRated">
-      <div class="section-heading"><h2>Top Rated Movies</h2><span class="tag">Viewer Favourites</span></div>
-      <div class="movie-row" id="topRatedRow"><div class="status">Loading...</div></div>
+      <div class="section-heading">
+        <h2>Top Rated Movies</h2>
+        <span class="tag">Viewer Favourites</span>
+      </div>
+      <div class="movie-row" id="topRatedRow">
+        <div class="status">Loading...</div>
+      </div>
     </section>
 
     <section class="section" id="myWatchlist">
-      <div class="section-heading"><h2>My Watchlist</h2><span class="tag">Saved Titles</span></div>
+      <div class="section-heading">
+        <h2>My Watchlist</h2>
+        <span class="tag">Saved Titles</span>
+      </div>
       <div class="movie-row" id="watchlistRow">
-        <div class="status">Sign in and save movies to build your list.</div>
+        <div class="status">
+          Sign in and save movies to build your list.
+        </div>
       </div>
     </section>
+
   </div>
 </main>
 
 <!-- MOVIE DETAILS -->
 <div class="modal" id="movieModal" aria-hidden="true">
   <div class="modal-box">
+
     <button class="close" id="closeMovie" aria-label="Close">×</button>
-    <div class="modal-backdrop" id="modalBackdrop"><h2 id="modalTitle"></h2></div>
+
+    <div class="modal-backdrop" id="modalBackdrop">
+      <h2 id="modalTitle"></h2>
+    </div>
+
     <div class="modal-body">
+
       <div class="modal-meta" id="modalMeta"></div>
+
       <p id="modalOverview"></p>
+
       <div class="modal-actions">
-        <button class="btn btn-primary" id="watchlistButton">＋ My Watchlist</button>
-        <button class="btn btn-secondary" id="downloadButton" disabled>Download unavailable</button>
+        <button class="btn btn-primary" id="watchlistButton">
+          ＋ My Watchlist
+        </button>
+
+        <button class="btn btn-secondary" id="downloadButton" disabled>
+          Download unavailable
+        </button>
       </div>
+
       <div id="downloadMessage" style="font-size:12px;color:#888;margin-top:9px">
         Official download links will appear here when AIDEL TV has permission to distribute a title.
       </div>
+
       <div id="trailerArea"></div>
+
     </div>
   </div>
 </div>
 
 <!-- SIGN IN / SIGN UP -->
 <div class="modal" id="authModal" aria-hidden="true">
+
   <div class="form-box">
+
     <button class="close" id="closeAuth">×</button>
+
     <h2 id="authTitle">Welcome to AIDEL TV</h2>
-    <p id="authDescription">Sign in to access your account and watchlist.</p>
+
+    <p id="authDescription">
+      Sign in to access your account and watchlist.
+    </p>
 
     <form id="authForm">
-      <input id="displayName" type="text" placeholder="Your name" autocomplete="name" style="display:none">
-      <input id="authEmail" type="email" placeholder="Email address" autocomplete="email" required>
-      <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password" minlength="6" required>
-      <button class="btn btn-primary" type="submit" id="authSubmit">Sign In</button>
+
+      <input
+        id="displayName"
+        type="text"
+        placeholder="Your name"
+        autocomplete="name"
+        style="display:none"
+      >
+
+      <input
+        id="authEmail"
+        type="email"
+        placeholder="Email address"
+        autocomplete="email"
+        required
+      >
+
+      <input
+        id="authPassword"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        minlength="6"
+        required
+      >
+
+      <button class="btn btn-primary" type="submit" id="authSubmit">
+        Sign In
+      </button>
+
     </form>
+
     <div class="form-message" id="authMessage"></div>
-    <button class="form-link" id="authSwitch">New to AIDEL TV? Create an account</button>
+
+    <button class="form-link" id="authSwitch">
+      New to AIDEL TV? Create an account
+    </button>
+
   </div>
 </div>
 
 <!-- PROFILE -->
 <div class="modal" id="profileModal" aria-hidden="true">
+
   <div class="form-box">
+
     <button class="close" id="closeProfile">×</button>
+
     <h2>My Profile</h2>
+
     <p>Manage your AIDEL TV account.</p>
+
     <div id="profileInfo"></div>
+
     <form id="profileForm">
-      <input id="profileName" type="text" placeholder="Display name" required>
-      <button class="btn btn-primary" type="submit">Save Profile</button>
+
+      <input
+        id="profileName"
+        type="text"
+        placeholder="Display name"
+        required
+      >
+
+      <button class="btn btn-primary" type="submit">
+        Save Profile
+      </button>
+
     </form>
+
     <div class="form-message" id="profileMessage"></div>
-    <button class="btn btn-secondary" id="signOutButton" style="width:100%;margin-top:15px">Sign Out</button>
+
+    <button
+      class="btn btn-secondary"
+      id="signOutButton"
+      style="width:100%;margin-top:15px"
+    >
+      Sign Out
+    </button>
+
   </div>
 </div>
 
+<!-- FOOTER -->
 <footer>
   <strong>AIDEL TV</strong><br>
   Your home for movies, TV series and entertainment.<br>
@@ -416,20 +1016,25 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 "use strict";
 
-/* YOUR EXISTING CONNECTION SETTINGS */
-const TMDB_API_KEY = "b780fe2deb5463314e4fa32ef70e42c4";
+/* CONNECTION SETTINGS */
+const TMDB_API_KEY = "b780fe2deb546331e4fa32ef70e42c4";
 const API_BASE = "https://api.themoviedb.org/3";
 const IMAGE_BASE = "https://image.tmdb.org/t/p/";
 
 const SUPABASE_URL = "https://nbvznasgshojxjsgchds.supabase.co";
 const SUPABASE_KEY = "sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej";
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(SUPABASE_URL,SUPABASE_KEY);
+
 window.aidelSupabase = supabase;
 
 const $ = id => document.getElementById(id);
-const FALLBACK_POSTER = "data:image/svg+xml;charset=UTF-8," +
-  encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450"><rect width="100%" height="100%" fill="#191923"/><text x="50%" y="50%" fill="#888" font-size="22" text-anchor="middle">AIDEL TV</text></svg>');
+
+const FALLBACK_POSTER =
+  "data:image/svg+xml;charset=UTF-8," +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450"><rect width="100%" height="100%" fill="#191923"/><text x="50%" y="50%" fill="#888" font-size="22" text-anchor="middle">AIDEL TV</text></svg>'
+  );
 
 let currentUser = null;
 let currentSession = null;
@@ -439,42 +1044,42 @@ let heroInterval = null;
 let currentDetails = null;
 let authMode = "login";
 
-/*
-  Add a legitimate download URL here only for films
-  AIDEL TV has permission to distribute.
-
-  Example:
-  "movie:12345": "https://your-authorised-download-link.com/movie.mp4"
-*/
+/* AUTHORISED DOWNLOAD LINKS ONLY */
 const DOWNLOAD_LINKS = {};
 
 function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  return String(value ?? "").replace(/[&<>"']/g,c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
   })[c]);
 }
 
-function imageURL(path, size = "w500") {
+function imageURL(path,size="w500") {
   return path ? IMAGE_BASE + size + path : FALLBACK_POSTER;
 }
 
-async function tmdb(path, params = {}) {
+async function tmdb(path,params={}) {
   const url = new URL(API_BASE + path);
-  url.searchParams.set("api_key", TMDB_API_KEY);
-  url.searchParams.set("language", "en-US");
+
+  url.searchParams.set("api_key",TMDB_API_KEY);
+  url.searchParams.set("language","en-US");
 
   Object.entries(params).forEach(([key,value]) => {
-    if (value !== undefined && value !== null) {
-      url.searchParams.set(key, value);
+    if(value !== undefined && value !== null) {
+      url.searchParams.set(key,value);
     }
   });
 
   const response = await fetch(url);
   const data = await response.json();
 
-  if (!response.ok) {
+  if(!response.ok) {
     throw new Error(data.status_message || "TMDB request failed.");
   }
+
   return data;
 }
 
@@ -488,9 +1093,12 @@ function getYear(item) {
 }
 
 function getMedia(item) {
-  return item.media_type === "tv" || item.first_air_date ? "tv" : "movie";
+  return item.media_type === "tv" || item.first_air_date
+    ? "tv"
+    : "movie";
 }
 
+/* WATCHLIST */
 function watchlistKey() {
   return "aidel_watchlist_" + (currentUser?.id || "guest");
 }
@@ -504,28 +1112,29 @@ function getWatchlist() {
 }
 
 function saveWatchlist(list) {
-  localStorage.setItem(watchlistKey(), JSON.stringify(list));
+  localStorage.setItem(watchlistKey(),JSON.stringify(list));
   renderWatchlist();
 }
 
-function isSaved(id, media) {
+function isSaved(id,media) {
   return getWatchlist().some(item =>
     String(item.id) === String(id) && item.media === media
   );
 }
 
-function toggleWatchlist(item, media) {
-  if (!currentUser) {
+function toggleWatchlist(item,media) {
+  if(!currentUser) {
     openAuth();
     return;
   }
 
   let list = getWatchlist();
+
   const exists = list.some(x =>
     String(x.id) === String(item.id) && x.media === media
   );
 
-  if (exists) {
+  if(exists) {
     list = list.filter(x =>
       !(String(x.id) === String(item.id) && x.media === media)
     );
@@ -543,98 +1152,144 @@ function toggleWatchlist(item, media) {
 
   saveWatchlist(list);
 
-  if (currentDetails && String(currentDetails.id) === String(item.id)) {
+  if(currentDetails && String(currentDetails.id) === String(item.id)) {
     updateWatchlistButton();
   }
 }
 
-function makeCard(item, media) {
+/* MOVIE CARDS */
+function makeCard(item,media) {
   const title = escapeHTML(getTitle(item));
   const poster = imageURL(item.poster_path);
   const rating = Number(item.vote_average || 0).toFixed(1);
   const year = escapeHTML(getYear(item));
 
   return `
-    <article class="movie-card" tabindex="0" role="button"
-      data-id="${Number(item.id)}" data-media="${media}"
+    <article class="movie-card"
+      tabindex="0"
+      role="button"
+      data-id="${Number(item.id)}"
+      data-media="${media}"
       aria-label="View ${title}">
+
       <div class="poster-wrap">
-        <img class="poster" src="${poster}" alt="${title}" loading="lazy"
-          onerror="this.onerror=null;this.src='${FALLBACK_POSTER}'">
+
+        <img
+          class="poster"
+          src="${poster}"
+          alt="${title}"
+          loading="lazy"
+          onerror="this.onerror=null;this.src='${FALLBACK_POSTER}'"
+        >
+
         <span class="rating">★ ${rating}</span>
+
         <div class="play-icon"></div>
+
       </div>
+
       <h3>${title}</h3>
       <small>${year}</small>
-    </article>`;
+
+    </article>
+  `;
 }
 
-function renderRow(element, results, media = "movie") {
+function renderRow(element,results,media="movie") {
   const items = (results || []).filter(item =>
     item && item.id && item.poster_path && item.media_type !== "person"
   ).slice(0,20);
 
-  if (!items.length) {
-    element.innerHTML = '<div class="status">No titles found in this category.</div>';
+  if(!items.length) {
+    element.innerHTML =
+      '<div class="status">No titles found in this category.</div>';
     return;
   }
 
   element.innerHTML = items.map(item =>
-    makeCard(item, media === "all" ? getMedia(item) : media)
+    makeCard(item,media === "all" ? getMedia(item) : media)
   ).join("");
 }
 
-function showError(element, error, retry) {
+function showError(element,error,retry) {
   element.innerHTML = `
     <div class="status error">
       ${escapeHTML(error.message || "Something went wrong.")}
       <button class="retry-button" type="button">Retry</button>
-    </div>`;
-  element.querySelector(".retry-button").addEventListener("click", retry);
+    </div>
+  `;
+
+  element.querySelector(".retry-button")
+    .addEventListener("click",retry);
 }
 
-async function loadSection(rowId, path, params = {}, media = "movie") {
+async function loadSection(rowId,path,params={},media="movie") {
   const element = $(rowId);
+
   try {
-    const data = await tmdb(path, params);
-    renderRow(element, data.results, media);
+    const data = await tmdb(path,params);
+    renderRow(element,data.results,media);
   } catch(error) {
-    showError(element, error, () => loadSection(rowId,path,params,media));
+    showError(element,error,() =>
+      loadSection(rowId,path,params,media)
+    );
     console.error(rowId,error);
   }
 }
 
 /* HERO SLIDER */
 function renderHeroSlides(movies) {
-  if (!movies.length) return;
+  if(!movies.length) return;
 
   heroMovies = movies.slice(0,6);
   currentHeroIndex = 0;
 
   $("heroSlider").innerHTML = heroMovies.map((movie,i) => {
-    const backdrop = imageURL(movie.backdrop_path || movie.poster_path,"original");
+    const backdrop = imageURL(
+      movie.backdrop_path || movie.poster_path,
+      "original"
+    );
+
     const title = escapeHTML(getTitle(movie));
-    const overview = escapeHTML(movie.overview || "Discover this title on AIDEL TV.");
+    const overview = escapeHTML(
+      movie.overview || "Discover this title on AIDEL TV."
+    );
+
     const rating = Number(movie.vote_average || 0).toFixed(1);
 
     return `
-      <div class="hero-slide ${i === 0 ? "active" : ""}"
-        style="background-image:url('${backdrop}')">
+      <div
+        class="hero-slide ${i === 0 ? "active" : ""}"
+        style="background-image:url('${backdrop}')"
+      >
+
         <div class="hero-content">
+
           <div class="eyebrow">FEATURED ON AIDEL TV</div>
+
           <h1>${title}</h1>
+
           <div class="hero-meta">
             <span class="rating-pill">★ ${rating}</span>
             <span>${escapeHTML(getYear(movie))}</span>
             <span>• MOVIE</span>
           </div>
+
           <p>${overview}</p>
+
           <div class="hero-actions">
-            <button class="btn btn-primary" data-hero-id="${movie.id}">More Info</button>
-            <button class="btn btn-secondary" data-hero-save="${movie.id}">＋ My List</button>
+            <button class="btn btn-primary" data-hero-id="${movie.id}">
+              More Info
+            </button>
+
+            <button class="btn btn-secondary" data-hero-save="${movie.id}">
+              ＋ My List
+            </button>
           </div>
+
         </div>
-      </div>`;
+      </div>
+    `;
   }).join("");
 
   $("heroDots").innerHTML = heroMovies.map((_,i) =>
@@ -642,20 +1297,25 @@ function renderHeroSlides(movies) {
   ).join("");
 
   $("heroDots").querySelectorAll(".hero-dot").forEach(dot => {
-    dot.addEventListener("click", () => {
+    dot.addEventListener("click",() => {
       goToHeroSlide(Number(dot.dataset.index));
       startHeroInterval();
     });
   });
 
   $("heroSlider").querySelectorAll("[data-hero-id]").forEach(button => {
-    button.addEventListener("click", () => openDetails(button.dataset.heroId,"movie"));
+    button.addEventListener("click",() =>
+      openDetails(button.dataset.heroId,"movie")
+    );
   });
 
   $("heroSlider").querySelectorAll("[data-hero-save]").forEach(button => {
-    button.addEventListener("click", () => {
-      const movie = heroMovies.find(x => String(x.id) === button.dataset.heroSave);
-      if (movie) toggleWatchlist(movie,"movie");
+    button.addEventListener("click",() => {
+      const movie = heroMovies.find(x =>
+        String(x.id) === button.dataset.heroSave
+      );
+
+      if(movie) toggleWatchlist(movie,"movie");
     });
   });
 
@@ -665,42 +1325,96 @@ function renderHeroSlides(movies) {
 function goToHeroSlide(index) {
   const slides = document.querySelectorAll(".hero-slide");
   const dots = document.querySelectorAll(".hero-dot");
-  if (!slides.length) return;
+
+  if(!slides.length) return;
 
   currentHeroIndex = (index + slides.length) % slides.length;
-  slides.forEach((slide,i) => slide.classList.toggle("active",i === currentHeroIndex));
-  dots.forEach((dot,i) => dot.classList.toggle("active",i === currentHeroIndex));
+
+  slides.forEach((slide,i) =>
+    slide.classList.toggle("active",i === currentHeroIndex)
+  );
+
+  dots.forEach((dot,i) =>
+    dot.classList.toggle("active",i === currentHeroIndex)
+  );
 }
 
 function startHeroInterval() {
   clearInterval(heroInterval);
-  heroInterval = setInterval(() => goToHeroSlide(currentHeroIndex + 1),5500);
+
+  heroInterval = setInterval(() => {
+    goToHeroSlide(currentHeroIndex + 1);
+  },5500);
 }
 
 async function loadHero() {
   try {
     const data = await tmdb("/trending/movie/week");
-    renderHeroSlides((data.results || []).filter(m => m.backdrop_path || m.poster_path));
+
+    renderHeroSlides(
+      (data.results || []).filter(m =>
+        m.backdrop_path || m.poster_path
+      )
+    );
   } catch(error) {
     console.error("Hero slider:",error);
   }
 }
 
+/* LOAD HOMEPAGE */
 async function loadHome() {
   await Promise.all([
     loadHero(),
-    loadSection("trendingRow","/trending/all/week",{},"all"),
-    loadSection("nollywoodRow","/discover/movie",{
-      with_origin_country:"NG",sort_by:"popularity.desc",include_adult:"false"
-    }),
-    loadSection("actionRow","/discover/movie",{
-      with_genres:"28",sort_by:"popularity.desc",include_adult:"false"
-    }),
-    loadSection("comedyRow","/discover/movie",{
-      with_genres:"35",sort_by:"popularity.desc",include_adult:"false"
-    }),
-    loadSection("seriesRow","/tv/popular",{},"tv"),
-    loadSection("topRatedRow","/movie/top_rated",{include_adult:"false"})
+
+    loadSection(
+      "trendingRow",
+      "/trending/all/week",
+      {},
+      "all"
+    ),
+
+    loadSection(
+      "nollywoodRow",
+      "/discover/movie",
+      {
+        with_origin_country:"NG",
+        sort_by:"popularity.desc",
+        include_adult:"false"
+      }
+    ),
+
+    loadSection(
+      "actionRow",
+      "/discover/movie",
+      {
+        with_genres:"28",
+        sort_by:"popularity.desc",
+        include_adult:"false"
+      }
+    ),
+
+    loadSection(
+      "comedyRow",
+      "/discover/movie",
+      {
+        with_genres:"35",
+        sort_by:"popularity.desc",
+        include_adult:"false"
+      }
+    ),
+
+    loadSection(
+      "seriesRow",
+      "/tv/popular",
+      {},
+      "tv"
+    ),
+
+    loadSection(
+      "topRatedRow",
+      "/movie/top_rated",
+      {include_adult:"false"}
+    )
   ]);
 }
 
@@ -709,28 +1423,43 @@ async function searchMovies(query) {
   $("searchResults").classList.add("active");
   $("sections").style.display = "none";
   $("searchCount").textContent = "Searching...";
-  $("searchGrid").innerHTML = '<div class="status">Searching TMDB...</div>';
+  $("searchGrid").innerHTML =
+    '<div class="status">Searching TMDB...</div>';
+
   $("searchResults").scrollIntoView({behavior:"smooth"});
 
   try {
-    const data = await tmdb("/search/multi",{query,include_adult:"false"});
+    const data = await tmdb("/search/multi",{
+      query,
+      include_adult:"false"
+    });
+
     const items = (data.results || []).filter(item =>
-      item.media_type !== "person" && item.poster_path && item.id
+      item.media_type !== "person" &&
+      item.poster_path &&
+      item.id
     );
 
     $("searchCount").textContent = items.length + " results";
 
-    if (!items.length) {
-      $("searchGrid").innerHTML = '<div class="status">No movies or series found. Try another search.</div>';
+    if(!items.length) {
+      $("searchGrid").innerHTML =
+        '<div class="status">No movies or series found. Try another search.</div>';
       return;
     }
 
     $("searchGrid").innerHTML = items.map(item =>
       makeCard(item,getMedia(item))
     ).join("");
+
   } catch(error) {
     $("searchCount").textContent = "Search error";
-    showError($("searchGrid"),error,() => searchMovies(query));
+
+    showError(
+      $("searchGrid"),
+      error,
+      () => searchMovies(query)
+    );
   }
 }
 
@@ -747,6 +1476,7 @@ async function openDetails(id,media) {
   $("trailerArea").innerHTML = "";
   $("downloadButton").disabled = true;
   $("downloadButton").textContent = "Download unavailable";
+
   currentDetails = null;
 
   try {
@@ -756,24 +1486,42 @@ async function openDetails(id,media) {
     ]);
 
     currentDetails = details;
-    $("modalTitle").textContent = getTitle(details);
-    $("modalOverview").textContent = details.overview || "No description is available.";
-    $("modalMeta").textContent =
-      getYear(details) + " • ★ " + Number(details.vote_average || 0).toFixed(1) +
-      " • " + (media === "tv" ? "TV SERIES" : "MOVIE");
 
-    const backdrop = imageURL(details.backdrop_path || details.poster_path,"w1280");
+    $("modalTitle").textContent = getTitle(details);
+
+    $("modalOverview").textContent =
+      details.overview || "No description is available.";
+
+    $("modalMeta").textContent =
+      getYear(details) +
+      " • ★ " +
+      Number(details.vote_average || 0).toFixed(1) +
+      " • " +
+      (media === "tv" ? "TV SERIES" : "MOVIE");
+
+    const backdrop = imageURL(
+      details.backdrop_path || details.poster_path,
+      "w1280"
+    );
+
     $("modalBackdrop").style.backgroundImage =
-      "linear-gradient(0deg,rgba(0,0,0,.7),transparent),url('" + backdrop + "')";
+      "linear-gradient(0deg,rgba(0,0,0,.7),transparent),url('" +
+      backdrop + "')";
 
     updateWatchlistButton();
 
-    const downloadUrl = DOWNLOAD_LINKS[media + ":" + details.id];
-    if (downloadUrl) {
+    const downloadUrl =
+      DOWNLOAD_LINKS[media + ":" + details.id];
+
+    if(downloadUrl) {
       $("downloadButton").disabled = false;
       $("downloadButton").textContent = "Download";
-      $("downloadMessage").textContent = "Official download link available.";
-      $("downloadButton").onclick = () => window.open(downloadUrl,"_blank","noopener");
+      $("downloadMessage").textContent =
+        "Official download link available.";
+
+      $("downloadButton").onclick = () => {
+        window.open(downloadUrl,"_blank","noopener");
+      };
     } else {
       $("downloadButton").onclick = null;
       $("downloadMessage").textContent =
@@ -781,21 +1529,33 @@ async function openDetails(id,media) {
     }
 
     const trailer = (videos.results || []).find(v =>
-      v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
+      v.site === "YouTube" &&
+      (v.type === "Trailer" || v.type === "Teaser")
     );
 
-    if (trailer) {
+    if(trailer) {
       const frame = document.createElement("iframe");
+
       frame.className = "trailer";
-      frame.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(trailer.key);
+
+      frame.src =
+        "https://www.youtube-nocookie.com/embed/" +
+        encodeURIComponent(trailer.key);
+
       frame.title = "Movie trailer";
-      frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+
+      frame.allow =
+        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+
       frame.allowFullscreen = true;
+
       $("trailerArea").appendChild(frame);
+
     } else {
       $("trailerArea").innerHTML =
         "<p style='color:#888;margin-top:16px'>No official trailer is available for this title.</p>";
     }
+
   } catch(error) {
     $("modalTitle").textContent = "Unable to load details";
     $("modalOverview").textContent = error.message;
@@ -803,10 +1563,13 @@ async function openDetails(id,media) {
 }
 
 function updateWatchlistButton() {
-  if (!currentDetails) return;
+  if(!currentDetails) return;
+
   const media = getMedia(currentDetails);
   const saved = isSaved(currentDetails.id,media);
-  $("watchlistButton").textContent = saved ? "✓ Remove from My List" : "＋ My Watchlist";
+
+  $("watchlistButton").textContent =
+    saved ? "✓ Remove from My List" : "＋ My Watchlist";
 }
 
 function closeMovieModal() {
@@ -816,26 +1579,33 @@ function closeMovieModal() {
   document.body.style.overflow = "";
 }
 
-/* WATCHLIST */
+/* WATCHLIST DISPLAY */
 function renderWatchlist() {
   const row = $("watchlistRow");
   const list = getWatchlist();
 
-  if (!currentUser) {
-    row.innerHTML = '<div class="status">Sign in to create your personal watchlist.</div>';
+  if(!currentUser) {
+    row.innerHTML =
+      '<div class="status">Sign in to create your personal watchlist.</div>';
     return;
   }
 
-  if (!list.length) {
-    row.innerHTML = '<div class="status">Your watchlist is empty. Open a movie and tap My Watchlist to save it.</div>';
+  if(!list.length) {
+    row.innerHTML =
+      '<div class="status">Your watchlist is empty. Open a movie and tap My Watchlist to save it.</div>';
     return;
   }
 
-  row.innerHTML = list.map(item => makeCard({
-    id:item.id,title:item.title,name:item.title,
-    poster_path:item.poster_path,vote_average:item.vote_average,
-    release_date:item.release_date
-  },item.media)).join("");
+  row.innerHTML = list.map(item =>
+    makeCard({
+      id:item.id,
+      title:item.title,
+      name:item.title,
+      poster_path:item.poster_path,
+      vote_average:item.vote_average,
+      release_date:item.release_date
+    },item.media)
+  ).join("");
 }
 
 /* AUTHENTICATION */
@@ -852,18 +1622,32 @@ function closeAuth() {
 
 function setAuthMode(mode) {
   authMode = mode;
+
   const signup = mode === "signup";
-  $("authTitle").textContent = signup ? "Create Your Account" : "Welcome to AIDEL TV";
+
+  $("authTitle").textContent = signup
+    ? "Create Your Account"
+    : "Welcome to AIDEL TV";
+
   $("authDescription").textContent = signup
     ? "Join AIDEL TV and start building your watchlist."
     : "Sign in to access your AIDEL TV account.";
-  $("displayName").style.display = signup ? "block" : "none";
+
+  $("displayName").style.display =
+    signup ? "block" : "none";
+
   $("displayName").required = signup;
-  $("authPassword").autocomplete = signup ? "new-password" : "current-password";
-  $("authSubmit").textContent = signup ? "Create Account" : "Sign In";
+
+  $("authPassword").autocomplete =
+    signup ? "new-password" : "current-password";
+
+  $("authSubmit").textContent =
+    signup ? "Create Account" : "Sign In";
+
   $("authSwitch").textContent = signup
     ? "Already have an account? Sign in"
     : "New to AIDEL TV? Create an account";
+
   $("authMessage").textContent = "";
 }
 
@@ -873,6 +1657,7 @@ $("authSwitch").addEventListener("click",() => {
 
 $("authForm").addEventListener("submit",async event => {
   event.preventDefault();
+
   const email = $("authEmail").value.trim();
   const password = $("authPassword").value;
   const name = $("displayName").value.trim();
@@ -881,27 +1666,44 @@ $("authForm").addEventListener("submit",async event => {
   $("authMessage").textContent = "Please wait...";
 
   try {
-    if (authMode === "signup") {
+    if(authMode === "signup") {
       const {data,error} = await supabase.auth.signUp({
-        email,password,
-        options:{data:{display_name:name}}
+        email,
+        password,
+        options:{
+          data:{display_name:name}
+        }
       });
-      if (error) throw error;
 
-      if (data.session) {
-        $("authMessage").textContent = "Account created successfully!";
+      if(error) throw error;
+
+      if(data.session) {
+        $("authMessage").textContent =
+          "Account created successfully!";
       } else {
         $("authMessage").textContent =
           "Account created. Check your email for the confirmation link before signing in.";
       }
+
     } else {
-      const {error} = await supabase.auth.signInWithPassword({email,password});
-      if (error) throw error;
-      $("authMessage").textContent = "Signed in successfully!";
+      const {error} =
+        await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if(error) throw error;
+
+      $("authMessage").textContent =
+        "Signed in successfully!";
+
       setTimeout(closeAuth,700);
     }
+
   } catch(error) {
-    $("authMessage").textContent = error.message || "Authentication failed.";
+    $("authMessage").textContent =
+      error.message || "Authentication failed.";
+
   } finally {
     $("authSubmit").disabled = false;
   }
@@ -909,15 +1711,17 @@ $("authForm").addEventListener("submit",async event => {
 
 /* PROFILE */
 async function openProfile() {
-  if (!currentUser) {
+  if(!currentUser) {
     openAuth();
     return;
   }
 
   $("profileModal").classList.add("open");
   $("profileModal").setAttribute("aria-hidden","false");
+
   $("profileInfo").textContent = currentUser.email || "";
   $("profileMessage").textContent = "";
+
   $("profileName").value =
     currentUser.user_metadata?.display_name ||
     currentUser.email?.split("@")[0] || "";
@@ -929,9 +1733,10 @@ async function openProfile() {
       .eq("id",currentUser.id)
       .maybeSingle();
 
-    if (!error && data?.display_name) {
+    if(!error && data?.display_name) {
       $("profileName").value = data.display_name;
     }
+
   } catch(error) {
     console.error("Profile read:",error);
   }
@@ -939,10 +1744,12 @@ async function openProfile() {
 
 $("profileForm").addEventListener("submit",async event => {
   event.preventDefault();
-  if (!currentUser) return;
+
+  if(!currentUser) return;
 
   const displayName = $("profileName").value.trim();
-  if (!displayName) return;
+
+  if(!displayName) return;
 
   $("profileMessage").textContent = "Saving profile...";
 
@@ -952,15 +1759,20 @@ $("profileForm").addEventListener("submit",async event => {
       .update({display_name:displayName})
       .eq("id",currentUser.id);
 
-    if (error) throw error;
+    if(error) throw error;
 
-    const {error:metadataError} = await supabase.auth.updateUser({
-      data:{display_name:displayName}
-    });
+    const {error:metadataError} =
+      await supabase.auth.updateUser({
+        data:{display_name:displayName}
+      });
 
-    if (metadataError) console.warn(metadataError);
-    $("profileMessage").textContent = "Profile updated successfully!";
+    if(metadataError) console.warn(metadataError);
+
+    $("profileMessage").textContent =
+      "Profile updated successfully!";
+
     await refreshAccount();
+
   } catch(error) {
     $("profileMessage").textContent = error.message;
   }
@@ -968,6 +1780,7 @@ $("profileForm").addEventListener("submit",async event => {
 
 async function refreshAccount() {
   const {data} = await supabase.auth.getSession();
+
   currentSession = data.session;
   currentUser = currentSession?.user || null;
 
@@ -980,18 +1793,21 @@ async function refreshAccount() {
 
 $("signOutButton").addEventListener("click",async () => {
   const {error} = await supabase.auth.signOut();
-  if (error) {
+
+  if(error) {
     $("profileMessage").textContent = error.message;
     return;
   }
 
   $("profileModal").classList.remove("open");
+
   await refreshAccount();
 });
 
 $("accountButton").addEventListener("click",() => {
-  if (currentUser) openProfile();
-  else {
+  if(currentUser) {
+    openProfile();
+  } else {
     setAuthMode("login");
     openAuth();
   }
@@ -1000,12 +1816,14 @@ $("accountButton").addEventListener("click",() => {
 /* EVENT LISTENERS */
 $("searchForm").addEventListener("submit",event => {
   event.preventDefault();
+
   const query = $("searchInput").value.trim();
-  if (query) searchMovies(query);
+
+  if(query) searchMovies(query);
 });
 
 $("searchInput").addEventListener("input",event => {
-  if (!event.target.value.trim()) {
+  if(!event.target.value.trim()) {
     $("searchResults").classList.remove("active");
     $("sections").style.display = "";
     $("searchCount").textContent = "";
@@ -1014,19 +1832,24 @@ $("searchInput").addEventListener("input",event => {
 });
 
 $("watchlistButton").addEventListener("click",() => {
-  if (!currentDetails) return;
-  toggleWatchlist(currentDetails,getMedia(currentDetails));
+  if(!currentDetails) return;
+
+  toggleWatchlist(
+    currentDetails,
+    getMedia(currentDetails)
+  );
 });
 
 $("closeMovie").addEventListener("click",closeMovieModal);
 $("closeAuth").addEventListener("click",closeAuth);
+
 $("closeProfile").addEventListener("click",() => {
   $("profileModal").classList.remove("open");
 });
 
 ["movieModal","authModal","profileModal"].forEach(id => {
   $(id).addEventListener("click",event => {
-    if (event.target === $(id)) {
+    if(event.target === $(id)) {
       $(id).classList.remove("open");
       document.body.style.overflow = "";
     }
@@ -1035,34 +1858,51 @@ $("closeProfile").addEventListener("click",() => {
 
 document.addEventListener("click",event => {
   const card = event.target.closest(".movie-card");
-  if (!card) return;
+
+  if(!card) return;
+
   openDetails(card.dataset.id,card.dataset.media);
 });
 
 document.addEventListener("keydown",event => {
-  if (event.key === "Escape") {
+  if(event.key === "Escape") {
     closeMovieModal();
     closeAuth();
     $("profileModal").classList.remove("open");
   }
 
-  if ((event.key === "Enter" || event.key === " ") &&
-      event.target.matches(".movie-card")) {
+  if(
+    (event.key === "Enter" || event.key === " ") &&
+    event.target.matches(".movie-card")
+  ) {
     event.preventDefault();
-    openDetails(event.target.dataset.id,event.target.dataset.media);
+
+    openDetails(
+      event.target.dataset.id,
+      event.target.dataset.media
+    );
   }
 });
 
-$("heroSection").addEventListener("mouseenter",() => clearInterval(heroInterval));
+$("heroSection").addEventListener("mouseenter",() => {
+  clearInterval(heroInterval);
+});
+
 $("heroSection").addEventListener("mouseleave",startHeroInterval);
 
 /* START WEBSITE */
 await refreshAccount();
+
 loadHome();
 
+/* WELCOME SCREEN DISAPPEARS AFTER 3 SECONDS */
 setTimeout(() => {
   $("aidel-intro").classList.add("hide");
-  setTimeout(() => $("aidel-intro")?.remove(),900);
+
+  setTimeout(() => {
+    $("aidel-intro")?.remove();
+  },900);
+
 },3000);
 
 </script>
