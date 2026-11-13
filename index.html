@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#000000">
   <title>AIDEL TV — Movies, Series & Entertainment</title>
   <meta name="description" content="Discover trending movies, Nollywood films, TV series and entertainment on AIDEL TV.">
@@ -45,7 +45,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ===== PURPLE WELCOME SCREEN ===== */
+    /* ===== CUSTOM BANNER WELCOME SCREEN ===== */
     #aidel-intro {
       position: fixed;
       inset: 0;
@@ -55,49 +55,31 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      animation: aidelFadeOut .8s ease 3s forwards;
+      animation: aidelFadeOut .8s ease 3.2s forwards;
+      padding: 20px;
     }
 
-    .aidel-logo {
-      position: relative;
-      text-align: center;
+    .welcome-banner-box {
+      max-width: 900px;
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 15px 50px rgba(229, 9, 20, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       animation: aidelGlow 1.5s ease-in-out infinite alternate;
     }
 
-    .aidel-name {
-      color: #a855f7;
-      font-size: clamp(48px, 13vw, 85px);
-      font-weight: 900;
-      letter-spacing: 3px;
-      text-shadow: 0 0 15px #9333ea;
-      font-family: 'Outfit', sans-serif;
-    }
-
-    .aidel-a {
-      color: #d8b4fe;
-    }
-
-    .aidel-tv {
-      position: absolute;
-      top: -17px;
-      right: 3px;
-      color: #c084fc;
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .aidel-tagline {
-      color: #c084fc;
-      letter-spacing: 4px;
-      font-size: 11px;
-      margin-top: 22px;
+    .welcome-banner-box img {
+      width: 100%;
+      height: auto;
+      display: block;
     }
 
     .aidel-loader {
-      width: 90px;
+      width: 120px;
       height: 3px;
       background: #2e1744;
-      margin-top: 25px;
+      margin-top: 30px;
       overflow: hidden;
       border-radius: 10px;
     }
@@ -107,13 +89,13 @@
       display: block;
       width: 40%;
       height: 100%;
-      background: #a855f7;
+      background: var(--red);
       animation: aidelLoad 1s infinite;
     }
 
     @keyframes aidelGlow {
-      from { transform: scale(.96); opacity: .8; }
-      to { transform: scale(1.04); opacity: 1; }
+      from { transform: scale(.98); opacity: .9; }
+      to { transform: scale(1.01); opacity: 1; }
     }
 
     @keyframes aidelLoad {
@@ -766,15 +748,12 @@
 </head>
 <body>
 
-<!-- ===== PURPLE WELCOME SCREEN ===== -->
+<!-- ===== BANNER WELCOME SCREEN ===== -->
 <div id="aidel-intro">
-  <div class="aidel-logo">
-    <div class="aidel-name">
-      <span class="aidel-a">A</span>IDEL
-    </div>
-    <div class="aidel-tv">▣ TV</div>
+  <div class="welcome-banner-box">
+    <!-- Uses your uploaded banner image file -->
+    <img src="IMG-20261113-WA0001.jpg" alt="AIDEL TV Welcome Banner">
   </div>
-  <p class="aidel-tagline">WATCH ANYTIME, ANYWHERE</p>
   <div class="aidel-loader"></div>
 </div>
 
@@ -916,11 +895,11 @@ let heroInterval = null;
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
+    "&": "&",
+    "<": "<",
+    ">": ">",
+    '"': """,
+    "'": "'"
   })[c]);
 }
 
@@ -1073,7 +1052,7 @@ function renderHeroSlides(movies) {
   }).join("");
 
   dots.innerHTML = heroMovies.map((_, i) =>
-    `<button class="hero-dot \( {i === 0 ? 'active' : ''}" data-index=" \){i}" aria-label="Go to slide ${i + 1}"></button>`
+    `<button class="hero-dot ${i === 0 ? 'active' : ''}" data-index="${i}" aria-label="Go to slide ${i + 1}"></button>`
   ).join("");
 
   dots.querySelectorAll(".hero-dot").forEach(dot => {
@@ -1282,11 +1261,11 @@ $("heroSection").addEventListener("mouseleave", startHeroInterval);
 
 loadHome();
 
-// Remove welcome screen after animation
+// Cleanly remove the banner welcome screen from the DOM after the fade-out completes
 setTimeout(function() {
   const intro = document.getElementById("aidel-intro");
   if (intro) intro.remove();
-}, 3900);
+}, 4000);
 </script>
 
 <!-- Supabase Connection -->
@@ -1297,19 +1276,7 @@ const SUPABASE_URL = 'https://nbvznasgshojxjsgchds.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
 window.aidelSupabase = supabase;
-
-const { error } = await supabase
-  .from('movies')
-  .select('id')
-  .limit(1);
-
-if (error) {
-  console.error('Supabase error:', error.message);
-} else {
-  console.log('AIDEL TV Supabase connected!');
-}
 </script>
 
 </body>
