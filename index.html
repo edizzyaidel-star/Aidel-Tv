@@ -7,7 +7,6 @@
   <title>AIDEL TV — Movies, Series & Entertainment</title>
   <meta name="description" content="Discover trending movies, Nollywood films, TV series and entertainment on AIDEL TV.">
   
-  <!-- Modern fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -46,7 +45,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ===== HEADER ===== */
     header {
       position: sticky;
       top: 0;
@@ -145,7 +143,6 @@
       font-size: 16px;
     }
 
-    /* ===== HERO / FEATURED CAROUSEL ===== */
     .hero-section {
       position: relative;
       height: 62vh;
@@ -304,7 +301,6 @@
       border-radius: 4px;
     }
 
-    /* ===== MAIN CONTENT ===== */
     main {
       padding: 10px 5% 60px;
     }
@@ -494,7 +490,6 @@
       gap: 18px;
     }
 
-    /* ===== MODAL ===== */
     .modal {
       display: none;
       position: fixed;
@@ -697,7 +692,6 @@
   </form>
 </header>
 
-<!-- Interchanging Featured Movies -->
 <section class="hero-section" id="heroSection">
   <div class="hero-slider" id="heroSlider"></div>
   <div class="hero-dots" id="heroDots"></div>
@@ -775,7 +769,6 @@
   </div>
 </main>
 
-<!-- Detail Modal -->
 <div class="modal" id="movieModal" aria-hidden="true">
   <div class="modal-box">
     <button class="close" id="closeModal" aria-label="Close">×</button>
@@ -886,7 +879,12 @@ function makeCard(item, media) {
       data-media="${media}"
       aria-label="View ${title}">
       <div class="poster-wrap">
-        <img class="poster" src="\( {poster}" alt=" \){title}" loading="lazy">
+        <img class="poster" 
+             src="${poster}" 
+             alt="${title}" 
+             loading="lazy"
+             referrerpolicy="no-referrer"
+             onerror="this.onerror=null; this.src='${FALLBACK_POSTER}'">
         <span class="rating">★ ${rating}</span>
         <div class="play-icon"></div>
       </div>
@@ -909,12 +907,6 @@ function renderRow(element, results, media = "movie") {
   element.innerHTML = items
     .map(item => makeCard(item, media === "all" ? getMedia(item) : media))
     .join("");
-
-  element.querySelectorAll(".poster").forEach(img => {
-    img.addEventListener("error", () => {
-      img.src = FALLBACK_POSTER;
-    }, { once: true });
-  });
 }
 
 function showError(element, error, retry) {
@@ -938,7 +930,6 @@ async function loadSection(rowId, path, params = {}, media = "movie") {
   }
 }
 
-/* ===== INTERCHANGING HERO ===== */
 function renderHeroSlides(movies) {
   const slider = $("heroSlider");
   const dots = $("heroDots");
@@ -1083,12 +1074,6 @@ async function searchMovies(query) {
     }
 
     grid.innerHTML = items.map(item => makeCard(item, getMedia(item))).join("");
-
-    grid.querySelectorAll(".poster").forEach(img => {
-      img.addEventListener("error", () => {
-        img.src = FALLBACK_POSTER;
-      }, { once: true });
-    });
   } catch (error) {
     $("searchCount").textContent = "Search error";
     showError(grid, error, () => searchMovies(query));
@@ -1150,7 +1135,6 @@ function closeModal() {
   document.body.style.overflow = "";
 }
 
-/* Event listeners */
 $("searchForm").addEventListener("submit", event => {
   event.preventDefault();
   const query = $("searchInput").value.trim();
@@ -1199,7 +1183,7 @@ loadHome();
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 const SUPABASE_URL = 'https://nbvznasgshojxjsgchds.supabase.co';
-const SUPABASE_KEY = ' sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej';
+const SUPABASE_KEY = 'sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -1215,20 +1199,6 @@ if (error) {
 } else {
   console.log('AIDEL TV Supabase connected!');
 }
-
-window.aidelSupabase = supabase;
-
-const { data, error: error2 } = await supabase
-  .from('movies')
-  .select('id')
-  .limit(1);
-
-if (error2) {
-  alert('Supabase connection failed: ' + error2.message);
-} else {
-  alert('AIDEL TV is successfully connected to Supabase!');
-}
-console.log('AIDEL TV Supabase connected successfully!');
 </script>
 
 </body>
