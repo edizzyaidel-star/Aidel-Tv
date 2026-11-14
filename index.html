@@ -288,7 +288,7 @@ footer strong{font:800 20px Outfit;color:white}
     <button class="btn btn-secondary" id="downloadButton" disabled>Not Available Yet</button>
    </div>
    <div id="downloadMessage" style="font-size:12px;color:#888;margin-top:9px">
-    Downloads appear when an authorised video file has been uploaded and approved.
+    Downloads appear when a video file has been uploaded to AIDEL TV storage.
    </div>
    <div id="seasonArea"></div>
    <div id="trailerArea"></div>
@@ -365,6 +365,7 @@ let currentDetails=null;
 let authMode="login";
 let activeSearchRequest=0;
 let detailRequest=0;
+let homeRenderToken=0;
 let savedView=readViewState();
 
 function readViewState(){
@@ -504,12 +505,17 @@ function setUnavailable(button,message){
  if(message)$("downloadMessage").textContent=message;
 }
 
-/* CHECK THE RIGHTS REGISTRY BEFORE ACTIVATING A MOVIE DOWNLOAD */
+/*
+ SUPABASE UPLOAD DOWNLOAD RULE:
+ If the movie file exists in the Movies bucket, enable its download.
+ This does not automatically approve Internet Archive or Wikimedia files.
+ Only upload movies you own or have permission to distribute.
+*/
 async function setupMovieDownload(details,token){
  const b=$("downloadButton");
  b.disabled=true;
  b.textContent="Checking...";
- $("downloadMessage").textContent="Checking movie file and distribution approval...";
+ $("downloadMessage").textContent="Checking AIDEL TV storage for the uploaded movie...";
 
  try{
   const f=await findMovieFile(details.id);
@@ -520,32 +526,14 @@ async function setupMovieDownload(details,token){
    return;
   }
 
-  const {data:approval,error}=await supabase
-   .from("movie_download_rights")
-   .select("id,rights_basis")
-   .eq("media_type","movie")
-   .eq("tmdb_id",details.id)
-   .eq("file_name",f.name)
-   .eq("storage_path",f.name)
-   .eq("approved",true)
-   .maybeSingle();
-
-  if(token!==detailRequest)return;
-  if(error)throw error;
-
-  if(!approval||!approval.rights_basis){
-   setUnavailable(b,"File found, but AIDEL TV has not approved its distribution rights.");
-   return;
-  }
-
   activateDownload(b,f.name,f.name);
-  $("downloadMessage").textContent="AIDEL TV approved • "+approval.rights_basis;
+  $("downloadMessage").textContent="Uploaded to AIDEL TV • Ready to download.";
 
  }catch(e){
   if(token===detailRequest){
-   setUnavailable(b,"Could not verify movie distribution approval.");
+   setUnavailable(b,storageErrorMessage(e));
   }
-  console.warn("Movie rights check:",e);
+  console.warn("Movie storage check:",e);
  }
 }
 
@@ -604,19 +592,24 @@ function makeCard(item,media,showSeasonInfo=false){
  </article>`;
 }
 
-async function loadSearchSeasonCounts(items,requestId){
+/* SHARED SEASON COUNT LOADER FOR HOMEPAGE AND SEARCH */
+async function loadSeasonCounts(items,isCurrent=()=>true){
  const tv=items.filter(x=>getMedia(x)==="tv"&&x.id);
 
  for(let i=0;i<tv.length;i+=5){
-  if(requestId!==activeSearchRequest)return;
+  if(!isCurrent())return;
 
   await Promise.all(tv.slice(i,i+5).map(async item=>{
    try{
     const d=await tmdb("/tv/"+item.id);
-    if(requestId!==activeSearchRequest)return;
+    if(!isCurrent())return;
+
     const el=$("season-"+Number(item.id));
-    if(el)el.textContent=`${d.number_of_seasons||0} ${d.number_of_seasons===1?"Season":"Seasons"} • ${d.number_of_episodes||0} Episodes`;
+    if(el){
+     el.textContent=`${d.number_of_seasons||0} ${d.number_of_seasons===1?"Season":"Seasons"} • ${d.number_of_episodes||0} Episodes`;
+    }
    }catch{
+    if(!isCurrent())return;
     const el=$("season-"+Number(item.id));
     if(el)el.textContent="Season information unavailable";
    }
@@ -624,13 +617,27 @@ async function loadSearchSeasonCounts(items,requestId){
  }
 }
 
+async function loadSearchSeasonCounts(items,requestId){
+ return loadSeasonCounts(items,()=>requestId===activeSearchRequest);
+}
+
 function renderRow(el,results,media="movie"){
  const items=(results||[]).filter(x=>x&&x.id&&x.poster_path&&x.media_type!=="person").slice(0,20);
+
  if(!items.length){
   el.innerHTML='<div class="status">No titles found in this category.</div>';
   return;
  }
+
  el.innerHTML=items.map(x=>makeCard(x,media==="all"?getMedia(x):media,media==="tv"||media==="all"&&getMedia(x)==="tv")).join("");
+
+ /* Load homepage season counts after the cards have been added */
+ const thisRender=++homeRenderToken;
+ const tvItems=items.filter(x=>media==="tv"||(media==="all"&&getMedia(x)==="tv"));
+
+ if(tvItems.length){
+  loadSeasonCounts(tvItems,()=>thisRender===homeRenderToken&&el.isConnected);
+ }
 }
 
 function showError(el,error,retry){
@@ -1067,10 +1074,7 @@ async function searchWikimediaCommons(query,requestId){
  }
 }
 
-/* SEARCH MOVIES
-   This function declaration was missing in your previous code.
-   It is now restored so the search works correctly.
-*/
+/* SEARCH MOVIES */
 async function searchMovies(query,{fromRestore=false}={}){
  const requestId=++activeSearchRequest;
 
@@ -1118,7 +1122,6 @@ function seasonPoster(season,series){
 
 async function showSeriesSeasons(series,{fromRestore=false}={}){
  const area=$("seasonArea");
- const token=detailRequest;
 
  area.innerHTML='<h3 style="margin-top:24px">All Seasons</h3><div class="status">Loading season posters...</div>';
 
@@ -1155,7 +1158,7 @@ async function showSeriesSeasons(series,{fromRestore=false}={}){
  }
 }
 
-/* EPISODES: CHECK RIGHTS BEFORE ENABLING DOWNLOAD */
+/* EPISODES: SUPABASE FILES ARE DOWNLOADABLE WHEN FOUND */
 async function showSeasonEpisodes(series,seasonNumber,{fromRestore=false}={}){
  const area=$("seasonArea");
  const token=detailRequest;
@@ -1192,7 +1195,7 @@ async function showSeasonEpisodes(series,seasonNumber,{fromRestore=false}={}){
     <img src="${imageURL(ep.still_path,"w500")}" alt="${escapeHTML(ep.name)}" onerror="this.onerror=null;this.src='${imageURL(data.poster_path||series.poster_path)}'">
     <h4>${String(ep.episode_number).padStart(2,"0")}. ${escapeHTML(ep.name||"Episode")}</h4>
     <p>${escapeHTML(ep.overview||"Episode description unavailable.")}</p>
-    <div class="episode-file-status" style="padding:0 9px 8px;color:#aaa;font-size:11px">Checking uploaded file and rights...</div>
+    <div class="episode-file-status" style="padding:0 9px 8px;color:#aaa;font-size:11px">Checking AIDEL TV storage...</div>
     <video class="episode-player" controls playsinline preload="metadata" hidden></video>
     <button class="episode-download" disabled data-episode="${ep.episode_number}">Checking file...</button>
    </article>
@@ -1216,29 +1219,15 @@ async function showSeasonEpisodes(series,seasonNumber,{fromRestore=false}={}){
      return;
     }
 
-    const {data:approval,error}=await supabase
-     .from("movie_download_rights")
-     .select("id,rights_basis")
-     .eq("media_type","tv")
-     .eq("tmdb_id",series.id)
-     .eq("file_name",file.name)
-     .eq("storage_path",file.storagePath)
-     .eq("approved",true)
-     .maybeSingle();
-
-    if(token!==detailRequest)return;
-    if(error)throw error;
-
-    if(!approval||!approval.rights_basis){
-     status.textContent="File uploaded, but distribution rights are not approved.";
-     button.textContent="Not Approved";
-     return;
-    }
-
+    /*
+     The file exists in the Supabase Movies bucket.
+     Enable the download without requiring a separate
+     movie_download_rights approval row.
+    */
     const url=file.publicURL||publicFileURL(file.storagePath);
     const ext=(file.name.split(".").pop()||"").toLowerCase();
 
-    status.textContent="AIDEL TV approved • "+approval.rights_basis;
+    status.textContent="Uploaded to AIDEL TV • File available";
     button.disabled=false;
     button.textContent="⬇ Download Episode";
     button.onclick=()=>downloadFile(file.storagePath,file.name);
