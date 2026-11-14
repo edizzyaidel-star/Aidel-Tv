@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,183 +10,760 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
 :root{--bg:#08080c;--panel:#14141d;--card:#191923;--red:#e50914;--purple:#a855f7;--text:#f5f5fa;--muted:#9292a2;--border:rgba(255,255,255,.09)}
-*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;overflow-x:hidden;line-height:1.5}button,input{font:inherit}button{cursor:pointer}
-#aidel-intro{position:fixed;inset:0;z-index:99999;background:#050408;display:flex;align-items:center;justify-content:center;transition:opacity .8s,visibility .8s}#aidel-intro.hide{opacity:0;visibility:hidden;pointer-events:none}.intro-content{text-align:center;width:90%;max-width:700px}.intro-content img{display:block;width:100%;max-height:60vh;object-fit:contain;margin:auto;animation:introGlow 1.8s ease-in-out infinite alternate}.welcome-text{color:#fff;font:800 clamp(25px,5vw,38px) Outfit;letter-spacing:8px;margin-top:20px;text-shadow:0 0 15px #a855f7,0 0 30px #7e22ce}.intro-loader{width:100px;height:3px;background:#32164b;border-radius:10px;margin:25px auto 0;overflow:hidden}.intro-loader:after{content:"";display:block;width:40%;height:100%;background:#b66aff;animation:loader 1s infinite}@keyframes loader{from{transform:translateX(-100%)}to{transform:translateX(260%)}}@keyframes introGlow{to{filter:drop-shadow(0 0 22px #a855f7)}}
-header{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 5%;background:rgba(5,5,8,.95);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}.logo{display:flex;align-items:center;gap:8px;color:white;text-decoration:none;font:800 25px Outfit}.logo-badge{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#e50914,#8c0710);box-shadow:0 0 18px #e5091455}.logo span{color:var(--red)}nav{display:flex;gap:20px;align-items:center}nav a{color:#ccc;text-decoration:none;font-size:13px}nav a:hover{color:var(--red)}.header-actions{display:flex;align-items:center;gap:9px}.search{display:flex;width:min(250px,30vw);border:1px solid var(--border);border-radius:25px;background:#17171e;overflow:hidden}.search input{width:100%;min-width:0;padding:10px 13px;color:white;background:transparent;border:0;outline:0}.search button{background:var(--red);color:white;border:0;padding:0 14px}.small-btn{border:1px solid var(--border);background:#1a1a22;color:white;border-radius:20px;padding:9px 13px;font-size:12px}#accountButton{background:var(--red);border-color:var(--red)}
-.hero-section{position:relative;height:62vh;min-height:420px;max-height:650px;overflow:hidden}.hero-slide{position:absolute;inset:0;opacity:0;background-size:cover;background-position:center 25%;display:flex;align-items:flex-end;transition:opacity 1s}.hero-slide.active{opacity:1;z-index:2}.hero-slide:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#000 0%,rgba(0,0,0,.83) 38%,transparent 80%),linear-gradient(0deg,#08080c 0%,transparent 65%)}.hero-content{position:relative;z-index:3;padding:45px 6%;max-width:620px}.eyebrow{color:#ff4550;font-size:12px;font-weight:800;letter-spacing:2px;margin-bottom:10px}.hero-content h1{font:800 clamp(32px,5.5vw,58px)/1.05 Outfit;margin-bottom:12px}.hero-meta{display:flex;gap:12px;flex-wrap:wrap;color:#ccc;font-size:13px;margin-bottom:14px}.rating-pill{color:#ffb84d;background:#392313;padding:3px 9px;border-radius:5px}.hero-content p{color:#c5c5ce;font-size:14px;line-height:1.7;max-width:480px;margin-bottom:22px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.hero-actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:0;border-radius:6px;padding:12px 22px;font-weight:700;font-size:13px}.btn-primary{background:var(--red);color:white}.btn-secondary{background:#ffffff22;color:white}.btn:disabled{opacity:.45;cursor:not-allowed}.hero-dots{position:absolute;bottom:18px;left:6%;z-index:5;display:flex;gap:8px}.hero-dot{width:8px;height:8px;border:0;border-radius:8px;background:#ffffff55}.hero-dot.active{width:23px;background:var(--red)}
-main{padding:10px 5% 60px}.section{margin:35px 0 42px}.section-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.section-heading h2{font:700 22px Outfit}.tag{font-size:10px;color:var(--red);font-weight:800;letter-spacing:1px;text-transform:uppercase}.movie-row{display:flex;gap:14px;overflow-x:auto;padding:5px 2px 17px;scrollbar-width:none;scroll-snap-type:x mandatory}.movie-row::-webkit-scrollbar{display:none}.movie-card{flex:0 0 148px;cursor:pointer;scroll-snap-align:start;transition:transform .25s}.movie-card:hover{transform:translateY(-5px)}.poster-wrap{position:relative;aspect-ratio:2/3;border-radius:9px;overflow:hidden;background:var(--card);box-shadow:0 8px 24px #0008}.poster{width:100%;height:100%;object-fit:cover;display:block}.rating{position:absolute;top:8px;left:8px;z-index:2;background:#000c;color:#ffd45c;padding:4px 7px;font-size:11px;border-radius:5px}.play-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:43px;height:43px;background:var(--red);border-radius:50%;display:grid;place-items:center;opacity:0;transition:.2s}.play-icon:after{content:"";margin-left:4px;border-left:12px solid white;border-top:7px solid transparent;border-bottom:7px solid transparent}.movie-card:hover .play-icon{opacity:1}.movie-card h3{font-size:13px;margin:9px 0 3px;font-weight:600;line-height:1.35}.movie-card small{display:block;font-size:11px;color:var(--muted)}.season-info{display:block;margin-top:5px;color:#c084fc!important;font-size:11px!important;font-weight:700}.status{padding:20px;background:var(--panel);border-radius:9px;color:#aaa;font-size:13px;min-width:100%}.status.error{color:#ff9b9b}.retry-button{background:var(--red);border:0;color:white;padding:7px 12px;border-radius:5px;margin-left:8px}#searchResults{display:none}#searchResults.active{display:block}#searchGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:17px}
-#archiveResults{display:none}#archiveResults.active{display:block}.archive-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:15px}.archive-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:13px;min-width:0}.archive-card h3{font:700 15px Outfit;margin-bottom:6px}.archive-card p{font-size:11px;color:#aaa;line-height:1.55;margin:5px 0}.archive-meta{font-size:10px;color:#c084fc;margin-bottom:7px}.archive-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.archive-actions button,.archive-actions a{border:0;border-radius:5px;padding:8px 11px;font-size:11px;font-weight:700;text-decoration:none}.archive-watch{background:var(--red);color:white}.archive-download{background:#292331;color:white}.archive-actions button:disabled{opacity:.4;cursor:not-allowed}.archive-player{width:100%;margin-top:10px;border-radius:7px;background:#000}.archive-note{color:#888;font-size:11px;line-height:1.6;margin-top:12px}.archive-license{color:#9bd7a6!important}.archive-link{color:#c084fc;text-decoration:none;font-size:11px}
-.modal{display:none;position:fixed;inset:0;z-index:200;background:#000e;overflow-y:auto;padding:20px 12px}.modal.open{display:block}.modal-box{position:relative;max-width:900px;margin:20px auto;background:#101017;border:1px solid var(--border);border-radius:15px;overflow:hidden}.close{position:absolute;right:13px;top:13px;z-index:5;width:39px;height:39px;border:0;border-radius:50%;background:var(--red);color:white;font-size:23px}.modal-backdrop{min-height:260px;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:27px;position:relative}.modal-backdrop:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#101017,transparent 80%)}.modal-backdrop h2{position:relative;font:800 clamp(25px,5vw,40px) Outfit}.modal-body{padding:25px}.modal-body p{color:#bbb;line-height:1.7;margin-top:12px}.modal-meta{color:#aaa;font-size:13px}.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.trailer{width:100%;aspect-ratio:16/9;border:0;margin-top:20px;border-radius:8px;background:#000}.form-box{max-width:430px;margin:35px auto;background:#11111a;padding:28px;border:1px solid var(--border);border-radius:15px;position:relative}.form-box h2{font:700 25px Outfit;margin-bottom:7px}.form-box p{font-size:13px;color:#999;margin-bottom:18px}.form-box input{width:100%;padding:13px;margin:7px 0;border-radius:7px;border:1px solid var(--border);background:#1a1a24;color:white;outline:0}.form-box input:focus{border-color:var(--purple)}.form-box .btn{width:100%;margin-top:10px}.form-link{color:#c084fc;background:none;border:0;margin-top:16px;font-size:13px}.form-message{font-size:12px;color:#ff9b9b;margin-top:12px}#profileInfo{color:#bbb;font-size:13px;margin:10px 0}
-.season-grid,.episode-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:14px;margin-top:15px}.season-card,.episode-card{background:#191923;border:1px solid rgba(255,255,255,.1);border-radius:9px;overflow:hidden}.season-card{cursor:pointer}.season-card img,.episode-card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}.episode-card img{aspect-ratio:16/9}.season-card h4,.episode-card h4{padding:9px;font-size:12px}.episode-card p{padding:0 9px 9px;font-size:11px;color:#aaa}.episode-download{display:block;margin:0 9px 12px;padding:9px;width:calc(100% - 18px);background:#e50914;border:0;color:white;border-radius:5px;font-size:11px}.episode-download:disabled{opacity:.45;cursor:not-allowed}.episode-player{width:calc(100% - 18px);margin:0 9px 10px;border-radius:7px;background:#000;max-height:230px}.season-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:24px}.back-season{background:#292331;border:1px solid var(--border);color:white;padding:8px 12px;border-radius:6px}
-footer{border-top:1px solid var(--border);padding:38px 5%;color:#777;text-align:center;font-size:12px;line-height:1.8}footer strong{font:800 20px Outfit;color:white}
-@media(max-width:760px){header{padding:11px 4%;flex-wrap:wrap;gap:10px}.logo{font-size:21px}.logo-badge{width:31px;height:31px}nav{order:3;width:100%;justify-content:space-between;gap:5px}nav a{font-size:11px}.header-actions{margin-left:auto}.search{width:42vw}.search input{padding:9px;font-size:12px}.small-btn{padding:8px 10px;font-size:11px}.hero-section{height:57vh;min-height:370px}.hero-content{padding:30px 5%}.hero-content h1{font-size:29px}.hero-content p{font-size:12px;-webkit-line-clamp:2}main{padding-left:4%;padding-right:4%}.movie-card{flex-basis:128px}.section-heading h2{font-size:18px}#searchGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.welcome-text{letter-spacing:6px}.modal-body{padding:17px}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;overflow-x:hidden;line-height:1.5}
+button,input{font:inherit}
+button{cursor:pointer}
+
+#aidel-intro{position:fixed;inset:0;z-index:99999;background:#050408;display:flex;align-items:center;justify-content:center;transition:opacity .8s,visibility .8s}
+#aidel-intro.hide{opacity:0;visibility:hidden;pointer-events:none}
+.intro-content{text-align:center;width:90%;max-width:700px}
+.intro-content img{display:block;width:100%;max-height:60vh;object-fit:contain;margin:auto;animation:introGlow 1.8s ease-in-out infinite alternate}
+.welcome-text{color:#fff;font:800 clamp(25px,5vw,38px) Outfit;letter-spacing:8px;margin-top:20px;text-shadow:0 0 15px #a855f7,0 0 30px #7e22ce}
+.intro-loader{width:100px;height:3px;background:#32164b;border-radius:10px;margin:25px auto 0;overflow:hidden}
+.intro-loader:after{content:"";display:block;width:40%;height:100%;background:#b66aff;animation:loader 1s infinite}
+@keyframes loader{from{transform:translateX(-100%)}to{transform:translateX(260%)}}
+@keyframes introGlow{to{filter:drop-shadow(0 0 22px #a855f7)}}
+
+header{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 5%;background:rgba(5,5,8,.95);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:8px;color:white;text-decoration:none;font:800 25px Outfit}
+.logo-badge{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#e50914,#8c0710);box-shadow:0 0 18px #e5091455}
+.logo span{color:var(--red)}
+nav{display:flex;gap:20px;align-items:center}
+nav a{color:#ccc;text-decoration:none;font-size:13px}
+nav a:hover{color:var(--red)}
+.header-actions{display:flex;align-items:center;gap:9px}
+.search{display:flex;width:min(250px,30vw);border:1px solid var(--border);border-radius:25px;background:#17171e;overflow:hidden}
+.search input{width:100%;min-width:0;padding:10px 13px;color:white;background:transparent;border:0;outline:0}
+.search button{background:var(--red);color:white;border:0;padding:0 14px}
+.small-btn{border:1px solid var(--border);background:#1a1a22;color:white;border-radius:20px;padding:9px 13px;font-size:12px}
+#accountButton{background:var(--red);border-color:var(--red)}
+
+.hero-section{position:relative;height:62vh;min-height:420px;max-height:650px;overflow:hidden}
+.hero-slide{position:absolute;inset:0;opacity:0;background-size:cover;background-position:center 25%;display:flex;align-items:flex-end;transition:opacity 1s}
+.hero-slide.active{opacity:1;z-index:2}
+.hero-slide:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#000 0%,rgba(0,0,0,.83) 38%,transparent 80%),linear-gradient(0deg,#08080c 0%,transparent 65%)}
+.hero-content{position:relative;z-index:3;padding:45px 6%;max-width:620px}
+.eyebrow{color:#ff4550;font-size:12px;font-weight:800;letter-spacing:2px;margin-bottom:10px}
+.hero-content h1{font:800 clamp(32px,5.5vw,58px)/1.05 Outfit;margin-bottom:12px}
+.hero-meta{display:flex;gap:12px;flex-wrap:wrap;color:#ccc;font-size:13px;margin-bottom:14px}
+.rating-pill{color:#ffb84d;background:#392313;padding:3px 9px;border-radius:5px}
+.hero-content p{color:#c5c5ce;font-size:14px;line-height:1.7;max-width:480px;margin-bottom:22px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:0;border-radius:6px;padding:12px 22px;font-weight:700;font-size:13px}
+.btn-primary{background:var(--red);color:white}
+.btn-secondary{background:#ffffff22;color:white}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.hero-dots{position:absolute;bottom:18px;left:6%;z-index:5;display:flex;gap:8px}
+.hero-dot{width:8px;height:8px;border:0;border-radius:8px;background:#ffffff55}
+.hero-dot.active{width:23px;background:var(--red)}
+
+main{padding:10px 5% 60px}
+.section{margin:35px 0 42px}
+.section-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
+.section-heading h2{font:700 22px Outfit}
+.tag{font-size:10px;color:var(--red);font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.movie-row{display:flex;gap:14px;overflow-x:auto;padding:5px 2px 17px;scrollbar-width:none;scroll-snap-type:x mandatory}
+.movie-row::-webkit-scrollbar{display:none}
+.movie-card{flex:0 0 148px;cursor:pointer;scroll-snap-align:start;transition:transform .25s}
+.movie-card:hover{transform:translateY(-5px)}
+.poster-wrap{position:relative;aspect-ratio:2/3;border-radius:9px;overflow:hidden;background:var(--card);box-shadow:0 8px 24px #0008}
+.poster{width:100%;height:100%;object-fit:cover;display:block}
+.rating{position:absolute;top:8px;left:8px;z-index:2;background:#000c;color:#ffd45c;padding:4px 7px;font-size:11px;border-radius:5px}
+.play-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:43px;height:43px;background:var(--red);border-radius:50%;display:grid;place-items:center;opacity:0;transition:.2s}
+.play-icon:after{content:"";margin-left:4px;border-left:12px solid white;border-top:7px solid transparent;border-bottom:7px solid transparent}
+.movie-card:hover .play-icon{opacity:1}
+.movie-card h3{font-size:13px;margin:9px 0 3px;font-weight:600;line-height:1.35}
+.movie-card small{display:block;font-size:11px;color:var(--muted)}
+.season-info{display:block;margin-top:5px;color:#c084fc!important;font-size:11px!important;font-weight:700}
+.status{padding:20px;background:var(--panel);border-radius:9px;color:#aaa;font-size:13px;min-width:100%}
+.status.error{color:#ff9b9b}
+.retry-button{background:var(--red);border:0;color:white;padding:7px 12px;border-radius:5px;margin-left:8px}
+#searchResults{display:none}
+#searchResults.active{display:block}
+#searchGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:17px}
+
+#archiveResults,#commonsResults{display:none}
+#archiveResults.active,#commonsResults.active{display:block}
+.archive-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:15px}
+.archive-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:13px;min-width:0}
+.archive-card h3{font:700 15px Outfit;margin-bottom:6px}
+.archive-card p{font-size:11px;color:#aaa;line-height:1.55;margin:5px 0}
+.archive-meta{font-size:10px;color:#c084fc;margin-bottom:7px}
+.archive-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+.archive-actions button,.archive-actions a{border:0;border-radius:5px;padding:8px 11px;font-size:11px;font-weight:700;text-decoration:none}
+.archive-watch{background:var(--red);color:white}
+.archive-download{background:#292331;color:white}
+.archive-actions button:disabled{opacity:.4;cursor:not-allowed}
+.archive-player{width:100%;margin-top:10px;border-radius:7px;background:#000}
+.archive-note{color:#888;font-size:11px;line-height:1.6;margin-top:12px}
+.archive-license{color:#9bd7a6!important}
+.archive-link{color:#c084fc;text-decoration:none;font-size:11px}
+
+.modal{display:none;position:fixed;inset:0;z-index:200;background:#000e;overflow-y:auto;padding:20px 12px}
+.modal.open{display:block}
+.modal-box{position:relative;max-width:900px;margin:20px auto;background:#101017;border:1px solid var(--border);border-radius:15px;overflow:hidden}
+.close{position:absolute;right:13px;top:13px;z-index:5;width:39px;height:39px;border:0;border-radius:50%;background:var(--red);color:white;font-size:23px}
+.modal-backdrop{min-height:260px;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:27px;position:relative}
+.modal-backdrop:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#101017,transparent 80%)}
+.modal-backdrop h2{position:relative;font:800 clamp(25px,5vw,40px) Outfit}
+.modal-body{padding:25px}
+.modal-body p{color:#bbb;line-height:1.7;margin-top:12px}
+.modal-meta{color:#aaa;font-size:13px}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.trailer{width:100%;aspect-ratio:16/9;border:0;margin-top:20px;border-radius:8px;background:#000}
+.form-box{max-width:430px;margin:35px auto;background:#11111a;padding:28px;border:1px solid var(--border);border-radius:15px;position:relative}
+.form-box h2{font:700 25px Outfit;margin-bottom:7px}
+.form-box p{font-size:13px;color:#999;margin-bottom:18px}
+.form-box input{width:100%;padding:13px;margin:7px 0;border-radius:7px;border:1px solid var(--border);background:#1a1a24;color:white;outline:0}
+.form-box input:focus{border-color:var(--purple)}
+.form-box .btn{width:100%;margin-top:10px}
+.form-link{color:#c084fc;background:none;border:0;margin-top:16px;font-size:13px}
+.form-message{font-size:12px;color:#ff9b9b;margin-top:12px}
+#profileInfo{color:#bbb;font-size:13px;margin:10px 0}
+
+.season-grid,.episode-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:14px;margin-top:15px}
+.season-card,.episode-card{background:#191923;border:1px solid rgba(255,255,255,.1);border-radius:9px;overflow:hidden}
+.season-card{cursor:pointer}
+.season-card img,.episode-card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+.episode-card img{aspect-ratio:16/9}
+.season-card h4,.episode-card h4{padding:9px;font-size:12px}
+.episode-card p{padding:0 9px 9px;font-size:11px;color:#aaa}
+.episode-download{display:block;margin:0 9px 12px;padding:9px;width:calc(100% - 18px);background:#e50914;border:0;color:white;border-radius:5px;font-size:11px}
+.episode-download:disabled{opacity:.45;cursor:not-allowed}
+.episode-player{width:calc(100% - 18px);margin:0 9px 10px;border-radius:7px;background:#000;max-height:230px}
+.season-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:24px}
+.back-season{background:#292331;border:1px solid var(--border);color:white;padding:8px 12px;border-radius:6px}
+
+footer{border-top:1px solid var(--border);padding:38px 5%;color:#777;text-align:center;font-size:12px;line-height:1.8}
+footer strong{font:800 20px Outfit;color:white}
+
+@media(max-width:760px){
+ header{padding:11px 4%;flex-wrap:wrap;gap:10px}
+ .logo{font-size:21px}
+ .logo-badge{width:31px;height:31px}
+ nav{order:3;width:100%;justify-content:space-between;gap:5px}
+ nav a{font-size:11px}
+ .header-actions{margin-left:auto}
+ .search{width:42vw}
+ .search input{padding:9px;font-size:12px}
+ .small-btn{padding:8px 10px;font-size:11px}
+ .hero-section{height:57vh;min-height:370px}
+ .hero-content{padding:30px 5%}
+ .hero-content h1{font-size:29px}
+ .hero-content p{font-size:12px;-webkit-line-clamp:2}
+ main{padding-left:4%;padding-right:4%}
+ .movie-card{flex-basis:128px}
+ .section-heading h2{font-size:18px}
+ #searchGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .welcome-text{letter-spacing:6px}
+ .modal-body{padding:17px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+}
 </style>
 </head>
+
 <body>
-<div id="aidel-intro"><div class="intro-content"><img src="IMG-20261113-WA0002.jpg" alt="AIDEL TV Logo" onerror="this.style.display='none';document.getElementById('introFallback').style.display='block'"><div id="introFallback" style="display:none;color:#b66aff;font:900 48px Outfit">AIDEL TV</div><h1 class="welcome-text">WELCOME</h1><div class="intro-loader"></div></div></div>
+
+<div id="aidel-intro">
+ <div class="intro-content">
+  <img src="IMG-20261113-WA0002.jpg" alt="AIDEL TV Logo" onerror="this.style.display='none';document.getElementById('introFallback').style.display='block'">
+  <div id="introFallback" style="display:none;color:#b66aff;font:900 48px Outfit">AIDEL TV</div>
+  <h1 class="welcome-text">WELCOME</h1>
+  <div class="intro-loader"></div>
+ </div>
+</div>
+
 <header>
-<a class="logo" href="#"><div class="logo-badge">A</div>AIDEL<span>TV</span></a>
-<nav><a href="#">Home</a><a href="#trending">Movies</a><a href="#series">Series</a><a href="#nollywood">Nollywood</a><a href="#myWatchlist">My List</a></nav>
-<div class="header-actions"><form class="search" id="searchForm"><input id="searchInput" type="search" placeholder="Search movies..." aria-label="Search movies"><button type="submit">⌕</button></form><button class="small-btn" id="accountButton">Sign In</button></div>
+ <a class="logo" href="#"><div class="logo-badge">A</div>AIDEL<span>TV</span></a>
+ <nav>
+  <a href="#">Home</a>
+  <a href="#trending">Movies</a>
+  <a href="#series">Series</a>
+  <a href="#nollywood">Nollywood</a>
+  <a href="#myWatchlist">My List</a>
+ </nav>
+ <div class="header-actions">
+  <form class="search" id="searchForm">
+   <input id="searchInput" type="search" placeholder="Search movies..." aria-label="Search movies">
+   <button type="submit">⌕</button>
+  </form>
+  <button class="small-btn" id="accountButton">Sign In</button>
+ </div>
 </header>
-<section class="hero-section" id="heroSection"><div id="heroSlider"></div><div class="hero-dots" id="heroDots"></div></section>
+
+<section class="hero-section" id="heroSection">
+ <div id="heroSlider"></div>
+ <div class="hero-dots" id="heroDots"></div>
+</section>
+
 <main>
-<section class="section" id="searchResults"><div class="section-heading"><h2>Search Results</h2><span class="tag" id="searchCount"></span></div><div id="searchGrid"></div></section>
-<section class="section" id="archiveResults"><div class="section-heading"><h2>Internet Archive Movies</h2><span class="tag">PUBLIC DOMAIN & LICENSED</span></div><div id="archiveGrid" class="archive-grid"><div class="status">Search for a title to discover available Internet Archive videos.</div></div><p class="archive-note">AIDEL TV links to videos hosted by Internet Archive. Availability and playback depend on the source file. Check the item page and its rights information before reusing or redistributing any file; uploader-provided licence details may need independent verification.</p></section>
-<div id="sections">
-<section class="section" id="trending"><div class="section-heading"><h2>Trending Movies & Series</h2><span class="tag">Hot This Week</span></div><div class="movie-row" id="trendingRow"><div class="status">Loading...</div></div></section>
-<section class="section" id="nollywood"><div class="section-heading"><h2>Nollywood Movies</h2><span class="tag">Made in Nigeria</span></div><div class="movie-row" id="nollywoodRow"><div class="status">Loading...</div></div></section>
-<section class="section" id="action"><div class="section-heading"><h2>Action & Adventure</h2><span class="tag">Non-stop Action</span></div><div class="movie-row" id="actionRow"><div class="status">Loading...</div></div></section>
-<section class="section" id="comedy"><div class="section-heading"><h2>Comedy</h2><span class="tag">Time to Laugh</span></div><div class="movie-row" id="comedyRow"><div class="status">Loading...</div></div></section>
-<section class="section" id="series"><div class="section-heading"><h2>Popular TV Series</h2><span class="tag">Top Series</span></div><div class="movie-row" id="seriesRow"><div class="status">Loading...</div></div></section>
-<section class="section" id="topRated"><div class="section-heading"><h2>Top Rated Movies</h2><span class="tag">Viewer Favourites</span></div><div class="movie-row" id="topRatedRow"><div class="status">Loading...</div></div></section>
-<section class="section" id="myWatchlist"><div class="section-heading"><h2>My Watchlist</h2><span class="tag">Saved Titles</span></div><div class="movie-row" id="watchlistRow"><div class="status">Sign in and save movies to build your list.</div></div></section>
-</div></main>
-<div class="modal" id="movieModal" aria-hidden="true"><div class="modal-box"><button class="close" id="closeMovie" aria-label="Close">×</button><div class="modal-backdrop" id="modalBackdrop"><h2 id="modalTitle"></h2></div><div class="modal-body"><div class="modal-meta" id="modalMeta"></div><p id="modalOverview"></p><div class="modal-actions"><button class="btn btn-primary" id="watchlistButton">＋ My Watchlist</button><button class="btn btn-secondary" id="downloadButton" disabled>Not Available Yet</button></div><div id="downloadMessage" style="font-size:12px;color:#888;margin-top:9px">Downloads appear when an authorised video file has been uploaded.</div><div id="seasonArea"></div><div id="trailerArea"></div></div></div></div>
-<div class="modal" id="authModal" aria-hidden="true"><div class="form-box"><button class="close" id="closeAuth">×</button><h2 id="authTitle">Welcome to AIDEL TV</h2><p id="authDescription">Sign in to access your account and watchlist.</p><form id="authForm"><input id="displayName" type="text" placeholder="Your name" autocomplete="name" style="display:none"><input id="authEmail" type="email" placeholder="Email address" autocomplete="email" required><input id="authPassword" type="password" placeholder="Password" autocomplete="current-password" minlength="6" required><button class="btn btn-primary" type="submit" id="authSubmit">Sign In</button></form><div class="form-message" id="authMessage"></div><button class="form-link" id="authSwitch">New to AIDEL TV? Create an account</button></div></div>
-<div class="modal" id="profileModal" aria-hidden="true"><div class="form-box"><button class="close" id="closeProfile">×</button><h2>My Profile</h2><p>Manage your AIDEL TV account.</p><div id="profileInfo"></div><form id="profileForm"><input id="profileName" type="text" placeholder="Display name" required><button class="btn btn-primary" type="submit">Save Profile</button></form><div class="form-message" id="profileMessage"></div><button class="btn btn-secondary" id="signOutButton" style="width:100%;margin-top:15px">Sign Out</button></div></div>
-<footer><strong>AIDEL TV</strong><br>Your home for movies, TV series and entertainment.<br>Movie information and images provided by TMDB.<br><br>This product uses the TMDB API but is not endorsed or certified by TMDB.<br>© 2026 AIDEL TV</footer>
+ <section class="section" id="searchResults">
+  <div class="section-heading">
+   <h2>Search Results</h2>
+   <span class="tag" id="searchCount"></span>
+  </div>
+  <div id="searchGrid"></div>
+ </section>
+
+ <section class="section" id="archiveResults">
+  <div class="section-heading">
+   <h2>Internet Archive Movies</h2>
+   <span class="tag">PUBLIC DOMAIN & LICENSED</span>
+  </div>
+  <div id="archiveGrid" class="archive-grid">
+   <div class="status">Search for a title to discover available Internet Archive videos.</div>
+  </div>
+  <p class="archive-note">
+   AIDEL TV links to videos hosted by Internet Archive. Availability and playback depend on the source file. Check the item page and its rights information before reusing or redistributing any file; uploader-provided licence details may need independent verification.
+  </p>
+ </section>
+
+ <section class="section" id="commonsResults">
+  <div class="section-heading">
+   <h2>Wikimedia Commons Movies</h2>
+   <span class="tag">OPEN-LICENCE MEDIA</span>
+  </div>
+  <div id="commonsGrid" class="archive-grid">
+   <div class="status">Search for films to discover video files on Wikimedia Commons.</div>
+  </div>
+  <p class="archive-note">
+   Wikimedia Commons files may have different licence conditions. AIDEL TV enables downloads only after the exact file and its distribution rights have been reviewed and approved.
+  </p>
+ </section>
+
+ <div id="sections">
+  <section class="section" id="trending">
+   <div class="section-heading"><h2>Trending Movies & Series</h2><span class="tag">Hot This Week</span></div>
+   <div class="movie-row" id="trendingRow"><div class="status">Loading...</div></div>
+  </section>
+
+  <section class="section" id="nollywood">
+   <div class="section-heading"><h2>Nollywood Movies</h2><span class="tag">Made in Nigeria</span></div>
+   <div class="movie-row" id="nollywoodRow"><div class="status">Loading...</div></div>
+  </section>
+
+  <section class="section" id="action">
+   <div class="section-heading"><h2>Action & Adventure</h2><span class="tag">Non-stop Action</span></div>
+   <div class="movie-row" id="actionRow"><div class="status">Loading...</div></div>
+  </section>
+
+  <section class="section" id="comedy">
+   <div class="section-heading"><h2>Comedy</h2><span class="tag">Time to Laugh</span></div>
+   <div class="movie-row" id="comedyRow"><div class="status">Loading...</div></div>
+  </section>
+
+  <section class="section" id="series">
+   <div class="section-heading"><h2>Popular TV Series</h2><span class="tag">Top Series</span></div>
+   <div class="movie-row" id="seriesRow"><div class="status">Loading...</div></div>
+  </section>
+
+  <section class="section" id="topRated">
+   <div class="section-heading"><h2>Top Rated Movies</h2><span class="tag">Viewer Favourites</span></div>
+   <div class="movie-row" id="topRatedRow"><div class="status">Loading...</div></div>
+  </section>
+
+  <section class="section" id="myWatchlist">
+   <div class="section-heading"><h2>My Watchlist</h2><span class="tag">Saved Titles</span></div>
+   <div class="movie-row" id="watchlistRow"><div class="status">Sign in and save movies to build your list.</div></div>
+  </section>
+ </div>
+</main>
+
+<div class="modal" id="movieModal" aria-hidden="true">
+ <div class="modal-box">
+  <button class="close" id="closeMovie" aria-label="Close">×</button>
+  <div class="modal-backdrop" id="modalBackdrop"><h2 id="modalTitle"></h2></div>
+  <div class="modal-body">
+   <div class="modal-meta" id="modalMeta"></div>
+   <p id="modalOverview"></p>
+   <div class="modal-actions">
+    <button class="btn btn-primary" id="watchlistButton">＋ My Watchlist</button>
+    <button class="btn btn-secondary" id="downloadButton" disabled>Not Available Yet</button>
+   </div>
+   <div id="downloadMessage" style="font-size:12px;color:#888;margin-top:9px">
+    Downloads appear when an authorised video file has been uploaded and approved.
+   </div>
+   <div id="seasonArea"></div>
+   <div id="trailerArea"></div>
+  </div>
+ </div>
+</div>
+
+<div class="modal" id="authModal" aria-hidden="true">
+ <div class="form-box">
+  <button class="close" id="closeAuth">×</button>
+  <h2 id="authTitle">Welcome to AIDEL TV</h2>
+  <p id="authDescription">Sign in to access your account and watchlist.</p>
+  <form id="authForm">
+   <input id="displayName" type="text" placeholder="Your name" autocomplete="name" style="display:none">
+   <input id="authEmail" type="email" placeholder="Email address" autocomplete="email" required>
+   <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password" minlength="6" required>
+   <button class="btn btn-primary" type="submit" id="authSubmit">Sign In</button>
+  </form>
+  <div class="form-message" id="authMessage"></div>
+  <button class="form-link" id="authSwitch">New to AIDEL TV? Create an account</button>
+ </div>
+</div>
+
+<div class="modal" id="profileModal" aria-hidden="true">
+ <div class="form-box">
+  <button class="close" id="closeProfile">×</button>
+  <h2>My Profile</h2>
+  <p>Manage your AIDEL TV account.</p>
+  <div id="profileInfo"></div>
+  <form id="profileForm">
+   <input id="profileName" type="text" placeholder="Display name" required>
+   <button class="btn btn-primary" type="submit">Save Profile</button>
+  </form>
+  <div class="form-message" id="profileMessage"></div>
+  <button class="btn btn-secondary" id="signOutButton" style="width:100%;margin-top:15px">Sign Out</button>
+ </div>
+</div>
+
+<footer>
+ <strong>AIDEL TV</strong><br>
+ Your home for movies, TV series and entertainment.<br>
+ Movie information and images provided by TMDB.<br><br>
+ This product uses the TMDB API but is not endorsed or certified by TMDB.<br>
+ © 2026 AIDEL TV
+</footer>
 
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
+/* KEEP YOUR EXISTING API KEYS AND PROJECT DETAILS */
 const TMDB_API_KEY = "b780fe2deb5463314e4fa32ef70e42c4"
 const API_BASE = "https://api.themoviedb.org/3";
 const IMAGE_BASE = "https://image.tmdb.org/t/p/";
 const SUPABASE_URL = "https://nbvznasgshojxjsgchds.supabase.co";
 const SUPABASE_KEY = "sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej";
 const BUCKET = "Movies";
+
 const supabase = createClient(SUPABASE_URL,SUPABASE_KEY);
 window.aidelSupabase = supabase;
+
 const $ = id => document.getElementById(id);
 const FALLBACK_POSTER = "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450"><rect width="100%" height="100%" fill="#191923"/><text x="50%" y="50%" fill="#888" font-size="22" text-anchor="middle">AIDEL TV</text></svg>');
+
 const STATE_KEY = "aidel_view_state_v2";
 const AVATAR_FILE = "Series/246/Season-3./S03E01.Mp4";
 const AVATAR_URL = SUPABASE_URL+"/storage/v1/object/public/"+BUCKET+"/"+AVATAR_FILE.split("/").map(encodeURIComponent).join("/");
-let currentUser=null,currentSession=null,heroMovies=[],currentHeroIndex=0,heroInterval=null,currentDetails=null,authMode="login",activeSearchRequest=0,detailRequest=0,restoring=false;
+
+let currentUser=null;
+let currentSession=null;
+let heroMovies=[];
+let currentHeroIndex=0;
+let heroInterval=null;
+let currentDetails=null;
+let authMode="login";
+let activeSearchRequest=0;
+let detailRequest=0;
 let savedView=readViewState();
 
-function readViewState(){try{return JSON.parse(sessionStorage.getItem(STATE_KEY)||"{}")}catch{return {}}}
-function saveViewState(patch={}){savedView={...readViewState(),...patch,scrollY:window.scrollY,hash:location.hash,updated:Date.now()};try{sessionStorage.setItem(STATE_KEY,JSON.stringify(savedView))}catch{}}
+function readViewState(){
+ try{return JSON.parse(sessionStorage.getItem(STATE_KEY)||"{}")}
+ catch{return {}}
+}
+
+function saveViewState(patch={}){
+ savedView={...readViewState(),...patch,scrollY:window.scrollY,hash:location.hash,updated:Date.now()};
+ try{sessionStorage.setItem(STATE_KEY,JSON.stringify(savedView))}
+ catch{}
+}
+
 let scrollSaveTimer;
-window.addEventListener("scroll",()=>{clearTimeout(scrollSaveTimer);scrollSaveTimer=setTimeout(()=>saveViewState(),180)},{passive:true});
+
+window.addEventListener("scroll",()=>{
+ clearTimeout(scrollSaveTimer);
+ scrollSaveTimer=setTimeout(()=>saveViewState(),180);
+},{passive:true});
+
 window.addEventListener("pagehide",()=>saveViewState());
 window.addEventListener("hashchange",()=>saveViewState({hash:location.hash}));
 
 function startWelcomeScreen(){
- const intro=$("aidel-intro"),seen=localStorage.getItem("aidel_welcome_seen")==="yes";
+ const intro=$("aidel-intro");
+ const seen=localStorage.getItem("aidel_welcome_seen")==="yes";
  if(seen){intro?.remove();return}
  localStorage.setItem("aidel_welcome_seen","yes");
- setTimeout(()=>{intro?.classList.add("hide");setTimeout(()=>intro?.remove(),900)},3000);
+ setTimeout(()=>{
+  intro?.classList.add("hide");
+  setTimeout(()=>intro?.remove(),900);
+ },3000);
 }
-function escapeHTML(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function imageURL(path,size="w500"){return path?IMAGE_BASE+size+path:FALLBACK_POSTER}
-async function tmdb(path,params={}){const url=new URL(API_BASE+path);url.searchParams.set("api_key",TMDB_API_KEY);url.searchParams.set("language","en-US");Object.entries(params).forEach(([k,v])=>{if(v!==undefined&&v!==null)url.searchParams.set(k,v)});const r=await fetch(url);const d=await r.json();if(!r.ok)throw new Error(d.status_message||"TMDB request failed.");return d}
+
+function escapeHTML(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+function imageURL(path,size="w500"){
+ return path?IMAGE_BASE+size+path:FALLBACK_POSTER;
+}
+
+async function tmdb(path,params={}){
+ const url=new URL(API_BASE+path);
+ url.searchParams.set("api_key",TMDB_API_KEY);
+ url.searchParams.set("language","en-US");
+ Object.entries(params).forEach(([k,v])=>{
+  if(v!==undefined&&v!==null)url.searchParams.set(k,v);
+ });
+ const r=await fetch(url);
+ const d=await r.json();
+ if(!r.ok)throw new Error(d.status_message||"TMDB request failed.");
+ return d;
+}
+
 function getTitle(x){return x.title||x.name||x.original_name||"Untitled"}
 function getYear(x){const d=x.release_date||x.first_air_date||"";return d?d.slice(0,4):"Year unavailable"}
 function getMedia(x){return x.media_type==="tv"||x.first_air_date?"tv":"movie"}
-function isVideoFile(name){return ["mp4","webm","mov","m4v","mkv"].includes((name.split(".").pop()||"").toLowerCase())}
-function storageErrorMessage(e){const m=String(e?.message||e||"");if(/permission|row-level|policy|not allowed|unauthorized|forbidden/i.test(m))return "Supabase storage listing is blocked. The Movies bucket needs a Storage SELECT policy.";return m||"Could not check Supabase storage."}
-async function listStorage(path){const {data,error}=await supabase.storage.from(BUCKET).list(path,{limit:1000,sortBy:{column:"name",order:"asc"}});if(error)throw error;return data||[]}
-async function findMovieFile(id){const files=await listStorage("");const prefix="movie-"+String(id).toLowerCase()+".";return files.find(f=>f.name.toLowerCase().startsWith(prefix)&&isVideoFile(f.name))||null}
+
+function isVideoFile(name){
+ return ["mp4","webm","mov","m4v","mkv","ogv"].includes((name.split(".").pop()||"").toLowerCase());
+}
+
+function storageErrorMessage(e){
+ const m=String(e?.message||e||"");
+ if(/permission|row-level|policy|not allowed|unauthorized|forbidden/i.test(m)){
+  return "Supabase storage listing is blocked. The Movies bucket needs a Storage SELECT policy.";
+ }
+ return m||"Could not check Supabase storage.";
+}
+
+async function listStorage(path){
+ const {data,error}=await supabase.storage.from(BUCKET).list(path,{limit:1000,sortBy:{column:"name",order:"asc"}});
+ if(error)throw error;
+ return data||[];
+}
+
+async function findMovieFile(id){
+ const files=await listStorage("");
+ const prefix="movie-"+String(id).toLowerCase()+".";
+ return files.find(f=>f.name.toLowerCase().startsWith(prefix)&&isVideoFile(f.name))||null;
+}
+
 async function findEpisodeFile(tvId,season,episode){
- if(String(tvId)==="246"&&Number(season)===3&&Number(episode)===1)return {name:"S03E01.Mp4",storagePath:AVATAR_FILE,publicURL:AVATAR_URL};
+ if(String(tvId)==="246"&&Number(season)===3&&Number(episode)===1){
+  return {name:"S03E01.Mp4",storagePath:AVATAR_FILE,publicURL:AVATAR_URL};
+ }
+
  const code=`s${String(season).padStart(2,"0")}e${String(episode).padStart(2,"0")}`.toLowerCase();
+
  for(const folder of [`Series/${tvId}/Season-${season}`,`Series/${tvId}/Season-${season}.`]){
-  try{const files=await listStorage(folder);const f=files.find(x=>x.name.toLowerCase().startsWith(code+".")&&isVideoFile(x.name));if(f)return {...f,storagePath:`${folder}/${f.name}`}}catch(e){console.warn("Storage folder check",folder,e)}
+  try{
+   const files=await listStorage(folder);
+   const f=files.find(x=>x.name.toLowerCase().startsWith(code+".")&&isVideoFile(x.name));
+   if(f)return {...f,storagePath:`${folder}/${f.name}`};
+  }catch(e){
+   console.warn("Storage folder check",folder,e);
+  }
  }
  return null;
 }
-function publicFileURL(path){return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl}
+
+function publicFileURL(path){
+ return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+
 async function downloadFile(path,filename){
  const url=path===AVATAR_FILE?AVATAR_URL:publicFileURL(path);
  try{
   const response=await fetch(url);
   if(!response.ok)throw new Error("Download request failed");
-  const blob=await response.blob(),objectURL=URL.createObjectURL(blob),a=document.createElement("a");
-  a.href=objectURL;a.download=filename||path.split("/").pop();document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(objectURL),60000);
+  const blob=await response.blob();
+  const objectURL=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=objectURL;
+  a.download=filename||path.split("/").pop();
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(objectURL),60000);
  }catch(error){
   console.warn("Direct download fallback:",error);
   window.open(url+"?download="+encodeURIComponent(filename||path.split("/").pop()),"_blank","noopener");
  }
 }
-function activateDownload(button,path,label){button.disabled=false;button.textContent="Download";button.onclick=()=>downloadFile(path,label)}
-function setUnavailable(button,message){button.disabled=true;button.textContent="Not Available Yet";button.onclick=null;if(message)$("downloadMessage").textContent=message}
-async function setupMovieDownload(details,token){
- const b=$("downloadButton");b.disabled=true;b.textContent="Checking...";$("downloadMessage").textContent="Checking the AIDEL TV movie library...";
- try{const f=await findMovieFile(details.id);if(token!==detailRequest)return;if(f){activateDownload(b,f.name,f.name);$("downloadMessage").textContent="This movie file is available in AIDEL TV storage."}else setUnavailable(b,"This movie has not been uploaded to AIDEL TV yet.")}catch(e){if(token===detailRequest)setUnavailable(b,storageErrorMessage(e));console.warn(e)}
+
+function activateDownload(button,path,label){
+ button.disabled=false;
+ button.textContent="Download";
+ button.onclick=()=>downloadFile(path,label);
 }
+
+function setUnavailable(button,message){
+ button.disabled=true;
+ button.textContent="Not Available Yet";
+ button.onclick=null;
+ if(message)$("downloadMessage").textContent=message;
+}
+
+/* CHECK THE RIGHTS REGISTRY BEFORE ACTIVATING A MOVIE DOWNLOAD */
+async function setupMovieDownload(details,token){
+ const b=$("downloadButton");
+ b.disabled=true;
+ b.textContent="Checking...";
+ $("downloadMessage").textContent="Checking movie file and distribution approval...";
+
+ try{
+  const f=await findMovieFile(details.id);
+  if(token!==detailRequest)return;
+
+  if(!f){
+   setUnavailable(b,"This movie has not been uploaded to AIDEL TV yet.");
+   return;
+  }
+
+  const {data:approval,error}=await supabase
+   .from("movie_download_rights")
+   .select("id,rights_basis")
+   .eq("media_type","movie")
+   .eq("tmdb_id",details.id)
+   .eq("file_name",f.name)
+   .eq("storage_path",f.name)
+   .eq("approved",true)
+   .maybeSingle();
+
+  if(token!==detailRequest)return;
+  if(error)throw error;
+
+  if(!approval||!approval.rights_basis){
+   setUnavailable(b,"File found, but AIDEL TV has not approved its distribution rights.");
+   return;
+  }
+
+  activateDownload(b,f.name,f.name);
+  $("downloadMessage").textContent="AIDEL TV approved • "+approval.rights_basis;
+
+ }catch(e){
+  if(token===detailRequest){
+   setUnavailable(b,"Could not verify movie distribution approval.");
+  }
+  console.warn("Movie rights check:",e);
+ }
+}
+
+/* WATCHLIST */
 function watchlistKey(){return "aidel_watchlist_"+(currentUser?.id||"guest")}
-function getWatchlist(){try{return JSON.parse(localStorage.getItem(watchlistKey())||"[]")}catch{return []}}
-function saveWatchlist(list){localStorage.setItem(watchlistKey(),JSON.stringify(list));renderWatchlist()}
-function isSaved(id,media){return getWatchlist().some(x=>String(x.id)===String(id)&&x.media===media)}
+
+function getWatchlist(){
+ try{return JSON.parse(localStorage.getItem(watchlistKey())||"[]")}
+ catch{return []}
+}
+
+function saveWatchlist(list){
+ localStorage.setItem(watchlistKey(),JSON.stringify(list));
+ renderWatchlist();
+}
+
+function isSaved(id,media){
+ return getWatchlist().some(x=>String(x.id)===String(id)&&x.media===media);
+}
+
 function toggleWatchlist(item,media){
  if(!currentUser){openAuth();return}
- let list=getWatchlist();const exists=list.some(x=>String(x.id)===String(item.id)&&x.media===media);
- list=exists?list.filter(x=>!(String(x.id)===String(item.id)&&x.media===media)):[{id:item.id,media,title:getTitle(item),poster_path:item.poster_path||null,vote_average:item.vote_average||0,release_date:item.release_date||item.first_air_date||"",overview:item.overview||""},...list];
- saveWatchlist(list);if(currentDetails&&String(currentDetails.id)===String(item.id))updateWatchlistButton();
+ let list=getWatchlist();
+ const exists=list.some(x=>String(x.id)===String(item.id)&&x.media===media);
+
+ list=exists
+  ?list.filter(x=>!(String(x.id)===String(item.id)&&x.media===media))
+  :[{id:item.id,media,title:getTitle(item),poster_path:item.poster_path||null,vote_average:item.vote_average||0,release_date:item.release_date||item.first_air_date||"",overview:item.overview||""},...list];
+
+ saveWatchlist(list);
+
+ if(currentDetails&&String(currentDetails.id)===String(item.id)){
+  updateWatchlistButton();
+ }
 }
+
+/* MOVIE CARDS */
 function makeCard(item,media,showSeasonInfo=false){
- const title=escapeHTML(getTitle(item)),poster=imageURL(item.poster_path),rating=Number(item.vote_average||0).toFixed(1),year=escapeHTML(getYear(item));
- const season=media==="tv"&&showSeasonInfo?`<small class="season-info" id="season-${Number(item.id)}">Loading season information...</small>`:"";
- return `<article class="movie-card" tabindex="0" role="button" data-id="${Number(item.id)}" data-media="${media}" aria-label="View ${title}"><div class="poster-wrap"><img class="poster" src="${poster}" alt="${title}" loading="lazy" onerror="this.onerror=null;this.src='${FALLBACK_POSTER}'"><span class="rating">★ ${rating}</span><div class="play-icon"></div></div><h3>${title}</h3><small>${year}</small>${season}</article>`;
+ const title=escapeHTML(getTitle(item));
+ const poster=imageURL(item.poster_path);
+ const rating=Number(item.vote_average||0).toFixed(1);
+ const year=escapeHTML(getYear(item));
+ const season=media==="tv"&&showSeasonInfo
+  ?`<small class="season-info" id="season-${Number(item.id)}">Loading season information...</small>`
+  :"";
+
+ return `<article class="movie-card" tabindex="0" role="button" data-id="${Number(item.id)}" data-media="${media}" aria-label="View ${title}">
+  <div class="poster-wrap">
+   <img class="poster" src="${poster}" alt="${title}" loading="lazy" onerror="this.onerror=null;this.src='${FALLBACK_POSTER}'">
+   <span class="rating">★ ${rating}</span>
+   <div class="play-icon"></div>
+  </div>
+  <h3>${title}</h3>
+  <small>${year}</small>
+  ${season}
+ </article>`;
 }
+
 async function loadSearchSeasonCounts(items,requestId){
  const tv=items.filter(x=>getMedia(x)==="tv"&&x.id);
+
  for(let i=0;i<tv.length;i+=5){
   if(requestId!==activeSearchRequest)return;
-  await Promise.all(tv.slice(i,i+5).map(async item=>{try{const d=await tmdb("/tv/"+item.id);if(requestId!==activeSearchRequest)return;const el=$("season-"+Number(item.id));if(el)el.textContent=`${d.number_of_seasons||0} ${d.number_of_seasons===1?"Season":"Seasons"} • ${d.number_of_episodes||0} Episodes`}catch{const el=$("season-"+Number(item.id));if(el)el.textContent="Season information unavailable"}}))
+
+  await Promise.all(tv.slice(i,i+5).map(async item=>{
+   try{
+    const d=await tmdb("/tv/"+item.id);
+    if(requestId!==activeSearchRequest)return;
+    const el=$("season-"+Number(item.id));
+    if(el)el.textContent=`${d.number_of_seasons||0} ${d.number_of_seasons===1?"Season":"Seasons"} • ${d.number_of_episodes||0} Episodes`;
+   }catch{
+    const el=$("season-"+Number(item.id));
+    if(el)el.textContent="Season information unavailable";
+   }
+  }));
  }
 }
 
 function renderRow(el,results,media="movie"){
  const items=(results||[]).filter(x=>x&&x.id&&x.poster_path&&x.media_type!=="person").slice(0,20);
- if(!items.length){el.innerHTML='<div class="status">No titles found in this category.</div>';return}
+ if(!items.length){
+  el.innerHTML='<div class="status">No titles found in this category.</div>';
+  return;
+ }
  el.innerHTML=items.map(x=>makeCard(x,media==="all"?getMedia(x):media,media==="tv"||media==="all"&&getMedia(x)==="tv")).join("");
 }
-function showError(el,error,retry){el.innerHTML=`<div class="status error">${escapeHTML(error.message||"Something went wrong.")}<button class="retry-button" type="button">Retry</button></div>`;el.querySelector(".retry-button")?.addEventListener("click",retry)}
-async function loadSection(id,path,params={},media="movie"){const el=$(id);try{const d=await tmdb(path,params);renderRow(el,d.results,media)}catch(e){showError(el,e,()=>loadSection(id,path,params,media));console.error(id,e)}}
+
+function showError(el,error,retry){
+ el.innerHTML=`<div class="status error">${escapeHTML(error.message||"Something went wrong.")}<button class="retry-button" type="button">Retry</button></div>`;
+ el.querySelector(".retry-button")?.addEventListener("click",retry);
+}
+
+async function loadSection(id,path,params={},media="movie"){
+ const el=$(id);
+ try{
+  const d=await tmdb(path,params);
+  renderRow(el,d.results,media);
+ }catch(e){
+  showError(el,e,()=>loadSection(id,path,params,media));
+  console.error(id,e);
+ }
+}
+
+/* HERO SLIDER */
 function renderHeroSlides(movies){
- if(!movies.length)return;heroMovies=movies.slice(0,6);currentHeroIndex=0;
- $("heroSlider").innerHTML=heroMovies.map((m,i)=>{const backdrop=imageURL(m.backdrop_path||m.poster_path,"original"),title=escapeHTML(getTitle(m)),overview=escapeHTML(m.overview||"Discover this title on AIDEL TV."),rating=Number(m.vote_average||0).toFixed(1),media=getMedia(m);return `<div class="hero-slide ${i===0?"active":""}" style="background-image:url('${backdrop}')"><div class="hero-content"><div class="eyebrow">FEATURED ON AIDEL TV</div><h1>${title}</h1><div class="hero-meta"><span class="rating-pill">★ ${rating}</span><span>${escapeHTML(getYear(m))}</span><span>• ${media==="tv"?"TV SERIES":"MOVIE"}</span></div><p>${overview}</p><div class="hero-actions"><button class="btn btn-primary" data-hero-id="${m.id}" data-hero-media="${media}">More Info</button><button class="btn btn-secondary" data-hero-save="${m.id}" data-hero-save-media="${media}">＋ My List</button></div></div></div>`}).join("");
+ if(!movies.length)return;
+ heroMovies=movies.slice(0,6);
+ currentHeroIndex=0;
+
+ $("heroSlider").innerHTML=heroMovies.map((m,i)=>{
+  const backdrop=imageURL(m.backdrop_path||m.poster_path,"original");
+  const title=escapeHTML(getTitle(m));
+  const overview=escapeHTML(m.overview||"Discover this title on AIDEL TV.");
+  const rating=Number(m.vote_average||0).toFixed(1);
+  const media=getMedia(m);
+
+  return `<div class="hero-slide ${i===0?"active":""}" style="background-image:url('${backdrop}')">
+   <div class="hero-content">
+    <div class="eyebrow">FEATURED ON AIDEL TV</div>
+    <h1>${title}</h1>
+    <div class="hero-meta">
+     <span class="rating-pill">★ ${rating}</span>
+     <span>${escapeHTML(getYear(m))}</span>
+     <span>• ${media==="tv"?"TV SERIES":"MOVIE"}</span>
+    </div>
+    <p>${overview}</p>
+    <div class="hero-actions">
+     <button class="btn btn-primary" data-hero-id="${m.id}" data-hero-media="${media}">More Info</button>
+     <button class="btn btn-secondary" data-hero-save="${m.id}" data-hero-save-media="${media}">＋ My List</button>
+    </div>
+   </div>
+  </div>`;
+ }).join("");
+
  $("heroDots").innerHTML=heroMovies.map((_,i)=>`<button class="hero-dot ${i===0?"active":""}" data-index="${i}" aria-label="Go to slide ${i+1}"></button>`).join("");
- $("heroDots").querySelectorAll(".hero-dot").forEach(d=>d.addEventListener("click",()=>{goToHeroSlide(Number(d.dataset.index));startHeroInterval()}));
- $("heroSlider").querySelectorAll("[data-hero-id]").forEach(b=>b.addEventListener("click",()=>openDetails(b.dataset.heroId,b.dataset.heroMedia)));
- $("heroSlider").querySelectorAll("[data-hero-save]").forEach(b=>b.addEventListener("click",()=>{const item=heroMovies.find(x=>String(x.id)===b.dataset.heroSave);if(item)toggleWatchlist(item,b.dataset.heroSaveMedia)}));
+
+ $("heroDots").querySelectorAll(".hero-dot").forEach(d=>{
+  d.addEventListener("click",()=>{
+   goToHeroSlide(Number(d.dataset.index));
+   startHeroInterval();
+  });
+ });
+
+ $("heroSlider").querySelectorAll("[data-hero-id]").forEach(b=>{
+  b.addEventListener("click",()=>openDetails(b.dataset.heroId,b.dataset.heroMedia));
+ });
+
+ $("heroSlider").querySelectorAll("[data-hero-save]").forEach(b=>{
+  b.addEventListener("click",()=>{
+   const item=heroMovies.find(x=>String(x.id)===b.dataset.heroSave);
+   if(item)toggleWatchlist(item,b.dataset.heroSaveMedia);
+  });
+ });
+
  startHeroInterval();
 }
-function goToHeroSlide(index){const slides=document.querySelectorAll(".hero-slide"),dots=document.querySelectorAll(".hero-dot");if(!slides.length)return;currentHeroIndex=(index+slides.length)%slides.length;slides.forEach((s,i)=>s.classList.toggle("active",i===currentHeroIndex));dots.forEach((d,i)=>d.classList.toggle("active",i===currentHeroIndex))}
-function startHeroInterval(){clearInterval(heroInterval);heroInterval=setInterval(()=>goToHeroSlide(currentHeroIndex+1),5500)}
-async function loadHero(){try{const d=await tmdb("/trending/all/week");renderHeroSlides((d.results||[]).filter(x=>x.media_type!=="person"&&(x.backdrop_path||x.poster_path)))}catch(e){console.error("Hero slider",e)}}
-async function loadHome(){await Promise.all([loadHero(),loadSection("trendingRow","/trending/all/week",{},"all"),loadSection("nollywoodRow","/discover/movie",{with_origin_country:"NG",sort_by:"popularity.desc",include_adult:"false"}),loadSection("actionRow","/discover/movie",{with_genres:"28",sort_by:"popularity.desc",include_adult:"false"}),loadSection("comedyRow","/discover/movie",{with_genres:"35",sort_by:"popularity.desc",include_adult:"false"}),loadSection("seriesRow","/tv/popular",{},"tv"),loadSection("topRatedRow","/movie/top_rated",{include_adult:"false"})])}
 
-/* INTERNET ARCHIVE DISCOVERY
-   Archive-hosted files are not stored in AIDEL TV's Supabase bucket.
-   Actions are enabled only for recognised licence URLs; users must still
-   verify the item page and rights details before reuse or redistribution.
-*/
+function goToHeroSlide(index){
+ const slides=document.querySelectorAll(".hero-slide");
+ const dots=document.querySelectorAll(".hero-dot");
+ if(!slides.length)return;
+
+ currentHeroIndex=(index+slides.length)%slides.length;
+ slides.forEach((s,i)=>s.classList.toggle("active",i===currentHeroIndex));
+ dots.forEach((d,i)=>d.classList.toggle("active",i===currentHeroIndex));
+}
+
+function startHeroInterval(){
+ clearInterval(heroInterval);
+ heroInterval=setInterval(()=>goToHeroSlide(currentHeroIndex+1),5500);
+}
+
+async function loadHero(){
+ try{
+  const d=await tmdb("/trending/all/week");
+  renderHeroSlides((d.results||[]).filter(x=>x.media_type!=="person"&&(x.backdrop_path||x.poster_path)));
+ }catch(e){
+  console.error("Hero slider",e);
+ }
+}
+
+async function loadHome(){
+ await Promise.all([
+  loadHero(),
+  loadSection("trendingRow","/trending/all/week",{},"all"),
+  loadSection("nollywoodRow","/discover/movie",{with_origin_country:"NG",sort_by:"popularity.desc",include_adult:"false"}),
+  loadSection("actionRow","/discover/movie",{with_genres:"28",sort_by:"popularity.desc",include_adult:"false"}),
+  loadSection("comedyRow","/discover/movie",{with_genres:"35",sort_by:"popularity.desc",include_adult:"false"}),
+  loadSection("seriesRow","/tv/popular",{},"tv"),
+  loadSection("topRatedRow","/movie/top_rated",{include_adult:"false"})
+ ]);
+}
+
+/* INTERNET ARCHIVE */
 const IA_SEARCH_URL="https://archive.org/advancedsearch.php";
 const IA_METADATA_URL="https://archive.org/metadata/";
-function archiveLicense(metadata){
- const raw=String(metadata?.licenseurl||"").trim().toLowerCase();
- if(!raw)return {allowed:false,label:"Licence not verified"};
- if(/creativecommons\.org\/licenses\/(by|by-sa|by-nd)\//.test(raw))return {allowed:true,label:"Creative Commons (check conditions)"};
- if(/creativecommons\.org\/publicdomain\/zero\//.test(raw))return {allowed:true,label:"CC0 (verify item page)"};
- if(/creativecommons\.org\/publicdomain\/mark\//.test(raw))return {allowed:true,label:"Public Domain Mark (verify item page)"};
- if(/rightsstatements\.org\/vocab\/NoC-US\//.test(raw))return {allowed:true,label:"No Copyright (US) — verify status"};
- return {allowed:false,label:/nc|non.?commercial|all.?rights.?reserved/i.test(raw)?"Restricted or non-commercial licence":"Licence not supported"};
-}
+
 function archiveVideoFile(files){
  const types=["mp4","webm","ogv","m4v","mov","mkv"];
  const list=(files||[]).filter(f=>f?.name&&!f.private&&!f.source&&types.includes(String(f.name).split(".").pop().toLowerCase()));
- list.sort((a,b)=>{const rank=f=>({mp4:0,webm:1,ogv:2,m4v:3,mov:4,mkv:5})[f.name.split(".").pop().toLowerCase()]??9;return rank(a)-rank(b)||(Number(b.size)||0)-(Number(a.size)||0)});
+
+ list.sort((a,b)=>{
+  const rank=f=>({mp4:0,webm:1,ogv:2,m4v:3,mov:4,mkv:5})[f.name.split(".").pop().toLowerCase()]??9;
+  return rank(a)-rank(b)||(Number(b.size)||0)-(Number(a.size)||0);
+ });
+
  return list[0]||null;
 }
-function archiveFileURL(identifier,filename){return "https://archive.org/download/"+encodeURIComponent(identifier)+"/"+String(filename).split("/").map(encodeURIComponent).join("/")}
-async function getArchiveMetadata(identifier){const r=await fetch(IA_METADATA_URL+encodeURIComponent(identifier));if(!r.ok)throw new Error("Internet Archive metadata request failed.");return r.json()}
+
+function archiveFileURL(identifier,filename){
+ return "https://archive.org/download/"+encodeURIComponent(identifier)+"/"+String(filename).split("/").map(encodeURIComponent).join("/");
+}
+
+async function getArchiveMetadata(identifier){
+ const r=await fetch(IA_METADATA_URL+encodeURIComponent(identifier));
+ if(!r.ok)throw new Error("Internet Archive metadata request failed.");
+ return r.json();
+}
 
 async function searchInternetArchive(query,requestId){
  const section=$("archiveResults");
@@ -195,12 +773,7 @@ async function searchInternetArchive(query,requestId){
  grid.innerHTML='<div class="status">Checking Internet Archive for matching films...</div>';
 
  try{
-  const clean=String(query||"")
-   .replace(/[\\"']/g," ")
-   .replace(/\s+/g," ")
-   .trim()
-   .slice(0,90);
-
+  const clean=String(query||"").replace(/[\\"']/g," ").replace(/\s+/g," ").trim().slice(0,90);
   if(!clean)throw new Error("Enter a movie title to search.");
 
   const params=new URLSearchParams();
@@ -214,13 +787,9 @@ async function searchInternetArchive(query,requestId){
   params.set("output","json");
 
   const response=await fetch(IA_SEARCH_URL+"?"+params.toString());
-
-  if(!response.ok){
-   throw new Error("Internet Archive search is temporarily unavailable.");
-  }
+  if(!response.ok)throw new Error("Internet Archive search is temporarily unavailable.");
 
   const data=await response.json();
-
   if(requestId!==activeSearchRequest)return;
 
   const docs=(data.response?.docs||[]).filter(x=>x.identifier);
@@ -232,24 +801,15 @@ async function searchInternetArchive(query,requestId){
 
   grid.innerHTML=docs.map((item,i)=>`
    <article class="archive-card" data-archive-index="${i}">
-    <div class="archive-meta">
-     INTERNET ARCHIVE${item.year?" • "+escapeHTML(item.year):""}
-    </div>
-
+    <div class="archive-meta">INTERNET ARCHIVE${item.year?" • "+escapeHTML(item.year):""}</div>
     <h3>${escapeHTML(item.title||item.identifier)}</h3>
-
     <p>${escapeHTML(String(item.description||"No description supplied.").replace(/<[^>]*>/g," ").slice(0,190))}</p>
-
     <p class="archive-status">Checking video and AIDEL TV approval...</p>
-
     <div class="archive-actions">
      <button class="archive-watch" type="button" disabled>Watch</button>
      <button class="archive-download" type="button" disabled>Download</button>
-     <a class="archive-link"
-        href="https://archive.org/details/${encodeURIComponent(item.identifier)}"
-        target="_blank" rel="noopener">Item details</a>
+     <a class="archive-link" href="https://archive.org/details/${encodeURIComponent(item.identifier)}" target="_blank" rel="noopener">Item details</a>
     </div>
-
     <video class="archive-player" controls playsinline preload="none" hidden></video>
    </article>
   `).join("");
@@ -257,222 +817,858 @@ async function searchInternetArchive(query,requestId){
   const cards=[...grid.querySelectorAll(".archive-card")];
   let cursor=0;
 
-  const workers=Array.from(
-   {length:Math.min(4,cards.length)},
-   async()=>{
-    while(cursor<cards.length){
+  const workers=Array.from({length:Math.min(4,cards.length)},async()=>{
+   while(cursor<cards.length){
+    const i=cursor++;
+    const card=cards[i];
+    const item=docs[i];
 
-     const i=cursor++;
-     const card=cards[i];
-     const item=docs[i];
+    try{
+     const metadata=await getArchiveMetadata(item.identifier);
+     if(requestId!==activeSearchRequest)return;
 
-     try{
-      const metadata=await getArchiveMetadata(item.identifier);
+     const file=archiveVideoFile(metadata.files||[]);
+     const status=card.querySelector(".archive-status");
+     const watch=card.querySelector(".archive-watch");
+     const download=card.querySelector(".archive-download");
+     const video=card.querySelector("video");
 
-      if(requestId!==activeSearchRequest)return;
-
-      const file=archiveVideoFile(metadata.files||[]);
-      const status=card.querySelector(".archive-status");
-      const watch=card.querySelector(".archive-watch");
-      const download=card.querySelector(".archive-download");
-      const video=card.querySelector("video");
-
-      if(!file){
-       status.textContent="No supported video file found.";
-       continue;
-      }
-
-      // Check AIDEL TV's approval database.
-      // A licence label alone cannot activate a download.
-      const {data:approval,error:approvalError}=await supabase
-       .from("movie_download_rights")
-       .select("id,rights_basis")
-       .eq("media_type","archive")
-       .eq("archive_identifier",item.identifier)
-       .eq("file_name",file.name)
-       .eq("approved",true)
-       .maybeSingle();
-
-      if(requestId!==activeSearchRequest)return;
-
-      if(approvalError){
-       console.warn("AIDEL TV rights check:",approvalError);
-       status.textContent="Could not verify AIDEL TV approval.";
-       continue;
-      }
-
-      if(!approval || !approval.rights_basis){
-       status.textContent="Found, but not approved for download on AIDEL TV.";
-       continue;
-      }
-
-      const url=archiveFileURL(item.identifier,file.name);
-      const ext=file.name.split(".").pop().toLowerCase();
-
-      status.textContent=
-       "AIDEL TV approved • "+escapeHTML(approval.rights_basis)+
-       " • "+ext.toUpperCase()+
-       (Number(file.size)>0
-        ?" • "+(Number(file.size)/1048576).toFixed(1)+" MB"
-        :"");
-
-      status.classList.add("archive-license");
-
-      download.disabled=false;
-      download.addEventListener("click",()=>{
-       window.open(url+"?download=1","_blank","noopener");
-      });
-
-      if(["mp4","webm","ogv","m4v"].includes(ext)){
-       watch.disabled=false;
-
-       watch.addEventListener("click",()=>{
-        if(video.hidden){
-         video.src=url;
-         video.hidden=false;
-         video.play().catch(()=>{});
-         watch.textContent="Hide player";
-        }else{
-         video.pause();
-         video.removeAttribute("src");
-         video.load();
-         video.hidden=true;
-         watch.textContent="Watch";
-        }
-       });
-      }else{
-       watch.textContent="Download to play";
-       watch.disabled=true;
-      }
-
-     }catch(error){
-      if(requestId!==activeSearchRequest)return;
-
-      card.querySelector(".archive-status").textContent=
-       "Could not check this Archive item. Open Item details to inspect it.";
-
-      console.warn("Internet Archive item:",error);
+     if(!file){
+      status.textContent="No supported video file found.";
+      continue;
      }
+
+     const {data:approval,error:approvalError}=await supabase
+      .from("movie_download_rights")
+      .select("id,rights_basis")
+      .eq("media_type","archive")
+      .eq("archive_identifier",item.identifier)
+      .eq("file_name",file.name)
+      .eq("approved",true)
+      .maybeSingle();
+
+     if(requestId!==activeSearchRequest)return;
+
+     if(approvalError){
+      console.warn("AIDEL TV rights check:",approvalError);
+      status.textContent="Could not verify AIDEL TV approval.";
+      continue;
+     }
+
+     if(!approval||!approval.rights_basis){
+      status.textContent="Found, but not approved for download on AIDEL TV.";
+      continue;
+     }
+
+     const url=archiveFileURL(item.identifier,file.name);
+     const ext=file.name.split(".").pop().toLowerCase();
+
+     status.textContent="AIDEL TV approved • "+approval.rights_basis+" • "+ext.toUpperCase()+
+      (Number(file.size)>0?" • "+(Number(file.size)/1048576).toFixed(1)+" MB":"");
+
+     status.classList.add("archive-license");
+
+     download.disabled=false;
+     download.addEventListener("click",()=>{
+      window.open(url+"?download=1","_blank","noopener");
+     });
+
+     if(["mp4","webm","ogv","m4v"].includes(ext)){
+      watch.disabled=false;
+      watch.addEventListener("click",()=>{
+       if(video.hidden){
+        video.src=url;
+        video.hidden=false;
+        video.play().catch(()=>{});
+        watch.textContent="Hide player";
+       }else{
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+        video.hidden=true;
+        watch.textContent="Watch";
+       }
+      });
+     }else{
+      watch.textContent="Download to play";
+      watch.disabled=true;
+     }
+
+    }catch(error){
+     if(requestId!==activeSearchRequest)return;
+     card.querySelector(".archive-status").textContent="Could not check this Archive item. Open Item details to inspect it.";
+     console.warn("Internet Archive item:",error);
     }
    }
-  );
+  });
 
   await Promise.all(workers);
 
  }catch(error){
   if(requestId!==activeSearchRequest)return;
-
-  grid.innerHTML=
-   `<div class="status error">${escapeHTML(error.message||"Internet Archive search failed.")} Check your connection and try again.</div>`;
-
+  grid.innerHTML=`<div class="status error">${escapeHTML(error.message||"Internet Archive search failed.")} Check your connection and try again.</div>`;
   console.warn("Internet Archive search:",error);
  }
 }
 
- const requestId=++activeSearchRequest;saveViewState({searchQuery:query,searchActive:true});
- searchInternetArchive(query,requestId);
- $("searchInput").value=query;$("searchResults").classList.add("active");$("sections").style.display="none";$("searchCount").textContent="Searching...";$("searchGrid").innerHTML='<div class="status">Searching TMDB...</div>';
- if(!fromRestore)$("searchResults").scrollIntoView({behavior:"smooth"});
- try{const d=await tmdb("/search/multi",{query,include_adult:"false"});if(requestId!==activeSearchRequest)return;const items=(d.results||[]).filter(x=>x.media_type!=="person"&&x.poster_path&&x.id);$("searchCount").textContent=items.length+" results";if(!items.length){$("searchGrid").innerHTML='<div class="status">No movies or series found. Try another search.</div>';return}$("searchGrid").innerHTML=items.map(x=>makeCard(x,getMedia(x),true)).join("");loadSearchSeasonCounts(items,requestId)}catch(e){if(requestId!==activeSearchRequest)return;$("searchCount").textContent="Search error";showError($("searchGrid"),e,()=>searchMovies(query))}
-}
-function seasonPoster(season,series){return imageURL(season.poster_path||series.poster_path)}
-async function showSeriesSeasons(series,{fromRestore=false}={}){
- const area=$("seasonArea"),token=detailRequest;area.innerHTML='<h3 style="margin-top:24px">All Seasons</h3><div class="status">Loading season posters...</div>';
- const seasons=(series.seasons||[]).filter(s=>Number(s.season_number)>=0);
- if(!seasons.length){area.innerHTML='<h3 style="margin-top:24px">Seasons</h3><p style="color:#999;margin-top:10px">No season information is available.</p>';return}
- area.innerHTML=`<h3 style="margin-top:24px">All Seasons (${Number(series.number_of_seasons??seasons.filter(s=>s.season_number>0).length)} seasons • ${Number(series.number_of_episodes||0)} episodes)</h3><div class="season-grid" id="seasonGrid"></div>`;
- $("seasonGrid").innerHTML=seasons.map(s=>`<article class="season-card" tabindex="0" role="button" data-season="${s.season_number}"><img src="${seasonPoster(s,series)}" alt="${escapeHTML(s.name||"Season "+s.season_number)}" onerror="this.onerror=null;this.src='${FALLBACK_POSTER}'"><h4>${escapeHTML(s.name||"Season "+s.season_number)}</h4><p style="padding:0 9px 10px;color:#aaa;font-size:11px">${s.episode_count||0} Episodes</p></article>`).join("");
- $("seasonGrid").querySelectorAll(".season-card").forEach(card=>{const open=()=>showSeasonEpisodes(series,Number(card.dataset.season));card.addEventListener("click",open);card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}})});
- if(!fromRestore)saveViewState({selectedSeason:null,selectedEpisode:null});
-}
-async function showSeasonEpisodes(series,seasonNumber,{fromRestore=false}={}){
- const area=$("seasonArea"),token=detailRequest;saveViewState({selectedSeason:seasonNumber,selectedEpisode:null});
- area.innerHTML=`<div class="season-heading"><h3>Season ${seasonNumber} Episodes</h3><button class="back-season" id="backSeasons">← All Seasons</button></div><div class="status">Loading episodes...</div>`;
- $("backSeasons").onclick=()=>{saveViewState({selectedSeason:null,selectedEpisode:null});showSeriesSeasons(series)};
+/* WIKIMEDIA COMMONS */
+const COMMONS_API="https://commons.wikimedia.org/w/api.php";
+
+async function searchWikimediaCommons(query,requestId){
+ const section=$("commonsResults");
+ const grid=$("commonsGrid");
+
+ section.classList.add("active");
+ grid.innerHTML='<div class="status">Searching Wikimedia Commons for video files...</div>';
+
  try{
-  const data=await tmdb(`/tv/${series.id}/season/${seasonNumber}`);if(token!==detailRequest)return;const episodes=data.episodes||[];
-  area.innerHTML=`<div class="season-heading"><h3>${escapeHTML(data.name||"Season "+seasonNumber)} — ${episodes.length} Episodes</h3><button class="back-season" id="backSeasons">← All Seasons</button></div><div class="episode-grid" id="episodeGrid"></div>`;
-  $("backSeasons").onclick=()=>{saveViewState({selectedSeason:null,selectedEpisode:null});showSeriesSeasons(series)};
-  if(!episodes.length){$("episodeGrid").innerHTML='<div class="status">No episodes listed for this season.</div>';return}
-  $("episodeGrid").innerHTML=episodes.map(ep=>`<article class="episode-card" id="episode-card-${ep.episode_number}"><img src="${imageURL(ep.still_path,"w500")}" alt="${escapeHTML(ep.name)}" onerror="this.onerror=null;this.src='${imageURL(data.poster_path||series.poster_path)}'"><h4>${String(ep.episode_number).padStart(2,"0")}. ${escapeHTML(ep.name||"Episode")}</h4><p>${escapeHTML(ep.overview||"Episode description unavailable.")}</p><div class="episode-file-status" style="padding:0 9px 8px;color:#aaa;font-size:11px">Checking uploaded file...</div><video class="episode-player" controls playsinline preload="metadata" hidden></video><button class="episode-download" disabled data-episode="${ep.episode_number}">Checking file...</button></article>`).join("");
-  const cards=[...$("episodeGrid").querySelectorAll(".episode-card")];
-  await Promise.all(cards.map(async card=>{
-   const epNo=Number(card.querySelector("button").dataset.episode),button=card.querySelector("button"),video=card.querySelector("video"),status=card.querySelector(".episode-file-status");
+  const clean=String(query||"").trim().slice(0,90);
+  if(!clean)throw new Error("Enter a movie title to search.");
+
+  const params=new URLSearchParams({
+   action:"query",
+   list:"search",
+   srnamespace:"6",
+   srsearch:clean+" filemime:video",
+   srlimit:"10",
+   format:"json",
+   origin:"*"
+  });
+
+  const response=await fetch(COMMONS_API+"?"+params);
+  if(!response.ok)throw new Error("Wikimedia Commons search is unavailable.");
+
+  const data=await response.json();
+  if(requestId!==activeSearchRequest)return;
+
+  const results=data.query?.search||[];
+
+  if(!results.length){
+   grid.innerHTML='<div class="status">No matching video files were found on Wikimedia Commons.</div>';
+   return;
+  }
+
+  grid.innerHTML=results.map((item,i)=>`
+   <article class="archive-card" data-commons-index="${i}">
+    <div class="archive-meta">WIKIMEDIA COMMONS</div>
+    <h3>${escapeHTML(item.title.replace(/^File:/i,""))}</h3>
+    <p class="commons-status">Checking file information and AIDEL TV approval...</p>
+    <div class="archive-actions">
+     <button class="archive-watch" type="button" disabled>Watch</button>
+     <button class="archive-download" type="button" disabled>Download</button>
+     <a class="archive-link" href="https://commons.wikimedia.org/wiki/${encodeURIComponent(item.title.replace(/ /g,"_"))}" target="_blank" rel="noopener">Licence details</a>
+    </div>
+    <video class="archive-player" controls playsinline preload="none" hidden></video>
+   </article>
+  `).join("");
+
+  const cards=[...grid.querySelectorAll(".archive-card")];
+
+  await Promise.all(cards.map(async(card,i)=>{
+   const item=results[i];
+
    try{
-    const file=await findEpisodeFile(series.id,seasonNumber,epNo);if(token!==detailRequest)return;
-    if(file){
-     const url=file.publicURL||publicFileURL(file.storagePath),ext=(file.name.split(".").pop()||"").toLowerCase();
-     status.textContent="Uploaded to AIDEL TV";
-     button.disabled=false;button.textContent="⬇ Download Episode";
-     button.onclick=()=>downloadFile(file.storagePath,file.name);
-     if(["mp4","webm","mov","m4v"].includes(ext)){
-      video.hidden=false;video.src=url;video.addEventListener("play",()=>saveViewState({selectedSeason:seasonNumber,selectedEpisode:epNo,videoTime:video.currentTime}));video.addEventListener("timeupdate",()=>{if(epNo===Number(readViewState().selectedEpisode))saveViewState({videoTime:video.currentTime})});
-      const state=readViewState();if(state.selectedSeason===seasonNumber&&Number(state.selectedEpisode)===epNo&&state.videoTime>0){video.addEventListener("loadedmetadata",()=>{try{video.currentTime=state.videoTime}catch{}},{once:true})}
-     }else{status.textContent="Uploaded (MKV format may need downloading to play)"}
-    }else{status.textContent="Not uploaded yet";button.textContent="Not Available Yet"}
-   }catch(e){status.textContent=storageErrorMessage(e);button.textContent="Check unavailable";console.warn(e)}
+    const infoParams=new URLSearchParams({
+     action:"query",
+     prop:"imageinfo",
+     titles:item.title,
+     iiprop:"url|extmetadata|mime",
+     format:"json",
+     origin:"*"
+    });
+
+    const infoResponse=await fetch(COMMONS_API+"?"+infoParams);
+    if(!infoResponse.ok)throw new Error("File information unavailable.");
+
+    const infoData=await infoResponse.json();
+    if(requestId!==activeSearchRequest)return;
+
+    const pages=Object.values(infoData.query?.pages||{});
+    const page=pages[0];
+    const file=page?.imageinfo?.[0];
+
+    const status=card.querySelector(".commons-status");
+    const watch=card.querySelector(".archive-watch");
+    const download=card.querySelector(".archive-download");
+    const video=card.querySelector("video");
+
+    if(!file?.url||!file.mime?.startsWith("video/")){
+     status.textContent="No supported video file found.";
+     return;
+    }
+
+    const filename=item.title.replace(/^File:/i,"");
+    const identifier="commons:"+item.title;
+    const ext=filename.split(".").pop().toLowerCase();
+
+    if(!["webm","ogv","mp4"].includes(ext)){
+     status.textContent="Unsupported video format.";
+     return;
+    }
+
+    const metadata=file.extmetadata||{};
+    const licence=metadata.LicenseShortName?.value||"Licence not identified";
+
+    const {data:approval,error}=await supabase
+     .from("movie_download_rights")
+     .select("id,rights_basis")
+     .eq("media_type","archive")
+     .eq("archive_identifier",identifier)
+     .eq("file_name",filename)
+     .eq("approved",true)
+     .maybeSingle();
+
+    if(requestId!==activeSearchRequest)return;
+
+    if(error){
+     status.textContent="Could not verify AIDEL TV approval.";
+     console.warn("Commons approval check:",error);
+     return;
+    }
+
+    if(!approval||!approval.rights_basis){
+     status.textContent="Found • "+licence+" • Not approved for AIDEL TV downloads.";
+     return;
+    }
+
+    status.textContent="AIDEL TV approved • "+approval.rights_basis+" • "+licence;
+    status.classList.add("archive-license");
+
+    download.disabled=false;
+    download.onclick=()=>{
+     window.open(file.url,"_blank","noopener");
+    };
+
+    watch.disabled=false;
+    watch.onclick=()=>{
+     if(video.hidden){
+      video.src=file.url;
+      video.hidden=false;
+      video.play().catch(()=>{});
+      watch.textContent="Hide player";
+     }else{
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+      video.hidden=true;
+      watch.textContent="Watch";
+     }
+    };
+
+   }catch(error){
+    card.querySelector(".commons-status").textContent="Could not verify this Commons file.";
+    console.warn("Commons file:",error);
+   }
   }));
-  const saved=readViewState();if(saved.selectedEpisode&&saved.selectedSeason===seasonNumber){const card=$("episode-card-"+saved.selectedEpisode);card?.scrollIntoView({block:"center"})}
- }catch(e){if(token!==detailRequest)return;area.innerHTML=`<div class="status error">${escapeHTML(e.message||"Could not load episodes.")}<button class="back-season" id="backSeasons">← All Seasons</button></div>`;$("backSeasons").onclick=()=>showSeriesSeasons(series)}
+
+ }catch(error){
+  if(requestId!==activeSearchRequest)return;
+  grid.innerHTML=`<div class="status error">${escapeHTML(error.message||"Wikimedia Commons search failed.")}</div>`;
+ }
 }
-async function openDetails(id,media,{fromRestore=false}={}){
- const token=++detailRequest;media=media==="tv"?"tv":"movie";
- $("movieModal").classList.add("open");$("movieModal").setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
- $("modalTitle").textContent="Loading...";$("modalOverview").textContent="Getting title information...";$("modalMeta").textContent="";$("modalBackdrop").style.backgroundImage="none";$("trailerArea").innerHTML="";$("seasonArea").innerHTML="";
- $("downloadButton").disabled=true;$("downloadButton").textContent="Checking...";$("downloadButton").onclick=null;$("downloadMessage").textContent="Checking AIDEL TV storage...";
- currentDetails=null;const priorView=readViewState();saveViewState({detail:{id:Number(id),media},selectedSeason:fromRestore?(priorView.selectedSeason??null):null,selectedEpisode:fromRestore?(priorView.selectedEpisode??null):null,videoTime:fromRestore?(priorView.videoTime||0):0,modalOpen:true});
+
+/* SEARCH MOVIES
+   This function declaration was missing in your previous code.
+   It is now restored so the search works correctly.
+*/
+async function searchMovies(query,{fromRestore=false}={}){
+ const requestId=++activeSearchRequest;
+
+ saveViewState({searchQuery:query,searchActive:true});
+
+ searchInternetArchive(query,requestId);
+ searchWikimediaCommons(query,requestId);
+
+ $("searchInput").value=query;
+ $("searchResults").classList.add("active");
+ $("sections").style.display="none";
+ $("searchCount").textContent="Searching...";
+ $("searchGrid").innerHTML='<div class="status">Searching TMDB...</div>';
+
+ if(!fromRestore){
+  $("searchResults").scrollIntoView({behavior:"smooth"});
+ }
+
  try{
-  const [details,videos]=await Promise.all([tmdb("/"+media+"/"+id),tmdb("/"+media+"/"+id+"/videos")]);if(token!==detailRequest)return;
-  currentDetails={...details,media_type:media};$("modalTitle").textContent=getTitle(details);$("modalOverview").textContent=details.overview||"No description is available.";
+  const d=await tmdb("/search/multi",{query,include_adult:"false"});
+  if(requestId!==activeSearchRequest)return;
+
+  const items=(d.results||[]).filter(x=>x.media_type!=="person"&&x.poster_path&&x.id);
+  $("searchCount").textContent=items.length+" results";
+
+  if(!items.length){
+   $("searchGrid").innerHTML='<div class="status">No movies or series found. Try another search.</div>';
+   return;
+  }
+
+  $("searchGrid").innerHTML=items.map(x=>makeCard(x,getMedia(x),true)).join("");
+  loadSearchSeasonCounts(items,requestId);
+
+ }catch(e){
+  if(requestId!==activeSearchRequest)return;
+  $("searchCount").textContent="Search error";
+  showError($("searchGrid"),e,()=>searchMovies(query));
+ }
+}
+
+/* SERIES SEASONS */
+function seasonPoster(season,series){
+ return imageURL(season.poster_path||series.poster_path);
+}
+
+async function showSeriesSeasons(series,{fromRestore=false}={}){
+ const area=$("seasonArea");
+ const token=detailRequest;
+
+ area.innerHTML='<h3 style="margin-top:24px">All Seasons</h3><div class="status">Loading season posters...</div>';
+
+ const seasons=(series.seasons||[]).filter(s=>Number(s.season_number)>=0);
+
+ if(!seasons.length){
+  area.innerHTML='<h3 style="margin-top:24px">Seasons</h3><p style="color:#999;margin-top:10px">No season information is available.</p>';
+  return;
+ }
+
+ area.innerHTML=`<h3 style="margin-top:24px">All Seasons (${Number(series.number_of_seasons??seasons.filter(s=>s.season_number>0).length)} seasons • ${Number(series.number_of_episodes||0)} episodes)</h3><div class="season-grid" id="seasonGrid"></div>`;
+
+ $("seasonGrid").innerHTML=seasons.map(s=>`
+  <article class="season-card" tabindex="0" role="button" data-season="${s.season_number}">
+   <img src="${seasonPoster(s,series)}" alt="${escapeHTML(s.name||"Season "+s.season_number)}" onerror="this.onerror=null;this.src='${FALLBACK_POSTER}'">
+   <h4>${escapeHTML(s.name||"Season "+s.season_number)}</h4>
+   <p style="padding:0 9px 10px;color:#aaa;font-size:11px">${s.episode_count||0} Episodes</p>
+  </article>
+ `).join("");
+
+ $("seasonGrid").querySelectorAll(".season-card").forEach(card=>{
+  const open=()=>showSeasonEpisodes(series,Number(card.dataset.season));
+  card.addEventListener("click",open);
+  card.addEventListener("keydown",e=>{
+   if(e.key==="Enter"||e.key===" "){
+    e.preventDefault();
+    open();
+   }
+  });
+ });
+
+ if(!fromRestore){
+  saveViewState({selectedSeason:null,selectedEpisode:null});
+ }
+}
+
+/* EPISODES: CHECK RIGHTS BEFORE ENABLING DOWNLOAD */
+async function showSeasonEpisodes(series,seasonNumber,{fromRestore=false}={}){
+ const area=$("seasonArea");
+ const token=detailRequest;
+
+ saveViewState({selectedSeason:seasonNumber,selectedEpisode:null});
+
+ area.innerHTML=`<div class="season-heading"><h3>Season ${seasonNumber} Episodes</h3><button class="back-season" id="backSeasons">← All Seasons</button></div><div class="status">Loading episodes...</div>`;
+
+ $("backSeasons").onclick=()=>{
+  saveViewState({selectedSeason:null,selectedEpisode:null});
+  showSeriesSeasons(series);
+ };
+
+ try{
+  const data=await tmdb(`/tv/${series.id}/season/${seasonNumber}`);
+  if(token!==detailRequest)return;
+
+  const episodes=data.episodes||[];
+
+  area.innerHTML=`<div class="season-heading"><h3>${escapeHTML(data.name||"Season "+seasonNumber)} — ${episodes.length} Episodes</h3><button class="back-season" id="backSeasons">← All Seasons</button></div><div class="episode-grid" id="episodeGrid"></div>`;
+
+  $("backSeasons").onclick=()=>{
+   saveViewState({selectedSeason:null,selectedEpisode:null});
+   showSeriesSeasons(series);
+  };
+
+  if(!episodes.length){
+   $("episodeGrid").innerHTML='<div class="status">No episodes listed for this season.</div>';
+   return;
+  }
+
+  $("episodeGrid").innerHTML=episodes.map(ep=>`
+   <article class="episode-card" id="episode-card-${ep.episode_number}">
+    <img src="${imageURL(ep.still_path,"w500")}" alt="${escapeHTML(ep.name)}" onerror="this.onerror=null;this.src='${imageURL(data.poster_path||series.poster_path)}'">
+    <h4>${String(ep.episode_number).padStart(2,"0")}. ${escapeHTML(ep.name||"Episode")}</h4>
+    <p>${escapeHTML(ep.overview||"Episode description unavailable.")}</p>
+    <div class="episode-file-status" style="padding:0 9px 8px;color:#aaa;font-size:11px">Checking uploaded file and rights...</div>
+    <video class="episode-player" controls playsinline preload="metadata" hidden></video>
+    <button class="episode-download" disabled data-episode="${ep.episode_number}">Checking file...</button>
+   </article>
+  `).join("");
+
+  const cards=[...$("episodeGrid").querySelectorAll(".episode-card")];
+
+  await Promise.all(cards.map(async card=>{
+   const epNo=Number(card.querySelector("button").dataset.episode);
+   const button=card.querySelector("button");
+   const video=card.querySelector("video");
+   const status=card.querySelector(".episode-file-status");
+
+   try{
+    const file=await findEpisodeFile(series.id,seasonNumber,epNo);
+    if(token!==detailRequest)return;
+
+    if(!file){
+     status.textContent="Not uploaded yet";
+     button.textContent="Not Available Yet";
+     return;
+    }
+
+    const {data:approval,error}=await supabase
+     .from("movie_download_rights")
+     .select("id,rights_basis")
+     .eq("media_type","tv")
+     .eq("tmdb_id",series.id)
+     .eq("file_name",file.name)
+     .eq("storage_path",file.storagePath)
+     .eq("approved",true)
+     .maybeSingle();
+
+    if(token!==detailRequest)return;
+    if(error)throw error;
+
+    if(!approval||!approval.rights_basis){
+     status.textContent="File uploaded, but distribution rights are not approved.";
+     button.textContent="Not Approved";
+     return;
+    }
+
+    const url=file.publicURL||publicFileURL(file.storagePath);
+    const ext=(file.name.split(".").pop()||"").toLowerCase();
+
+    status.textContent="AIDEL TV approved • "+approval.rights_basis;
+    button.disabled=false;
+    button.textContent="⬇ Download Episode";
+    button.onclick=()=>downloadFile(file.storagePath,file.name);
+
+    if(["mp4","webm","mov","m4v","ogv"].includes(ext)){
+     video.hidden=false;
+     video.src=url;
+
+     video.addEventListener("play",()=>{
+      saveViewState({selectedSeason:seasonNumber,selectedEpisode:epNo,videoTime:video.currentTime});
+     });
+
+     video.addEventListener("timeupdate",()=>{
+      if(epNo===Number(readViewState().selectedEpisode)){
+       saveViewState({videoTime:video.currentTime});
+      }
+     });
+
+     const state=readViewState();
+
+     if(state.selectedSeason===seasonNumber&&Number(state.selectedEpisode)===epNo&&state.videoTime>0){
+      video.addEventListener("loadedmetadata",()=>{
+       try{video.currentTime=state.videoTime}catch{}
+      },{once:true});
+     }
+    }else{
+     status.textContent+=" • Download to play this format";
+    }
+
+   }catch(e){
+    status.textContent=storageErrorMessage(e);
+    button.textContent="Check unavailable";
+    console.warn(e);
+   }
+  }));
+
+  const saved=readViewState();
+
+  if(saved.selectedEpisode&&saved.selectedSeason===seasonNumber){
+   const card=$("episode-card-"+saved.selectedEpisode);
+   card?.scrollIntoView({block:"center"});
+  }
+
+ }catch(e){
+  if(token!==detailRequest)return;
+  area.innerHTML=`<div class="status error">${escapeHTML(e.message||"Could not load episodes.")}<button class="back-season" id="backSeasons">← All Seasons</button></div>`;
+  $("backSeasons").onclick=()=>showSeriesSeasons(series);
+ }
+}
+
+/* MOVIE AND SERIES DETAILS */
+async function openDetails(id,media,{fromRestore=false}={}){
+ const token=++detailRequest;
+ media=media==="tv"?"tv":"movie";
+
+ $("movieModal").classList.add("open");
+ $("movieModal").setAttribute("aria-hidden","false");
+ document.body.style.overflow="hidden";
+
+ $("modalTitle").textContent="Loading...";
+ $("modalOverview").textContent="Getting title information...";
+ $("modalMeta").textContent="";
+ $("modalBackdrop").style.backgroundImage="none";
+ $("trailerArea").innerHTML="";
+ $("seasonArea").innerHTML="";
+
+ $("downloadButton").disabled=true;
+ $("downloadButton").textContent="Checking...";
+ $("downloadButton").onclick=null;
+ $("downloadMessage").textContent="Checking AIDEL TV storage...";
+
+ currentDetails=null;
+
+ const priorView=readViewState();
+
+ saveViewState({
+  detail:{id:Number(id),media},
+  selectedSeason:fromRestore?(priorView.selectedSeason??null):null,
+  selectedEpisode:fromRestore?(priorView.selectedEpisode??null):null,
+  videoTime:fromRestore?(priorView.videoTime||0):0,
+  modalOpen:true
+ });
+
+ try{
+  const [details,videos]=await Promise.all([
+   tmdb("/"+media+"/"+id),
+   tmdb("/"+media+"/"+id+"/videos")
+  ]);
+
+  if(token!==detailRequest)return;
+
+  currentDetails={...details,media_type:media};
+
+  $("modalTitle").textContent=getTitle(details);
+  $("modalOverview").textContent=details.overview||"No description is available.";
+
   const basic=getYear(details)+" • ★ "+Number(details.vote_average||0).toFixed(1);
+
   if(media==="tv"){
    $("modalMeta").textContent=basic+" • TV SERIES • "+(details.number_of_seasons||0)+" SEASONS • "+(details.number_of_episodes||0)+" EPISODES";
-   setUnavailable($("downloadButton"),"Download individual episodes from the season and episode list below.");
-   await showSeriesSeasons(details,{fromRestore});
-   if(token!==detailRequest)return;
-   const state=readViewState();if(state.selectedSeason!==undefined&&state.selectedSeason!==null)await showSeasonEpisodes(details,Number(state.selectedSeason),{fromRestore:true});
-  }else{$("modalMeta").textContent=basic+" • MOVIE";await setupMovieDownload(details,token)}
-  if(token!==detailRequest)return;
-  const backdrop=imageURL(details.backdrop_path||details.poster_path,"w1280");$("modalBackdrop").style.backgroundImage="linear-gradient(0deg,rgba(0,0,0,.7),transparent),url('"+backdrop+"')";
-  updateWatchlistButton();
-  const trailer=(videos.results||[]).find(v=>v.site==="YouTube"&&(v.type==="Trailer"||v.type==="Teaser"));
-  if(trailer){const frame=document.createElement("iframe");frame.className="trailer";frame.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(trailer.key);frame.title="Movie or series trailer";frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";frame.allowFullscreen=true;$("trailerArea").appendChild(frame)}else $("trailerArea").innerHTML="<p style='color:#888;margin-top:16px'>No official trailer is available for this title.</p>";
- }catch(e){if(token!==detailRequest)return;$("modalTitle").textContent="Unable to load details";$("modalOverview").textContent=e.message}
-}
-function updateWatchlistButton(){if(!currentDetails)return;const media=currentDetails.media_type||getMedia(currentDetails);$("watchlistButton").textContent=isSaved(currentDetails.id,media)?"✓ Remove from My List":"＋ My Watchlist"}
-function closeMovieModal({save=true}={}){$("movieModal").classList.remove("open");$("movieModal").setAttribute("aria-hidden","true");$("trailerArea").innerHTML="";document.body.style.overflow="";if(save)saveViewState({detail:null,modalOpen:false,selectedSeason:null,selectedEpisode:null,videoTime:0})}
-function renderWatchlist(){const row=$("watchlistRow"),list=getWatchlist();if(!currentUser){row.innerHTML='<div class="status">Sign in to create your personal watchlist.</div>';return}if(!list.length){row.innerHTML='<div class="status">Your watchlist is empty. Open a movie and tap My Watchlist to save it.</div>';return}row.innerHTML=list.map(x=>makeCard({id:x.id,title:x.title,name:x.title,poster_path:x.poster_path,vote_average:x.vote_average,release_date:x.release_date,first_air_date:x.media==="tv"?x.release_date:undefined},x.media)).join("")}
-function openAuth(){$("authModal").classList.add("open");$("authModal").setAttribute("aria-hidden","false");$("authMessage").textContent=""}
-function closeAuth(){$("authModal").classList.remove("open");$("authModal").setAttribute("aria-hidden","true")}
-function setAuthMode(mode){authMode=mode;const signup=mode==="signup";$("authTitle").textContent=signup?"Create Your Account":"Welcome to AIDEL TV";$("authDescription").textContent=signup?"Join AIDEL TV and start building your watchlist.":"Sign in to access your AIDEL TV account.";$("displayName").style.display=signup?"block":"none";$("displayName").required=signup;$("authPassword").autocomplete=signup?"new-password":"current-password";$("authSubmit").textContent=signup?"Create Account":"Sign In";$("authSwitch").textContent=signup?"Already have an account? Sign in":"New to AIDEL TV? Create an account";$("authMessage").textContent=""}
-$("authSwitch").addEventListener("click",()=>setAuthMode(authMode==="login"?"signup":"login"));
-$("authForm").addEventListener("submit",async e=>{e.preventDefault();const email=$("authEmail").value.trim(),password=$("authPassword").value,name=$("displayName").value.trim();$("authSubmit").disabled=true;$("authMessage").textContent="Please wait...";try{if(authMode==="signup"){const {data,error}=await supabase.auth.signUp({email,password,options:{data:{display_name:name}}});if(error)throw error;$("authMessage").textContent=data.session?"Account created successfully!":"Account created. Check your email for the confirmation link before signing in."}else{const {error}=await supabase.auth.signInWithPassword({email,password});if(error)throw error;$("authMessage").textContent="Signed in successfully!";await refreshAccount();setTimeout(closeAuth,700)}}catch(e){$("authMessage").textContent=e.message||"Authentication failed."}finally{$("authSubmit").disabled=false}});
-async function openProfile(){if(!currentUser){openAuth();return}$("profileModal").classList.add("open");$("profileModal").setAttribute("aria-hidden","false");$("profileInfo").textContent=currentUser.email||"";$("profileMessage").textContent="";$("profileName").value=currentUser.user_metadata?.display_name||currentUser.email?.split("@")[0]||"";try{const {data,error}=await supabase.from("profiles").select("display_name").eq("id",currentUser.id).maybeSingle();if(!error&&data?.display_name)$("profileName").value=data.display_name}catch(e){console.warn("Profile read",e)}}
-$("profileForm").addEventListener("submit",async e=>{e.preventDefault();if(!currentUser)return;const displayName=$("profileName").value.trim();if(!displayName)return;$("profileMessage").textContent="Saving profile...";try{const {error}=await supabase.from("profiles").update({display_name:displayName}).eq("id",currentUser.id);if(error)throw error;const {error:metaError}=await supabase.auth.updateUser({data:{display_name:displayName}});if(metaError)console.warn(metaError);$("profileMessage").textContent="Profile updated successfully!";await refreshAccount()}catch(e){$("profileMessage").textContent=e.message}});
-async function refreshAccount(){const {data}=await supabase.auth.getSession();currentSession=data.session;currentUser=currentSession?.user||null;$("accountButton").textContent=currentUser?(currentUser.user_metadata?.display_name||"My Account"):"Sign In";renderWatchlist()}
-$("signOutButton").addEventListener("click",async()=>{const {error}=await supabase.auth.signOut();if(error){$("profileMessage").textContent=error.message;return}$("profileModal").classList.remove("open");await refreshAccount()});
-$("accountButton").addEventListener("click",()=>{if(currentUser)openProfile();else{setAuthMode("login");openAuth()}});
-$("searchForm").addEventListener("submit",e=>{e.preventDefault();const q=$("searchInput").value.trim();if(q)searchMovies(q)});
-$("searchInput").addEventListener("input",e=>{if(!e.target.value.trim()){activeSearchRequest++;$("searchResults").classList.remove("active");$("sections").style.display="";$("searchCount").textContent="";$("searchGrid").innerHTML="";$("archiveResults").classList.remove("active");$("archiveGrid").innerHTML="";saveViewState({searchQuery:"",searchActive:false})}});
-$("watchlistButton").addEventListener("click",()=>{if(currentDetails)toggleWatchlist(currentDetails,currentDetails.media_type||getMedia(currentDetails))});
-$("closeMovie").addEventListener("click",()=>closeMovieModal());$("closeAuth").addEventListener("click",closeAuth);
-$("closeProfile").addEventListener("click",()=>{$("profileModal").classList.remove("open");document.body.style.overflow=""});
-["movieModal","authModal","profileModal"].forEach(id=>$(id).addEventListener("click",e=>{if(e.target===$(id)){if(id==="movieModal")closeMovieModal();else $(id).classList.remove("open");document.body.style.overflow=""}}));
-document.addEventListener("click",e=>{const card=e.target.closest(".movie-card");if(card)openDetails(card.dataset.id,card.dataset.media)});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeMovieModal();closeAuth();$("profileModal").classList.remove("open");document.body.style.overflow=""}if((e.key==="Enter"||e.key===" ")&&e.target.matches(".movie-card")){e.preventDefault();openDetails(e.target.dataset.id,e.target.dataset.media)}});
-$("heroSection").addEventListener("mouseenter",()=>clearInterval(heroInterval));$("heroSection").addEventListener("mouseleave",startHeroInterval);
 
+   setUnavailable($("downloadButton"),"Download individual episodes from the season and episode list below.");
+
+   await showSeriesSeasons(details,{fromRestore});
+
+   if(token!==detailRequest)return;
+
+   const state=readViewState();
+
+   if(state.selectedSeason!==undefined&&state.selectedSeason!==null){
+    await showSeasonEpisodes(details,Number(state.selectedSeason),{fromRestore:true});
+   }
+
+  }else{
+   $("modalMeta").textContent=basic+" • MOVIE";
+   await setupMovieDownload(details,token);
+  }
+
+  if(token!==detailRequest)return;
+
+  const backdrop=imageURL(details.backdrop_path||details.poster_path,"w1280");
+
+  $("modalBackdrop").style.backgroundImage="linear-gradient(0deg,rgba(0,0,0,.7),transparent),url('"+backdrop+"')";
+
+  updateWatchlistButton();
+
+  const trailer=(videos.results||[]).find(v=>v.site==="YouTube"&&(v.type==="Trailer"||v.type==="Teaser"));
+
+  if(trailer){
+   const frame=document.createElement("iframe");
+   frame.className="trailer";
+   frame.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(trailer.key);
+   frame.title="Movie or series trailer";
+   frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+   frame.allowFullscreen=true;
+   $("trailerArea").appendChild(frame);
+  }else{
+   $("trailerArea").innerHTML="<p style='color:#888;margin-top:16px'>No official trailer is available for this title.</p>";
+  }
+
+ }catch(e){
+  if(token!==detailRequest)return;
+  $("modalTitle").textContent="Unable to load details";
+  $("modalOverview").textContent=e.message;
+ }
+}
+
+function updateWatchlistButton(){
+ if(!currentDetails)return;
+ const media=currentDetails.media_type||getMedia(currentDetails);
+ $("watchlistButton").textContent=isSaved(currentDetails.id,media)?"✓ Remove from My List":"＋ My Watchlist";
+}
+
+function closeMovieModal({save=true}={}){
+ $("movieModal").classList.remove("open");
+ $("movieModal").setAttribute("aria-hidden","true");
+ $("trailerArea").innerHTML="";
+ document.body.style.overflow="";
+ if(save)saveViewState({detail:null,modalOpen:false,selectedSeason:null,selectedEpisode:null,videoTime:0});
+}
+
+function renderWatchlist(){
+ const row=$("watchlistRow");
+ const list=getWatchlist();
+
+ if(!currentUser){
+  row.innerHTML='<div class="status">Sign in to create your personal watchlist.</div>';
+  return;
+ }
+
+ if(!list.length){
+  row.innerHTML='<div class="status">Your watchlist is empty. Open a movie and tap My Watchlist to save it.</div>';
+  return;
+ }
+
+ row.innerHTML=list.map(x=>makeCard({
+  id:x.id,
+  title:x.title,
+  name:x.title,
+  poster_path:x.poster_path,
+  vote_average:x.vote_average,
+  release_date:x.release_date,
+  first_air_date:x.media==="tv"?x.release_date:undefined
+ },x.media)).join("");
+}
+
+/* AUTHENTICATION */
+function openAuth(){
+ $("authModal").classList.add("open");
+ $("authModal").setAttribute("aria-hidden","false");
+ $("authMessage").textContent="";
+}
+
+function closeAuth(){
+ $("authModal").classList.remove("open");
+ $("authModal").setAttribute("aria-hidden","true");
+}
+
+function setAuthMode(mode){
+ authMode=mode;
+ const signup=mode==="signup";
+
+ $("authTitle").textContent=signup?"Create Your Account":"Welcome to AIDEL TV";
+ $("authDescription").textContent=signup?"Join AIDEL TV and start building your watchlist.":"Sign in to access your AIDEL TV account.";
+ $("displayName").style.display=signup?"block":"none";
+ $("displayName").required=signup;
+ $("authPassword").autocomplete=signup?"new-password":"current-password";
+ $("authSubmit").textContent=signup?"Create Account":"Sign In";
+ $("authSwitch").textContent=signup?"Already have an account? Sign in":"New to AIDEL TV? Create an account";
+ $("authMessage").textContent="";
+}
+
+$("authSwitch").addEventListener("click",()=>{
+ setAuthMode(authMode==="login"?"signup":"login");
+});
+
+$("authForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+
+ const email=$("authEmail").value.trim();
+ const password=$("authPassword").value;
+ const name=$("displayName").value.trim();
+
+ $("authSubmit").disabled=true;
+ $("authMessage").textContent="Please wait...";
+
+ try{
+  if(authMode==="signup"){
+   const {data,error}=await supabase.auth.signUp({
+    email,
+    password,
+    options:{data:{display_name:name}}
+   });
+
+   if(error)throw error;
+
+   $("authMessage").textContent=data.session
+    ?"Account created successfully!"
+    :"Account created. Check your email for the confirmation link before signing in.";
+
+  }else{
+   const {error}=await supabase.auth.signInWithPassword({email,password});
+   if(error)throw error;
+
+   $("authMessage").textContent="Signed in successfully!";
+   await refreshAccount();
+   setTimeout(closeAuth,700);
+  }
+
+ }catch(e){
+  $("authMessage").textContent=e.message||"Authentication failed.";
+ }finally{
+  $("authSubmit").disabled=false;
+ }
+});
+
+/* PROFILE */
+async function openProfile(){
+ if(!currentUser){openAuth();return}
+
+ $("profileModal").classList.add("open");
+ $("profileModal").setAttribute("aria-hidden","false");
+ $("profileInfo").textContent=currentUser.email||"";
+ $("profileMessage").textContent="";
+ $("profileName").value=currentUser.user_metadata?.display_name||currentUser.email?.split("@")[0]||"";
+
+ try{
+  const {data,error}=await supabase.from("profiles").select("display_name").eq("id",currentUser.id).maybeSingle();
+  if(!error&&data?.display_name)$("profileName").value=data.display_name;
+ }catch(e){
+  console.warn("Profile read",e);
+ }
+}
+
+$("profileForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ if(!currentUser)return;
+
+ const displayName=$("profileName").value.trim();
+ if(!displayName)return;
+
+ $("profileMessage").textContent="Saving profile...";
+
+ try{
+  const {error}=await supabase.from("profiles").update({display_name:displayName}).eq("id",currentUser.id);
+  if(error)throw error;
+
+  const {error:metaError}=await supabase.auth.updateUser({data:{display_name:displayName}});
+  if(metaError)console.warn(metaError);
+
+  $("profileMessage").textContent="Profile updated successfully!";
+  await refreshAccount();
+
+ }catch(e){
+  $("profileMessage").textContent=e.message;
+ }
+});
+
+async function refreshAccount(){
+ const {data}=await supabase.auth.getSession();
+ currentSession=data.session;
+ currentUser=currentSession?.user||null;
+
+ $("accountButton").textContent=currentUser
+  ?(currentUser.user_metadata?.display_name||"My Account")
+  :"Sign In";
+
+ renderWatchlist();
+}
+
+$("signOutButton").addEventListener("click",async()=>{
+ const {error}=await supabase.auth.signOut();
+
+ if(error){
+  $("profileMessage").textContent=error.message;
+  return;
+ }
+
+ $("profileModal").classList.remove("open");
+ await refreshAccount();
+});
+
+$("accountButton").addEventListener("click",()=>{
+ if(currentUser)openProfile();
+ else{
+  setAuthMode("login");
+  openAuth();
+ }
+});
+
+/* SEARCH AND PAGE EVENTS */
+$("searchForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const q=$("searchInput").value.trim();
+ if(q)searchMovies(q);
+});
+
+$("searchInput").addEventListener("input",e=>{
+ if(!e.target.value.trim()){
+  activeSearchRequest++;
+
+  $("searchResults").classList.remove("active");
+  $("sections").style.display="";
+  $("searchCount").textContent="";
+  $("searchGrid").innerHTML="";
+
+  $("archiveResults").classList.remove("active");
+  $("archiveGrid").innerHTML="";
+
+  $("commonsResults").classList.remove("active");
+  $("commonsGrid").innerHTML="";
+
+  saveViewState({searchQuery:"",searchActive:false});
+ }
+});
+
+$("watchlistButton").addEventListener("click",()=>{
+ if(currentDetails){
+  toggleWatchlist(currentDetails,currentDetails.media_type||getMedia(currentDetails));
+ }
+});
+
+$("closeMovie").addEventListener("click",()=>closeMovieModal());
+$("closeAuth").addEventListener("click",closeAuth);
+
+$("closeProfile").addEventListener("click",()=>{
+ $("profileModal").classList.remove("open");
+ document.body.style.overflow="";
+});
+
+["movieModal","authModal","profileModal"].forEach(id=>{
+ $(id).addEventListener("click",e=>{
+  if(e.target===$(id)){
+   if(id==="movieModal")closeMovieModal();
+   else $(id).classList.remove("open");
+   document.body.style.overflow="";
+  }
+ });
+});
+
+document.addEventListener("click",e=>{
+ const card=e.target.closest(".movie-card");
+ if(card)openDetails(card.dataset.id,card.dataset.media);
+});
+
+document.addEventListener("keydown",e=>{
+ if(e.key==="Escape"){
+  closeMovieModal();
+  closeAuth();
+  $("profileModal").classList.remove("open");
+  document.body.style.overflow="";
+ }
+
+ if((e.key==="Enter"||e.key===" ")&&e.target.matches(".movie-card")){
+  e.preventDefault();
+  openDetails(e.target.dataset.id,e.target.dataset.media);
+ }
+});
+
+$("heroSection").addEventListener("mouseenter",()=>clearInterval(heroInterval));
+$("heroSection").addEventListener("mouseleave",startHeroInterval);
+
+/* RESTORE THE USER'S LAST VIEW */
 async function restoreSavedView(){
  const state=readViewState();
- if(state.searchActive&&state.searchQuery){await searchMovies(state.searchQuery,{fromRestore:true})}
- if(state.detail?.id&&state.detail?.media){await openDetails(state.detail.id,state.detail.media,{fromRestore:true})}
- requestAnimationFrame(()=>requestAnimationFrame(()=>{const latest=readViewState();if(typeof latest.scrollY==="number")window.scrollTo(0,latest.scrollY)}));
+
+ if(state.searchActive&&state.searchQuery){
+  await searchMovies(state.searchQuery,{fromRestore:true});
+ }
+
+ if(state.detail?.id&&state.detail?.media){
+  await openDetails(state.detail.id,state.detail.media,{fromRestore:true});
+ }
+
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  const latest=readViewState();
+  if(typeof latest.scrollY==="number")window.scrollTo(0,latest.scrollY);
+ }));
 }
+
+/* START AIDEL TV */
 startWelcomeScreen();
 await refreshAccount();
 await loadHome();
 await restoreSavedView();
-supabase.auth.onAuthStateChange(()=>{refreshAccount()});
+
+supabase.auth.onAuthStateChange(()=>{
+ refreshAccount();
+});
+
 </script>
 </body>
 </html>
