@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -115,6 +114,7 @@ main{padding:10px 5% 60px}
 .modal-body p{color:#bbb;line-height:1.7;margin-top:12px}
 .modal-meta{color:#aaa;font-size:13px}
 .modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.modal-actions .btn-home{background:#292331;border:1px solid var(--border);color:white}
 .trailer{width:100%;aspect-ratio:16/9;border:0;margin-top:20px;border-radius:8px;background:#000}
 .form-box{max-width:430px;margin:35px auto;background:#11111a;padding:28px;border:1px solid var(--border);border-radius:15px;position:relative}
 .form-box h2{font:700 25px Outfit;margin-bottom:7px}
@@ -162,6 +162,7 @@ footer strong{font:800 20px Outfit;color:white}
  #searchGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .welcome-text{letter-spacing:6px}
  .modal-body{padding:17px}
+ .modal-actions .btn{padding:11px 14px;font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){
  *,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
@@ -181,9 +182,9 @@ footer strong{font:800 20px Outfit;color:white}
 </div>
 
 <header>
- <a class="logo" href="#"><div class="logo-badge">A</div>AIDEL<span>TV</span></a>
+ <a class="logo" href="#" id="homeLogo"><div class="logo-badge">A</div>AIDEL<span>TV</span></a>
  <nav>
-  <a href="#">Home</a>
+  <a href="#" id="homeNav">Home</a>
   <a href="#trending">Movies</a>
   <a href="#series">Series</a>
   <a href="#nollywood">Nollywood</a>
@@ -284,6 +285,7 @@ footer strong{font:800 20px Outfit;color:white}
    <div class="modal-meta" id="modalMeta"></div>
    <p id="modalOverview"></p>
    <div class="modal-actions">
+    <button class="btn btn-home" id="backHomeButton">← Back to Home</button>
     <button class="btn btn-primary" id="watchlistButton">＋ My Watchlist</button>
     <button class="btn btn-secondary" id="downloadButton" disabled>Not Available Yet</button>
    </div>
@@ -339,7 +341,7 @@ footer strong{font:800 20px Outfit;color:white}
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 /* KEEP YOUR EXISTING API KEYS AND PROJECT DETAILS */
-const TMDB_API_KEY = "b780fe2deb5463314e4fa32ef70e42c4"
+const TMDB_API_KEY = "b780fe2deb5463314e4fa32ef70e42c4";
 const API_BASE = "https://api.themoviedb.org/3";
 const IMAGE_BASE = "https://image.tmdb.org/t/p/";
 const SUPABASE_URL = "https://nbvznasgshojxjsgchds.supabase.co";
@@ -365,7 +367,14 @@ let currentDetails=null;
 let authMode="login";
 let activeSearchRequest=0;
 let detailRequest=0;
-let homeRenderToken=0;
+
+/* Each homepage row has its own render counter.
+   This prevents one row cancelling another row's season requests. */
+const rowRenderTokens=new WeakMap();
+
+/* Tracks the browser-history entry created when details are opened. */
+let detailHistoryActive=false;
+
 let savedView=readViewState();
 
 function readViewState(){
@@ -621,22 +630,37 @@ async function loadSearchSeasonCounts(items,requestId){
  return loadSeasonCounts(items,()=>requestId===activeSearchRequest);
 }
 
+/* FIXED: Each homepage row now has an independent render token. */
 function renderRow(el,results,media="movie"){
- const items=(results||[]).filter(x=>x&&x.id&&x.poster_path&&x.media_type!=="person").slice(0,20);
+ const items=(results||[])
+  .filter(x=>x&&x.id&&x.poster_path&&x.media_type!=="person")
+  .slice(0,20);
 
  if(!items.length){
   el.innerHTML='<div class="status">No titles found in this category.</div>';
   return;
  }
 
- el.innerHTML=items.map(x=>makeCard(x,media==="all"?getMedia(x):media,media==="tv"||media==="all"&&getMedia(x)==="tv")).join("");
+ const thisRender=(rowRenderTokens.get(el)||0)+1;
+ rowRenderTokens.set(el,thisRender);
 
- /* Load homepage season counts after the cards have been added */
- const thisRender=++homeRenderToken;
- const tvItems=items.filter(x=>media==="tv"||(media==="all"&&getMedia(x)==="tv"));
+ el.innerHTML=items.map(x=>
+  makeCard(
+   x,
+   media==="all"?getMedia(x):media,
+   media==="tv"||(media==="all"&&getMedia(x)==="tv")
+  )
+ ).join("");
+
+ const tvItems=items.filter(x=>
+  media==="tv"||(media==="all"&&getMedia(x)==="tv")
+ );
 
  if(tvItems.length){
-  loadSeasonCounts(tvItems,()=>thisRender===homeRenderToken&&el.isConnected);
+  loadSeasonCounts(
+   tvItems,
+   ()=>rowRenderTokens.get(el)===thisRender&&el.isConnected
+  );
  }
 }
 
@@ -1219,11 +1243,6 @@ async function showSeasonEpisodes(series,seasonNumber,{fromRestore=false}={}){
      return;
     }
 
-    /*
-     The file exists in the Supabase Movies bucket.
-     Enable the download without requiring a separate
-     movie_download_rights approval row.
-    */
     const url=file.publicURL||publicFileURL(file.storagePath);
     const ext=(file.name.split(".").pop()||"").toLowerCase();
 
@@ -1280,6 +1299,13 @@ async function showSeasonEpisodes(series,seasonNumber,{fromRestore=false}={}){
 
 /* MOVIE AND SERIES DETAILS */
 async function openDetails(id,media,{fromRestore=false}={}){
+ /* Add one browser-history entry when opening the details window.
+    The phone/browser Back button can then close the details window. */
+ if(!detailHistoryActive){
+  history.pushState({aidelDetail:true},"",location.href);
+  detailHistoryActive=true;
+ }
+
  const token=++detailRequest;
  media=media==="tv"?"tv":"movie";
 
@@ -1312,10 +1338,19 @@ async function openDetails(id,media,{fromRestore=false}={}){
  });
 
  try{
-  const [details,videos]=await Promise.all([
-   tmdb("/"+media+"/"+id),
-   tmdb("/"+media+"/"+id+"/videos")
-  ]);
+  /* FIXED: Load title details independently from the trailer.
+     A trailer API error will no longer stop the movie/series page. */
+  const details=await tmdb("/"+media+"/"+id);
+
+  if(token!==detailRequest)return;
+
+  let videos={results:[]};
+
+  try{
+   videos=await tmdb("/"+media+"/"+id+"/videos");
+  }catch(videoError){
+   console.warn("Trailer information unavailable:",videoError);
+  }
 
   if(token!==detailRequest)return;
 
@@ -1381,12 +1416,72 @@ function updateWatchlistButton(){
  $("watchlistButton").textContent=isSaved(currentDetails.id,media)?"✓ Remove from My List":"＋ My Watchlist";
 }
 
-function closeMovieModal({save=true}={}){
+/* FIXED: Close the details immediately, then restore browser history.
+   fromHistory prevents calling history.back() a second time. */
+function closeMovieModal({save=true,fromHistory=false}={}){
+ const shouldGoBack=detailHistoryActive&&!fromHistory;
+
+ detailHistoryActive=false;
+
  $("movieModal").classList.remove("open");
  $("movieModal").setAttribute("aria-hidden","true");
  $("trailerArea").innerHTML="";
+ $("seasonArea").innerHTML="";
  document.body.style.overflow="";
- if(save)saveViewState({detail:null,modalOpen:false,selectedSeason:null,selectedEpisode:null,videoTime:0});
+
+ if(save){
+  saveViewState({
+   detail:null,
+   modalOpen:false,
+   selectedSeason:null,
+   selectedEpisode:null,
+   videoTime:0
+  });
+ }
+
+ if(shouldGoBack){
+  history.back();
+ }
+}
+
+/* Phone/browser Back button closes the open movie or series details. */
+window.addEventListener("popstate",()=>{
+ if($("movieModal").classList.contains("open")){
+  closeMovieModal({save:true,fromHistory:true});
+ }
+});
+
+/* Dedicated Back to Home action. */
+function goBackHome(){
+ closeMovieModal();
+
+ activeSearchRequest++;
+
+ $("searchResults").classList.remove("active");
+ $("archiveResults").classList.remove("active");
+ $("commonsResults").classList.remove("active");
+
+ $("sections").style.display="";
+ $("searchInput").value="";
+ $("searchCount").textContent="";
+ $("searchGrid").innerHTML="";
+ $("archiveGrid").innerHTML='<div class="status">Search for a title to discover available Internet Archive videos.</div>';
+ $("commonsGrid").innerHTML='<div class="status">Search for films to discover video files on Wikimedia Commons.</div>';
+
+ saveViewState({
+  detail:null,
+  modalOpen:false,
+  searchQuery:"",
+  searchActive:false,
+  selectedSeason:null,
+  selectedEpisode:null,
+  videoTime:0,
+  scrollY:0,
+  hash:""
+ });
+
+ history.replaceState({aidelHome:true},"",location.pathname+location.search);
+ window.scrollTo({top:0,behavior:"smooth"});
 }
 
 function renderWatchlist(){
@@ -1590,12 +1685,44 @@ $("watchlistButton").addEventListener("click",()=>{
  }
 });
 
+$("backHomeButton").addEventListener("click",goBackHome);
+
 $("closeMovie").addEventListener("click",()=>closeMovieModal());
 $("closeAuth").addEventListener("click",closeAuth);
 
 $("closeProfile").addEventListener("click",()=>{
  $("profileModal").classList.remove("open");
  document.body.style.overflow="";
+});
+
+$("homeLogo").addEventListener("click",e=>{
+ e.preventDefault();
+ if($("movieModal").classList.contains("open")){
+  goBackHome();
+ }else{
+  $("searchInput").value="";
+  $("searchResults").classList.remove("active");
+  $("archiveResults").classList.remove("active");
+  $("commonsResults").classList.remove("active");
+  $("sections").style.display="";
+  saveViewState({searchQuery:"",searchActive:false,scrollY:0,hash:""});
+  window.scrollTo({top:0,behavior:"smooth"});
+ }
+});
+
+$("homeNav").addEventListener("click",e=>{
+ e.preventDefault();
+ if($("movieModal").classList.contains("open")){
+  goBackHome();
+ }else{
+  $("searchInput").value="";
+  $("searchResults").classList.remove("active");
+  $("archiveResults").classList.remove("active");
+  $("commonsResults").classList.remove("active");
+  $("sections").style.display="";
+  saveViewState({searchQuery:"",searchActive:false,scrollY:0,hash:""});
+  window.scrollTo({top:0,behavior:"smooth"});
+ }
 });
 
 ["movieModal","authModal","profileModal"].forEach(id=>{
@@ -1615,7 +1742,7 @@ document.addEventListener("click",e=>{
 
 document.addEventListener("keydown",e=>{
  if(e.key==="Escape"){
-  closeMovieModal();
+  if($("movieModal").classList.contains("open"))closeMovieModal();
   closeAuth();
   $("profileModal").classList.remove("open");
   document.body.style.overflow="";
