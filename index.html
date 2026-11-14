@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#08080c">
 <title>AIDEL TV — Movies, Series & Entertainment</title>
 <meta name="description" content="Discover movies, Nollywood films and TV series on AIDEL TV.">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -886,12 +887,101 @@ const IMAGE_BASE = "https://image.tmdb.org/t/p/";
 const SUPABASE_URL = "https://nbvznasgshojxjsgchds.supabase.co";
 const SUPABASE_KEY = "sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej";
 
-const BUCKET = "movies";
+/* IMPORTANT: Bucket name matches Supabase */
+
+const BUCKET = "Movies";
 
 const supabase = createClient(SUPABASE_URL,SUPABASE_KEY);
 window.aidelSupabase = supabase;
 
 const $ = id => document.getElementById(id);
+
+/* REMEMBER WHERE THE VISITOR WAS */
+
+history.scrollRestoration = "manual";
+
+let aidelScrollTimer;
+
+function saveAidelPosition() {
+  sessionStorage.setItem(
+    "aidel_scroll_position",
+    String(window.scrollY)
+  );
+
+  sessionStorage.setItem(
+    "aidel_current_section",
+    location.hash
+  );
+}
+
+window.addEventListener("scroll",()=>{
+  clearTimeout(aidelScrollTimer);
+
+  aidelScrollTimer = setTimeout(()=>{
+    saveAidelPosition();
+  },150);
+},{passive:true});
+
+window.addEventListener("hashchange",()=>{
+  saveAidelPosition();
+});
+
+window.addEventListener("pagehide",()=>{
+  saveAidelPosition();
+});
+
+/* RESTORE POSITION AFTER REFRESH */
+
+function restoreAidelPosition() {
+  const savedPosition =
+    sessionStorage.getItem("aidel_scroll_position");
+
+  const savedSection =
+    sessionStorage.getItem("aidel_current_section");
+
+  if(
+    savedPosition !== null &&
+    savedSection === location.hash
+  ) {
+    window.scrollTo(0,Number(savedPosition));
+  } else if(location.hash) {
+    const section = document.getElementById(
+      location.hash.substring(1)
+    );
+
+    section?.scrollIntoView();
+  }
+}
+
+window.addEventListener("load",()=>{
+  setTimeout(restoreAidelPosition,500);
+});
+
+/* WELCOME SCREEN: FIRST VISIT ONLY */
+
+function startWelcomeScreen() {
+  const intro = $("aidel-intro");
+
+  const alreadyVisited =
+    localStorage.getItem("aidel_welcome_seen")==="yes";
+
+  if(alreadyVisited || location.hash) {
+    intro?.remove();
+    localStorage.setItem("aidel_welcome_seen","yes");
+    return;
+  }
+
+  localStorage.setItem("aidel_welcome_seen","yes");
+
+  setTimeout(()=>{
+    intro?.classList.add("hide");
+
+    setTimeout(()=>{
+      intro?.remove();
+    },900);
+
+  },3000);
+}
 
 const FALLBACK_POSTER =
   "data:image/svg+xml;charset=UTF-8," +
@@ -959,17 +1049,7 @@ function getMedia(item) {
   return item.media_type==="tv" || item.first_air_date ? "tv" : "movie";
 }
 
-/* SUPABASE DOWNLOAD SYSTEM
-
-MOVIES:
-Movies/movie-TMDBID.mp4
-
-SERIES:
-Series/TV_TMDBID/Season-1/S01E01.mp4
-
-Supported extensions:
-mp4, webm, mov, m4v, mkv
-*/
+/* SUPABASE DOWNLOAD SYSTEM */
 
 const VIDEO_EXTENSIONS = ["mp4","webm","mov","m4v","mkv"];
 
@@ -983,7 +1063,7 @@ function storageErrorMessage(error) {
   const msg = String(error?.message || error || "");
 
   if(/permission|row-level|policy|not allowed|unauthorized|forbidden/i.test(msg)) {
-    return "Supabase file listing is blocked. The movies bucket needs a Storage SELECT policy to let AIDEL TV check uploaded files.";
+    return "Supabase file listing is blocked. The Movies bucket needs a Storage SELECT policy.";
   }
 
   return msg || "Could not check Supabase storage.";
@@ -1002,10 +1082,10 @@ async function listStorage(path) {
   return data || [];
 }
 
-/* FIND A MOVIE FILE */
+/* FIND A MOVIE FILE IN THE ROOT OF THE MOVIES BUCKET */
 
 async function findMovieFile(tmdbId) {
-  const files = await listStorage("Movies");
+  const files = await listStorage("");
 
   const expected = "movie-" + String(tmdbId);
 
@@ -1015,24 +1095,44 @@ async function findMovieFile(tmdbId) {
   ) || null;
 }
 
-/* FIND A SERIES EPISODE FILE */
+/* FIND SERIES EPISODES */
 
 async function findEpisodeFile(tvId,seasonNumber,episodeNumber) {
-  const folder =
-    `Series/${tvId}/Season-${seasonNumber}`;
-
   const code =
     `S${String(seasonNumber).padStart(2,"0")}E${String(episodeNumber).padStart(2,"0")}`.toLowerCase();
 
-  const files = await listStorage(folder);
+  /* Check both normal folder and folder with a trailing period */
 
-  return files.find(file =>
-    file.name.toLowerCase().startsWith(code+".") &&
-    isVideoFile(file.name)
-  ) || null;
+  const folders = [
+    `Series/${tvId}/Season-${seasonNumber}`,
+    `Series/${tvId}/Season-${seasonNumber}.`
+  ];
+
+  for(const folder of folders) {
+    try {
+      const files = await listStorage(folder);
+
+      const file = files.find(file =>
+        file.name.toLowerCase().startsWith(code+".") &&
+        isVideoFile(file.name)
+      );
+
+      if(file) {
+        return {
+          ...file,
+          storagePath:`${folder}/${file.name}`
+        };
+      }
+
+    } catch(error) {
+      console.warn("Could not check folder:",folder,error);
+    }
+  }
+
+  return null;
 }
 
-/* CREATE PUBLIC DOWNLOAD URL */
+/* PUBLIC DOWNLOAD URL */
 
 function publicFileURL(path) {
   return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
@@ -1042,7 +1142,7 @@ function activateDownload(button,path,label) {
   button.disabled = false;
   button.textContent = "Download";
 
-  button.onclick = () => {
+  button.onclick = ()=>{
     const url = publicFileURL(path);
 
     const a = document.createElement("a");
@@ -1084,7 +1184,7 @@ async function setupMovieDownload(details) {
     if(file) {
       activateDownload(
         button,
-        `Movies/${file.name}`,
+        file.name,
         file.name
       );
 
@@ -1202,7 +1302,7 @@ function makeCard(item,media,showSeasonInfo=false) {
   `;
 }
 
-/* SHOW TOTAL SEASON COUNTS IN SEARCH */
+/* TOTAL SEASON COUNTS IN SEARCH */
 
 async function loadSearchSeasonCounts(items,requestId) {
   const tvItems = items.filter(x =>
@@ -1685,16 +1785,13 @@ async function showSeasonEpisodes(series,seasonNumber) {
         );
 
         if(file) {
-          const path =
-            `Series/${series.id}/Season-${seasonNumber}/${file.name}`;
-
           button.disabled = false;
           button.textContent = "Download Episode";
 
           button.addEventListener("click",()=>{
             const a = document.createElement("a");
 
-            a.href = publicFileURL(path);
+            a.href = publicFileURL(file.storagePath);
             a.download = file.name;
             a.target = "_blank";
             a.rel = "noopener";
@@ -2179,6 +2276,8 @@ $("heroSection").addEventListener("mouseleave",startHeroInterval);
 
 /* START AIDEL TV */
 
+startWelcomeScreen();
+
 await refreshAccount();
 
 loadHome();
@@ -2187,20 +2286,9 @@ supabase.auth.onAuthStateChange(()=>{
   refreshAccount();
 });
 
-/* SHOW WELCOME SCREEN FOR 3 SECONDS */
-
-setTimeout(()=>{
-  $("aidel-intro").classList.add("hide");
-
-  setTimeout(()=>{
-    $("aidel-intro")?.remove();
-  },900);
-
-},3000);
-
 </script>
 
-<!-- AIDEL TV - AVATAR SEASON 3 EPISODE 1 -->
+<!-- AVATAR SEASON 3 EPISODE 1 -->
 
 <section id="avatar-season-3" style="
   background:#101018;
@@ -2257,6 +2345,6 @@ setTimeout(()=>{
 </section>
 
 <!-- END AVATAR EPISODE -->
-  
+
 </body>
 </html>
