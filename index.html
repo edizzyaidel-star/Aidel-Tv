@@ -883,19 +883,13 @@ const TMDB_API_KEY = "b780fe2deb5463314e4fa32ef70e42c4"
 const API_BASE = "https://api.themoviedb.org/3";
 const IMAGE_BASE = "https://image.tmdb.org/t/p/";
 
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-const SUPABASE_URL = 'https://nbvznasgshojxjsgchds.supabase.co';
-const SUPABASE_KEY = ' sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej';
+const SUPABASE_URL = "https://nbvznasgshojxjsgchds.supabase.co";
+const SUPABASE_KEY = "sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej";
 
 const BUCKET = "movies";
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
+const supabase = createClient(SUPABASE_URL,SUPABASE_KEY);
 window.aidelSupabase = supabase;
-
-console.log('AIDEL TV Supabase connected successfully!');
 
 const $ = id => document.getElementById(id);
 
