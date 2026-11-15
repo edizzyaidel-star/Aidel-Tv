@@ -29,9 +29,44 @@ button{cursor:pointer}
 @keyframes introGlow{to{filter:drop-shadow(0 0 22px #a855f7)}}
 
 header{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 5%;background:rgba(5,5,8,.95);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
-.logo{display:flex;align-items:center;gap:8px;color:white;text-decoration:none;font:800 25px Outfit}
-.logo-badge{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#e50914,#8c0710);box-shadow:0 0 18px #e5091455}
-.logo span{color:var(--red)}
+
+.logo{
+ display:flex;
+ align-items:center;
+ gap:0;
+ color:white;
+ text-decoration:none;
+ font:900 27px/1 Outfit,sans-serif;
+ letter-spacing:-1.8px;
+ white-space:nowrap;
+}
+
+.logo-a{
+ display:inline-block;
+ background:linear-gradient(145deg,#ff7777 0%,#e50914 45%,#78000a 100%);
+ -webkit-background-clip:text;
+ background-clip:text;
+ color:transparent;
+ text-shadow:0 2px 7px #e5091466;
+}
+
+.logo-idel{
+ background:linear-gradient(180deg,#fff 0%,#c6c8d0 45%,#777b87 100%);
+ -webkit-background-clip:text;
+ background-clip:text;
+ color:transparent;
+ text-shadow:0 1px 4px #ffffff33;
+}
+
+.logo-tv{
+ align-self:flex-start;
+ margin:1px 0 0 2px;
+ color:#fff;
+ font:italic 900 10px/1 Outfit,sans-serif;
+ letter-spacing:-.4px;
+ text-shadow:0 0 5px #fff8;
+}
+
 nav{display:flex;gap:20px;align-items:center}
 nav a{color:#ccc;text-decoration:none;font-size:13px}
 nav a:hover{color:var(--red)}
@@ -144,8 +179,7 @@ footer strong{font:800 20px Outfit;color:white}
 
 @media(max-width:760px){
  header{padding:11px 4%;flex-wrap:wrap;gap:10px}
- .logo{font-size:21px}
- .logo-badge{width:31px;height:31px}
+ .logo{font-size:23px}
  nav{order:3;width:100%;justify-content:space-between;gap:5px}
  nav a{font-size:11px}
  .header-actions{margin-left:auto}
@@ -182,7 +216,9 @@ footer strong{font:800 20px Outfit;color:white}
 </div>
 
 <header>
- <a class="logo" href="#" id="homeLogo"><div class="logo-badge">A</div>AIDEL<span>TV</span></a>
+ <a class="logo" href="#" id="homeLogo" aria-label="AIDEL TV home">
+  <span class="logo-a">A</span><span class="logo-idel">IDEL</span><span class="logo-tv">TV</span>
+ </a>
  <nav>
   <a href="#" id="homeNav">Home</a>
   <a href="#trending">Movies</a>
