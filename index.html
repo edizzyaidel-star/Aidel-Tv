@@ -905,7 +905,40 @@ async function searchInternetArchive(query,requestId){
       continue;
      }
 
-     const {data:approval,error:approvalError}=await supabase
+     
+const url=archiveFileURL(item.identifier,file.name);
+const ext=file.name.split(".").pop().toLowerCase();
+
+status.textContent="Video file found • Hosted by Internet Archive • "+ext.toUpperCase()+
+ (Number(file.size)>0?" • "+(Number(file.size)/1048576).toFixed(1)+" MB":"");
+
+download.disabled=false;
+download.textContent="Download from Archive";
+download.addEventListener("click",()=>{
+ window.open(url+"?download=1","_blank","noopener");
+});
+
+if(["mp4","webm","ogv","m4v"].includes(ext)){
+ watch.disabled=false;
+ watch.addEventListener("click",()=>{
+  if(video.hidden){
+   video.src=url;
+   video.hidden=false;
+   video.play().catch(()=>{});
+   watch.textContent="Hide player";
+  }else{
+   video.pause();
+   video.removeAttribute("src");
+   video.load();
+   video.hidden=true;
+   watch.textContent="Watch";
+  }
+ });
+}else{
+ watch.textContent="Download to play";
+ watch.disabled=true;
+}
+
       .from("movie_download_rights")
       .select("id,rights_basis")
       .eq("media_type","archive")
