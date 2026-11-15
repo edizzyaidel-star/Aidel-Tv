@@ -871,7 +871,7 @@ async function searchInternetArchive(query,requestId){
     <div class="archive-meta">INTERNET ARCHIVE${item.year?" • "+escapeHTML(item.year):""}</div>
     <h3>${escapeHTML(item.title||item.identifier)}</h3>
     <p>${escapeHTML(String(item.description||"No description supplied.").replace(/<[^>]*>/g," ").slice(0,190))}</p>
-    <p class="archive-status">Checking video and AIDEL TV approval...</p>
+    <p class="archive-status">Checking for a video file...</p>
     <div class="archive-actions">
      <button class="archive-watch" type="button" disabled>Watch</button>
      <button class="archive-download" type="button" disabled>Download</button>
