@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,7 +62,7 @@ nav a:hover{color:#ff4550}
 
 main{padding:10px 5% 60px}
 .section{margin:35px 0 42px}
-.section-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
+.section-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px;gap:10px}
 .section-heading h2{font:700 22px Outfit}
 .tag{font-size:10px;color:var(--red);font-weight:800;letter-spacing:1px;text-transform:uppercase}
 .movie-row{display:flex;gap:14px;overflow-x:auto;padding:5px 2px 17px;scrollbar-width:none;scroll-snap-type:x mandatory}
@@ -82,6 +81,7 @@ main{padding:10px 5% 60px}
 .status{padding:20px;background:var(--panel);border-radius:9px;color:#aaa;font-size:13px;min-width:100%}
 .status.error{color:#ff9b9b}
 .retry-button{background:var(--red);border:0;color:white;padding:7px 12px;border-radius:5px;margin-left:8px}
+
 #searchResults{display:none}
 #searchResults.active{display:block}
 #searchGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:17px}
@@ -101,6 +101,27 @@ main{padding:10px 5% 60px}
 .archive-note{color:#888;font-size:11px;line-height:1.6;margin-top:12px}
 .archive-license{color:#9bd7a6!important}
 .archive-link{color:#ff5963;text-decoration:none;font-size:11px}
+
+/* GENRE BROWSING */
+#genreSection{border-top:1px solid var(--border);padding-top:28px;margin-top:55px}
+.genre-list{display:flex;flex-wrap:wrap;gap:10px}
+.genre-chip{border:1px solid #38303a;background:#17141b;color:#ddd;border-radius:22px;padding:10px 17px;font-size:12px;font-weight:700;transition:.2s}
+.genre-chip:hover,.genre-chip.active{background:var(--red);border-color:var(--red);color:#fff}
+#genrePage{display:none;margin:30px 0 50px}
+#genrePage.active{display:block}
+.genre-page-top{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:23px}
+.genre-page-top h2{font:800 clamp(23px,4vw,32px) Outfit}
+.genre-back{background:#292331;border:1px solid var(--border);color:white;border-radius:6px;padding:10px 15px;font-size:12px;font-weight:700}
+.genre-back:hover{background:var(--red)}
+#genreGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:20px 14px}
+#genreGrid .movie-card{min-width:0;width:100%;flex:none}
+#genreGrid .movie-card h3{font-size:12px}
+.genre-pagination{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin-top:35px}
+.genre-page-button{min-width:39px;height:39px;padding:0 11px;background:#1b1b24;color:#ddd;border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:700}
+.genre-page-button:hover,.genre-page-button.active{background:var(--red);border-color:var(--red);color:white}
+.genre-page-button:disabled{opacity:.35;cursor:not-allowed}
+.genre-page-info{text-align:center;color:#888;font-size:11px;margin-top:13px}
+#genreStatus{margin-bottom:15px}
 
 .modal{display:none;position:fixed;inset:0;z-index:200;background:#000e;overflow-y:auto;padding:20px 12px}
 .modal.open{display:block}
@@ -130,6 +151,9 @@ main{padding:10px 5% 60px}
 footer{border-top:1px solid var(--border);padding:38px 5%;color:#777;text-align:center;font-size:12px;line-height:1.8}
 footer strong{font:800 20px Outfit;color:white}
 
+@media(max-width:1000px){
+ #genreGrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
 @media(max-width:760px){
  header{padding:11px 4%;flex-wrap:wrap;gap:10px}
  .logo{font-size:23px}
@@ -149,6 +173,12 @@ footer strong{font:800 20px Outfit;color:white}
  .welcome-text{letter-spacing:6px}
  .modal-body{padding:17px}
  .modal-actions .btn{padding:11px 14px;font-size:12px}
+ #genreGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:17px 10px}
+ #genreGrid .movie-card h3{font-size:11px}
+ .genre-chip{padding:8px 12px;font-size:11px}
+}
+@media(max-width:420px){
+ #genreGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
 }
 @media(prefers-reduced-motion:reduce){
  *,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
@@ -214,7 +244,35 @@ footer strong{font:800 20px Outfit;color:white}
   <section class="section" id="comedy"><div class="section-heading"><h2>Comedy</h2><span class="tag">Time to Laugh</span></div><div class="movie-row" id="comedyRow"><div class="status">Loading...</div></div></section>
   <section class="section" id="series"><div class="section-heading"><h2>Popular TV Series</h2><span class="tag">Top Series</span></div><div class="movie-row" id="seriesRow"><div class="status">Loading...</div></div></section>
   <section class="section" id="topRated"><div class="section-heading"><h2>Top Rated Movies</h2><span class="tag">Viewer Favourites</span></div><div class="movie-row" id="topRatedRow"><div class="status">Loading...</div></div></section>
+
+  <section class="section" id="genreSection">
+   <div class="section-heading">
+    <div>
+     <h2>Explore by Genre</h2>
+     <p style="color:#888;font-size:12px;margin-top:5px">Choose a genre to discover more movies.</p>
+    </div>
+    <span class="tag">FIND YOUR FAVOURITE</span>
+   </div>
+   <div class="genre-list" id="genreList">
+    <div class="status">Loading genres...</div>
+   </div>
+  </section>
  </div>
+
+ <section id="genrePage">
+  <div class="genre-page-top">
+   <div>
+    <span class="tag">EXPLORE AIDEL TV</span>
+    <h2 id="genrePageTitle">Movies</h2>
+    <p id="genrePageSubtitle" style="color:#999;font-size:12px;margin-top:5px">Browse movies by genre.</p>
+   </div>
+   <button class="genre-back" id="genreBackButton">← Back to Home</button>
+  </div>
+  <div id="genreStatus"></div>
+  <div id="genreGrid"></div>
+  <div class="genre-pagination" id="genrePagination"></div>
+  <div class="genre-page-info" id="genrePageInfo"></div>
+ </section>
 </main>
 
 <div class="modal" id="movieModal" aria-hidden="true">
@@ -254,7 +312,6 @@ const SUPABASE_URL = "https://nbvznasgshojxjsgchds.supabase.co";
 const SUPABASE_KEY = "sb_publishable_GbyBcju0hvPOsBps3ljzPg_lD6w_Rej";
 const BUCKET = "Movies";
 
-/* Supabase is used for public movie and episode storage only. */
 const supabase = createClient(SUPABASE_URL,SUPABASE_KEY);
 window.aidelSupabase = supabase;
 
@@ -266,6 +323,10 @@ const AVATAR_FILE = "Series/246/Season-3./S03E01.Mp4";
 const AVATAR_URL = SUPABASE_URL+"/storage/v1/object/public/"+BUCKET+"/"+AVATAR_FILE.split("/").map(encodeURIComponent).join("/");
 
 let heroMovies=[],currentHeroIndex=0,heroInterval=null,currentDetails=null,activeSearchRequest=0,detailRequest=0;
+let genreList=[],currentGenre=null,currentGenrePage=1,genreRequest=0;
+const GENRE_PAGE_SIZE=6;
+const TMDB_PAGE_SIZE=20;
+const TMDB_MAX_PAGES=500;
 const rowRenderTokens=new WeakMap();
 let detailHistoryActive=false;
 let savedView=readViewState();
@@ -301,6 +362,29 @@ function getTitle(x){return x.title||x.name||x.original_name||"Untitled"}
 function getYear(x){const d=x.release_date||x.first_air_date||"";return d?d.slice(0,4):"Year unavailable"}
 function getMedia(x){return x.media_type==="tv"||x.first_air_date?"tv":"movie"}
 function isVideoFile(name){return ["mp4","webm","mov","m4v","mkv","ogv"].includes((name.split(".").pop()||"").toLowerCase())}
+
+/* HOMEPAGE / SEARCH / GENRE VISIBILITY */
+function showHomepage(){
+ $("heroSection").style.display="";
+ $("sections").style.display="";
+ $("genrePage").classList.remove("active");
+ startHeroInterval();
+}
+function hideHomepageForSearch(){
+ clearInterval(heroInterval);
+ $("heroSection").style.display="none";
+ $("sections").style.display="none";
+ $("genrePage").classList.remove("active");
+}
+function showGenrePage(){
+ clearInterval(heroInterval);
+ $("heroSection").style.display="none";
+ $("sections").style.display="none";
+ $("searchResults").classList.remove("active");
+ $("archiveResults").classList.remove("active");
+ $("commonsResults").classList.remove("active");
+ $("genrePage").classList.add("active");
+}
 
 function storageErrorMessage(e){
  const m=String(e?.message||e||"");
@@ -430,7 +514,11 @@ function goToHeroSlide(index){
  slides.forEach((s,i)=>s.classList.toggle("active",i===currentHeroIndex));
  dots.forEach((d,i)=>d.classList.toggle("active",i===currentHeroIndex));
 }
-function startHeroInterval(){clearInterval(heroInterval);heroInterval=setInterval(()=>goToHeroSlide(currentHeroIndex+1),5500)}
+function startHeroInterval(){
+ clearInterval(heroInterval);
+ if($("heroSection").style.display==="none"||$("searchResults").classList.contains("active")||$("genrePage").classList.contains("active"))return;
+ heroInterval=setInterval(()=>goToHeroSlide(currentHeroIndex+1),5500);
+}
 async function loadHero(){
  try{const d=await tmdb("/trending/all/week");renderHeroSlides((d.results||[]).filter(x=>x.media_type!=="person"&&(x.backdrop_path||x.poster_path)))}
  catch(e){console.error("Hero slider",e)}
@@ -445,6 +533,195 @@ async function loadHome(){
   loadSection("seriesRow","/tv/popular",{},"tv"),
   loadSection("topRatedRow","/movie/top_rated",{include_adult:"false"})
  ]);
+}
+
+/* GENRE LIST AND SEPARATE GENRE PAGES */
+async function loadGenres(){
+ const list=$("genreList");
+ try{
+  const data=await tmdb("/genre/movie/list");
+  genreList=data.genres||[];
+  if(!genreList.length){list.innerHTML='<div class="status">Genres are not available right now.</div>';return}
+  list.innerHTML=genreList.map(g=>`<button class="genre-chip" type="button" data-genre-id="${g.id}">${escapeHTML(g.name)}</button>`).join("");
+  list.querySelectorAll("[data-genre-id]").forEach(button=>{
+   button.addEventListener("click",()=>openGenre(Number(button.dataset.genreId)));
+  });
+ }catch(error){
+  list.innerHTML=`<div class="status error">Could not load genres. ${escapeHTML(error.message)}</div>`;
+ }
+}
+
+function openGenre(genreId){
+ const genre=genreList.find(g=>Number(g.id)===Number(genreId));
+ if(!genre)return;
+ currentGenre=genre;
+ currentGenrePage=1;
+ $("genrePageTitle").textContent=genre.name+" Movies";
+ $("genrePageSubtitle").textContent="Explore movies in the "+genre.name+" genre.";
+ $("genreList").querySelectorAll(".genre-chip").forEach(button=>{
+  button.classList.toggle("active",Number(button.dataset.genreId)===genreId);
+ });
+ showGenrePage();
+ saveViewState({genreId:genre.id,genrePage:1,genreActive:true,searchQuery:"",searchActive:false});
+ $("searchInput").value="";
+ $("searchResults").classList.remove("active");
+ $("archiveResults").classList.remove("active");
+ $("commonsResults").classList.remove("active");
+ loadGenrePage(1);
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/*
+ * GENRE PAGINATION FIX
+ *
+ * TMDB supplies 20 results per API page, but AIDEL TV displays
+ * only 6 movies per user-facing page.
+ *
+ * This function translates the user's six-movie page number into
+ * the correct TMDB API page and offset. If the six movies cross
+ * a TMDB page boundary, it fetches the next API page as well.
+ *
+ * Example:
+ * AIDEL TV page 4 starts at movie 19 in TMDB API page 1.
+ * It takes the last 2 movies from API page 1 and the first
+ * 4 movies from API page 2.
+ */
+async function fetchGenrePageItems(genreId,userPage,isCurrent){
+ const startIndex=(userPage-1)*GENRE_PAGE_SIZE;
+ const apiPage=Math.floor(startIndex/TMDB_PAGE_SIZE)+1;
+ const offset=startIndex%TMDB_PAGE_SIZE;
+
+ if(apiPage>TMDB_MAX_PAGES)return {items:[],totalResults:0};
+
+ const firstData=await tmdb("/discover/movie",{
+  with_genres:genreId,
+  sort_by:"popularity.desc",
+  include_adult:"false",
+  page:apiPage
+ });
+
+ if(!isCurrent())return null;
+
+ const totalResults=Number(firstData.total_results)||0;
+ const maxAvailable=Math.min(totalResults,TMDB_PAGE_SIZE*TMDB_MAX_PAGES);
+ const remaining=Math.max(0,maxAvailable-startIndex);
+
+ if(remaining===0)return {items:[],totalResults};
+
+ let items=(firstData.results||[]).slice(offset,offset+GENRE_PAGE_SIZE);
+
+ if(items.length<GENRE_PAGE_SIZE&&items.length<remaining&&apiPage<TMDB_MAX_PAGES){
+  const nextData=await tmdb("/discover/movie",{
+   with_genres:genreId,
+   sort_by:"popularity.desc",
+   include_adult:"false",
+   page:apiPage+1
+  });
+
+  if(!isCurrent())return null;
+
+  const needed=GENRE_PAGE_SIZE-items.length;
+  items=items.concat((nextData.results||[]).slice(0,needed));
+ }
+
+ return {
+  items:items.filter(item=>item&&item.id),
+  totalResults
+ };
+}
+
+async function loadGenrePage(page){
+ if(!currentGenre)return;
+
+ const totalAllowedPages=Math.max(1,Math.ceil(
+  Math.min(10000,GENRE_PAGE_SIZE*TMDB_MAX_PAGES)/GENRE_PAGE_SIZE
+ ));
+
+ page=Math.max(1,Math.min(Number(page)||1,totalAllowedPages));
+
+ const request=++genreRequest;
+ const genreId=currentGenre.id;
+ currentGenrePage=page;
+
+ $("genreGrid").innerHTML='<div class="status">Loading movies in this genre...</div>';
+ $("genreStatus").innerHTML="";
+ $("genrePagination").innerHTML="";
+ $("genrePageInfo").textContent="";
+
+ const isCurrent=()=>request===genreRequest&&currentGenre&&Number(currentGenre.id)===Number(genreId);
+
+ try{
+  const result=await fetchGenrePageItems(genreId,page,isCurrent);
+  if(!result||!isCurrent())return;
+
+  const items=result.items||[];
+  const totalResults=Number(result.totalResults)||0;
+  const totalPages=Math.max(1,Math.ceil(Math.min(totalResults,TMDB_PAGE_SIZE*TMDB_MAX_PAGES)/GENRE_PAGE_SIZE));
+
+  if(!items.length){
+   $("genreGrid").innerHTML='<div class="status">No movies were found on this page.</div>';
+   $("genrePageInfo").textContent=`Page ${page} • ${totalResults.toLocaleString()} movies found`;
+   renderGenrePagination(totalPages,page);
+   saveViewState({genreId:genreId,genrePage:page,genreActive:true});
+   return;
+  }
+
+  $("genreGrid").innerHTML=items.map(item=>makeCard(item,"movie")).join("");
+  $("genreStatus").textContent="";
+  $("genrePageInfo").textContent=`Page ${page} of ${totalPages} • ${totalResults.toLocaleString()} movies found`;
+  renderGenrePagination(totalPages,page);
+  saveViewState({genreId:genreId,genrePage:page,genreActive:true});
+
+ }catch(error){
+  if(!isCurrent())return;
+  $("genreGrid").innerHTML=`<div class="status error">${escapeHTML(error.message||"Could not load this genre.")}<button class="retry-button" id="retryGenre">Retry</button></div>`;
+  $("retryGenre")?.addEventListener("click",()=>loadGenrePage(page));
+ }
+}
+
+function renderGenrePagination(totalPages,currentPage){
+ const holder=$("genrePagination");
+ if(totalPages<=1){holder.innerHTML="";return}
+
+ const pages=new Set();
+ pages.add(1);
+ pages.add(totalPages);
+
+ for(let p=Math.max(1,currentPage-2);p<=Math.min(totalPages,currentPage+2);p++)pages.add(p);
+
+ const sorted=[...pages].sort((a,b)=>a-b);
+ let html=`<button class="genre-page-button" data-page="${currentPage-1}" ${currentPage<=1?"disabled":""} aria-label="Previous page">‹</button>`;
+
+ let previous=0;
+ sorted.forEach(p=>{
+  if(previous&&p-previous>1)html+='<span style="color:#777;padding:0 3px">…</span>';
+  html+=`<button class="genre-page-button ${p===currentPage?"active":""}" data-page="${p}" ${p===currentPage?'aria-current="page"':""}>${p}</button>`;
+  previous=p;
+ });
+
+ html+=`<button class="genre-page-button" data-page="${currentPage+1}" ${currentPage>=totalPages?"disabled":""} aria-label="Next page">›</button>`;
+
+ holder.innerHTML=html;
+
+ holder.querySelectorAll("[data-page]").forEach(button=>{
+  button.addEventListener("click",()=>{
+   const next=Number(button.dataset.page);
+   if(next>=1&&next<=totalPages&&next!==currentGenrePage){
+    loadGenrePage(next);
+    $("genrePage").scrollIntoView({behavior:"smooth",block:"start"});
+   }
+  });
+ });
+}
+
+function backFromGenre(){
+ genreRequest++;
+ currentGenre=null;
+ $("genrePage").classList.remove("active");
+ $("genreList").querySelectorAll(".genre-chip").forEach(button=>button.classList.remove("active"));
+ showHomepage();
+ saveViewState({genreId:null,genrePage:1,genreActive:false,scrollY:0,hash:""});
+ window.scrollTo({top:0,behavior:"smooth"});
 }
 
 /* INTERNET ARCHIVE */
@@ -564,8 +841,6 @@ async function searchInternetArchive(query,requestId){
       };
      }else{watch.textContent="Unsupported for browser playback";watch.disabled=true}
 
-     /* Approval is checked for this exact Archive item and filename. */
-     download.disabled=true;download.textContent="Checking approval...";
      const {data:approval,error:approvalError}=await supabase
       .from("movie_download_rights")
       .select("id,rights_basis")
@@ -682,12 +957,12 @@ async function searchWikimediaCommons(query,requestId){
 /* SEARCH MOVIES */
 async function searchMovies(query,{fromRestore=false}={}){
  const requestId=++activeSearchRequest;
- saveViewState({searchQuery:query,searchActive:true});
+ saveViewState({searchQuery:query,searchActive:true,genreActive:false,genreId:null});
+ hideHomepageForSearch();
  searchInternetArchive(query,requestId);
  searchWikimediaCommons(query,requestId);
  $("searchInput").value=query;
  $("searchResults").classList.add("active");
- $("sections").style.display="none";
  $("searchCount").textContent="Searching...";
  $("searchGrid").innerHTML='<div class="status">Searching TMDB...</div>';
  if(!fromRestore)$("searchResults").scrollIntoView({behavior:"smooth"});
@@ -852,10 +1127,14 @@ window.addEventListener("popstate",()=>{if($("movieModal").classList.contains("o
 function goBackHome(){
  closeMovieModal();activeSearchRequest++;
  $("searchResults").classList.remove("active");$("archiveResults").classList.remove("active");$("commonsResults").classList.remove("active");
- $("sections").style.display="";$("searchInput").value="";$("searchCount").textContent="";$("searchGrid").innerHTML="";
+ $("searchInput").value="";$("searchCount").textContent="";$("searchGrid").innerHTML="";
  $("archiveGrid").innerHTML='<div class="status">Search for a title to discover available Internet Archive videos.</div>';
  $("commonsGrid").innerHTML='<div class="status">Search for films to discover video files on Wikimedia Commons.</div>';
- saveViewState({detail:null,modalOpen:false,searchQuery:"",searchActive:false,selectedSeason:null,selectedEpisode:null,videoTime:0,scrollY:0,hash:""});
+ currentGenre=null;genreRequest++;
+ $("genrePage").classList.remove("active");
+ $("genreList").querySelectorAll(".genre-chip").forEach(button=>button.classList.remove("active"));
+ showHomepage();
+ saveViewState({detail:null,modalOpen:false,searchQuery:"",searchActive:false,genreActive:false,genreId:null,genrePage:1,selectedSeason:null,selectedEpisode:null,videoTime:0,scrollY:0,hash:""});
  history.replaceState({aidelHome:true},"",location.pathname+location.search);
  window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -867,22 +1146,31 @@ $("searchForm").addEventListener("submit",e=>{
 $("searchInput").addEventListener("input",e=>{
  if(!e.target.value.trim()){
   activeSearchRequest++;
-  $("searchResults").classList.remove("active");$("sections").style.display="";
-  $("searchCount").textContent="";$("searchGrid").innerHTML="";
+  $("searchResults").classList.remove("active");$("searchCount").textContent="";$("searchGrid").innerHTML="";
   $("archiveResults").classList.remove("active");$("archiveGrid").innerHTML="";
   $("commonsResults").classList.remove("active");$("commonsGrid").innerHTML="";
-  saveViewState({searchQuery:"",searchActive:false});
+  currentGenre=null;genreRequest++;
+  $("genrePage").classList.remove("active");
+  $("genreList").querySelectorAll(".genre-chip").forEach(button=>button.classList.remove("active"));
+  showHomepage();
+  saveViewState({searchQuery:"",searchActive:false,genreActive:false,genreId:null,genrePage:1});
  }
 });
 $("backHomeButton").addEventListener("click",goBackHome);
 $("closeMovie").addEventListener("click",()=>closeMovieModal());
+$("genreBackButton").addEventListener("click",backFromGenre);
 function goHome(){
  if($("movieModal").classList.contains("open"))goBackHome();
  else{
+  activeSearchRequest++;
   $("searchInput").value="";$("searchResults").classList.remove("active");
+  $("searchCount").textContent="";$("searchGrid").innerHTML="";
   $("archiveResults").classList.remove("active");$("commonsResults").classList.remove("active");
-  $("sections").style.display="";
-  saveViewState({searchQuery:"",searchActive:false,scrollY:0,hash:""});
+  currentGenre=null;genreRequest++;
+  $("genrePage").classList.remove("active");
+  $("genreList").querySelectorAll(".genre-chip").forEach(button=>button.classList.remove("active"));
+  showHomepage();
+  saveViewState({searchQuery:"",searchActive:false,genreActive:false,genreId:null,genrePage:1,scrollY:0,hash:""});
   window.scrollTo({top:0,behavior:"smooth"});
  }
 }
@@ -907,7 +1195,14 @@ $("heroSection").addEventListener("mouseleave",startHeroInterval);
 /* RESTORE THE USER'S LAST VIEW */
 async function restoreSavedView(){
  const state=readViewState();
- if(state.searchActive&&state.searchQuery)await searchMovies(state.searchQuery,{fromRestore:true});
+ if(state.searchActive&&state.searchQuery){
+  await searchMovies(state.searchQuery,{fromRestore:true});
+ }else if(state.genreActive&&state.genreId){
+  if(!genreList.length)await loadGenres();
+  const savedPage=Math.max(1,Number(state.genrePage)||1);
+  openGenre(Number(state.genreId));
+  if(savedPage>1)await loadGenrePage(savedPage);
+ }
  if(state.detail?.id&&state.detail?.media)await openDetails(state.detail.id,state.detail.media,{fromRestore:true});
  requestAnimationFrame(()=>requestAnimationFrame(()=>{
   const latest=readViewState();
@@ -917,7 +1212,7 @@ async function restoreSavedView(){
 
 /* START AIDEL TV */
 startWelcomeScreen();
-await loadHome();
+await Promise.all([loadHome(),loadGenres()]);
 await restoreSavedView();
 </script>
 </body>
