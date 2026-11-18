@@ -57,7 +57,7 @@ footer{border-top:1px solid var(--border);padding:38px 5%;color:#777;text-align:
 <button class="close" id="closeMovie" aria-label="Close">×</button><div class="modal-backdrop" id="modalBackdrop"><h2 id="modalTitle"></h2></div>
 <div class="modal-body"><div class="modal-meta" id="modalMeta"></div><p id="modalOverview"></p>
 <div class="modal-actions"><button class="btn btn-home" id="backHomeButton">← Back to Home</button><button class="btn btn-secondary" id="downloadButton" disabled>Not Available Yet</button></div>
-<div id="downloadMessage" style="font-size:12px;color:#888;margin-top:9px">Downloads appear when a video file has been uploaded to AIDEL TV storage.</div><div id="seasonArea"></div><div id="trailerArea"></div>
+<div id="downloadMessage" style="font-size:12px;color:#888;margin-top:9px">Downloads appear when a video file has been uploaded to AIDEL TV storage or an eligible Internet Archive file is found.</div><div id="seasonArea"></div><div id="trailerArea"></div>
 </div></div></div>
 <footer><strong>AIDEL TV</strong><br>Your home for movies, TV series and entertainment.<br>Movie information and images provided by TMDB.<p class="tmdb-disclaimer">This product uses the TMDB API but is not endorsed or certified by TMDB.</p><br>© 2026 AIDEL TV</footer>
 
@@ -87,7 +87,6 @@ const rowRenderTokens=new WeakMap();
 
 function startWelcomeScreen(){
  const intro=$("aidel-intro");
- // Show for exactly five seconds on each full page load.
  window.setTimeout(()=>{intro?.classList.add("hide");window.setTimeout(()=>intro?.remove(),700)},5000);
 }
 function escapeHTML(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -144,217 +143,1684 @@ async function downloadFile(path,filename){
 }
 function setUnavailable(button,message){button.disabled=true;button.textContent="Not Available Yet";button.onclick=null;if(message)$("downloadMessage").textContent=message}
 function activateDownload(button,path,label){button.disabled=false;button.textContent="Download";button.onclick=()=>downloadFile(path,label)}
-async function setupMovieDownload(details,token){
- const button=$("downloadButton");button.disabled=true;button.textContent="Checking...";
- $("downloadMessage").textContent="Checking AIDEL TV storage for the uploaded movie...";
- try{
-  const file=await findMovieFile(details.id);if(token!==detailRequest)return;
-  if(!file){setUnavailable(button,"This movie has not been uploaded to AIDEL TV yet.");return}
-  activateDownload(button,file.name,file.name);$("downloadMessage").textContent="Uploaded to AIDEL TV • Ready to download.";
- }catch(e){if(token===detailRequest)setUnavailable(button,storageErrorMessage(e));console.warn("Movie storage check:",e)}
+/* AUTOMATIC MOVIE DOWNLOAD: SUPABASE FIRST, INTERNET ARCHIVE SECOND */
+
+function normalizeArchiveTitle(title){
+ return String(title||"")
+  .toLowerCase()
+  .replace(/\b(19|20)\d{2}\b/g," ")
+  .replace(/[^\p{L}\p{N}]+/gu," ")
+  .replace(/\s+/g," ")
+  .trim();
 }
 
-function makeCard(item,media,showSeasonInfo=false){
- const title=escapeHTML(getTitle(item)),poster=imageURL(item.poster_path),rating=Number(item.vote_average||0).toFixed(1),year=escapeHTML(getYear(item));
- const season=media==="tv"&&showSeasonInfo?`<small class="season-info" id="season-${Number(item.id)}">Loading season information...</small>`:"";
- return `<article class="movie-card" tabindex="0" role="button" data-id="${Number(item.id)}" data-media="${media}" aria-label="View ${title}"><div class="poster-wrap"><img class="poster" src="${poster}" alt="${title}" loading="lazy" onerror="this.onerror=null;this.src='${FALLBACK_POSTER}'"><span class="rating">★ ${rating}</span><div class="play-icon"></div></div><h3>${title}</h3><small>${year}</small>${season}</article>`;
+function archiveTitleMatches(requestedTitle,archiveTitle){
+ const requested=normalizeArchiveTitle(requestedTitle);
+ const candidate=normalizeArchiveTitle(archiveTitle);
+ if(!requested||!candidate)return false;
+ if(requested===candidate)return true;
+
+ const a=requested.split(" ").filter(Boolean);
+ const b=candidate.split(" ").filter(Boolean);
+ if(!a.length||!b.length)return false;
+
+ const matched=a.filter(word=>b.includes(word)).length;
+ const score=matched/Math.max(a.length,b.length);
+
+ // Short one-word titles must match exactly.
+ if(a.length===1)return b.length===1&&a[0]===b[0];
+
+ // Require a strong match to avoid offering unrelated films.
+ return score>=0.80&&matched>=Math.min(2,a.length);
 }
-async function loadSeasonCounts(items,isCurrent=()=>true){
- const tv=items.filter(x=>getMedia(x)==="tv"&&x.id);
- for(let i=0;i<tv.length;i+=5){
-  if(!isCurrent())return;
-  await Promise.all(tv.slice(i,i+5).map(async item=>{try{const d=await tmdb("/tv/"+item.id);if(!isCurrent())return;const el=$("season-"+Number(item.id));if(el)el.textContent=`${d.number_of_seasons||0} ${d.number_of_seasons===1?"Season":"Seasons"} • ${d.number_of_episodes||0} Episodes`}catch{if(!isCurrent())return;const el=$("season-"+Number(item.id));if(el)el.textContent="Season information unavailable"}}));
+
+async function findArchiveMovieDownload(details,token){
+ const title=getTitle(details);
+ const requestedYear=Number(getYear(details));
+ const queries=buildArchiveQueries(title);
+ const candidates=[];
+ const seen=new Set();
+
+ for(const query of queries){
+  if(token!==detailRequest)return null;
+  try{
+   const results=await fetchArchiveSearchResults(query);
+   if(token!==detailRequest)return null;
+
+   for(const item of results){
+    if(!item.identifier||seen.has(item.identifier))continue;
+    seen.add(item.identifier);
+
+    if(!archiveTitleMatches(title,item.title||""))continue;
+
+    const archiveYear=Number(item.year);
+    if(requestedYear&&archiveYear&&Math.abs(requestedYear-archiveYear)>1)continue;
+
+    candidates.push(item);
+   }
+  }catch(error){
+   console.warn("Automatic Internet Archive search:",error);
+  }
+
+  if(candidates.length>=12)break;
+ }
+
+ // Check metadata for a small number of the strongest title matches.
+ for(const item of candidates.slice(0,8)){
+  if(token!==detailRequest)return null;
+
+  try{
+   const metadata=await getArchiveMetadata(item.identifier);
+   if(token!==detailRequest)return null;
+
+   const licence=getArchiveLicence(metadata);
+   if(!licence.allowed)continue;
+
+   const files=archiveVideoFiles(metadata.files||[]);
+   const playable=files.find(file=>
+    ["mp4","webm","ogv","m4v"].includes(
+     String(file.name).split(".").pop().toLowerCase()
+    )
+   );
+
+   if(!playable)continue;
+
+   return {
+    identifier:item.identifier,
+    filename:playable.name,
+    url:archiveFileURL(item.identifier,playable.name),
+    licence:licence.label,
+    licenceUrl:licence.url,
+    title:item.title||title
+   };
+  }catch(error){
+   console.warn("Automatic Archive metadata check:",error);
+  }
+ }
+
+ return null;
+}
+
+async function setupMovieDownload(details,token){
+ const button=$("downloadButton");
+
+ button.disabled=true;
+ button.textContent="Checking...";
+ button.onclick=null;
+
+ $("downloadMessage").textContent=
+  "Checking AIDEL TV storage first...";
+
+ // STEP 1: Check Supabase.
+ try{
+  const file=await findMovieFile(details.id);
+  if(token!==detailRequest)return;
+
+  if(file){
+   activateDownload(button,file.name,file.name);
+   $("downloadMessage").textContent=
+    "Uploaded to AIDEL TV • Ready to download.";
+   return;
+  }
+ }catch(error){
+  console.warn("Supabase movie check:",error);
+  if(token!==detailRequest)return;
+ }
+
+ // STEP 2: If missing from Supabase, search Internet Archive.
+ button.disabled=true;
+ button.textContent="Searching Archive...";
+
+ $("downloadMessage").textContent=
+  "Movie not found in AIDEL TV storage. Searching Internet Archive for a matching, legally eligible video...";
+
+ try{
+  const archiveFile=await findArchiveMovieDownload(details,token);
+  if(token!==detailRequest)return;
+
+  if(!archiveFile){
+   setUnavailable(
+    button,
+    "This movie was not found in Supabase or no matching Internet Archive video with a recognised redistribution licence was found."
+   );
+   return;
+  }
+
+  button.disabled=false;
+  button.textContent="⬇ Download Movie";
+
+  button.onclick=()=>{
+   downloadArchiveFile(archiveFile.url);
+  };
+
+  $("downloadMessage").textContent=
+   "Found on Internet Archive • "+archiveFile.licence+
+   " • Open the item details and licence before redistribution.";
+
+  console.log("AIDEL TV Archive movie found:",archiveFile);
+
+ }catch(error){
+  if(token!==detailRequest)return;
+
+  setUnavailable(
+   button,
+   "Could not complete the Internet Archive search. Please check your internet connection and try again."
+  );
+
+  console.warn("Internet Archive fallback:",error);
  }
 }
-function renderRow(el,results,media="movie"){
- const items=(results||[]).filter(x=>x&&x.id&&x.poster_path&&x.media_type!=="person").slice(0,20);
- if(!items.length){el.innerHTML='<div class="status">No titles found in this category.</div>';return}
- const token=(rowRenderTokens.get(el)||0)+1;rowRenderTokens.set(el,token);
- el.innerHTML=items.map(x=>makeCard(x,media==="all"?getMedia(x):media,media==="tv"||(media==="all"&&getMedia(x)==="tv"))).join("");
- const tv=items.filter(x=>media==="tv"||(media==="all"&&getMedia(x)==="tv"));
- if(tv.length)loadSeasonCounts(tv,()=>rowRenderTokens.get(el)===token&&el.isConnected);
+
+/* MOVIE CARDS */
+
+function makeCard(item,media,showSeasonInfo=false){
+ const title=escapeHTML(getTitle(item));
+ const poster=imageURL(item.poster_path);
+ const rating=Number(item.vote_average||0).toFixed(1);
+ const year=escapeHTML(getYear(item));
+
+ const season=media==="tv"&&showSeasonInfo
+  ?`<small class="season-info" id="season-${Number(item.id)}">Loading season information...</small>`
+  :"";
+
+ return `<article class="movie-card" tabindex="0" role="button" data-id="${Number(item.id)}" data-media="${media}" aria-label="View ${title}">
+ <div class="poster-wrap">
+ <img class="poster" src="${poster}" alt="${title}" loading="lazy" onerror="this.onerror=null;this.src='${FALLBACK_POSTER}'">
+ <span class="rating">★ ${rating}</span>
+ <div class="play-icon"></div>
+ </div>
+ <h3>${title}</h3>
+ <small>${year}</small>${season}</article>`;
 }
-function showError(el,error,retry){el.innerHTML=`<div class="status error">${escapeHTML(error.message||"Something went wrong.")}<button class="retry-button" type="button">Retry</button></div>`;el.querySelector(".retry-button")?.addEventListener("click",retry)}
+
+async function loadSeasonCounts(items,isCurrent=()=>true){
+ const tv=items.filter(x=>getMedia(x)==="tv"&&x.id);
+
+ for(let i=0;i<tv.length;i+=5){
+  if(!isCurrent())return;
+
+  await Promise.all(tv.slice(i,i+5).map(async item=>{
+   try{
+    const d=await tmdb("/tv/"+item.id);
+    if(!isCurrent())return;
+
+    const el=$("season-"+Number(item.id));
+
+    if(el){
+     el.textContent=
+      `${d.number_of_seasons||0} ${d.number_of_seasons===1?"Season":"Seasons"} • ${d.number_of_episodes||0} Episodes`;
+    }
+   }catch{
+    if(!isCurrent())return;
+    const el=$("season-"+Number(item.id));
+    if(el)el.textContent="Season information unavailable";
+   }
+  }));
+ }
+}
+
+function renderRow(el,results,media="movie"){
+ const items=(results||[])
+  .filter(x=>x&&x.id&&x.poster_path&&x.media_type!=="person")
+  .slice(0,20);
+
+ if(!items.length){
+  el.innerHTML='<div class="status">No titles found in this category.</div>';
+  return;
+ }
+
+ const token=(rowRenderTokens.get(el)||0)+1;
+ rowRenderTokens.set(el,token);
+
+ el.innerHTML=items.map(x=>
+  makeCard(
+   x,
+   media==="all"?getMedia(x):media,
+   media==="tv"||(media==="all"&&getMedia(x)==="tv")
+  )
+ ).join("");
+
+ const tv=items.filter(x=>
+  media==="tv"||(media==="all"&&getMedia(x)==="tv")
+ );
+
+ if(tv.length){
+  loadSeasonCounts(
+   tv,
+   ()=>rowRenderTokens.get(el)===token&&el.isConnected
+  );
+ }
+}
+
+function showError(el,error,retry){
+ el.innerHTML=`<div class="status error">
+ ${escapeHTML(error.message||"Something went wrong.")}
+ <button class="retry-button" type="button">Retry</button>
+ </div>`;
+
+ el.querySelector(".retry-button")?.addEventListener("click",retry);
+}
+
 async function loadSection(id,path,params={},media="movie"){
- const el=$(id);try{const d=await tmdb(path,params);renderRow(el,d.results,media)}catch(e){showError(el,e,()=>loadSection(id,path,params,media));console.error(id,e)}
+ const el=$(id);
+
+ try{
+  const d=await tmdb(path,params);
+  renderRow(el,d.results,media);
+ }catch(e){
+  showError(el,e,()=>loadSection(id,path,params,media));
+  console.error(id,e);
+ }
 }
 
 /* HERO */
+
 function renderHeroSlides(movies){
- if(!movies.length)return;heroMovies=movies.slice(0,6);currentHeroIndex=0;
- $("heroSlider").innerHTML=heroMovies.map((m,i)=>{const backdrop=imageURL(m.backdrop_path||m.poster_path,"original"),title=escapeHTML(getTitle(m)),overview=escapeHTML(m.overview||"Discover this title on AIDEL TV."),rating=Number(m.vote_average||0).toFixed(1),media=getMedia(m);return `<div class="hero-slide ${i===0?"active":""}" style="background-image:url('${backdrop}')"><div class="hero-content"><div class="eyebrow">FEATURED ON AIDEL TV</div><h1>${title}</h1><div class="hero-meta"><span class="rating-pill">★ ${rating}</span><span>${escapeHTML(getYear(m))}</span><span>• ${media==="tv"?"TV SERIES":"MOVIE"}</span></div><p>${overview}</p><div class="hero-actions"><button class="btn btn-primary" data-hero-id="${m.id}" data-hero-media="${media}">More Info</button></div></div></div>`}).join("");
- $("heroDots").innerHTML=heroMovies.map((_,i)=>`<button class="hero-dot ${i===0?"active":""}" data-index="${i}" aria-label="Go to slide ${i+1}"></button>`).join("");
- $("heroDots").querySelectorAll(".hero-dot").forEach(b=>b.addEventListener("click",()=>{goToHeroSlide(Number(b.dataset.index));startHeroInterval()}));
- $("heroSlider").querySelectorAll("[data-hero-id]").forEach(b=>b.addEventListener("click",()=>openDetails(b.dataset.heroId,b.dataset.heroMedia)));
+ if(!movies.length)return;
+
+ heroMovies=movies.slice(0,6);
+ currentHeroIndex=0;
+
+ $("heroSlider").innerHTML=heroMovies.map((m,i)=>{
+  const backdrop=imageURL(m.backdrop_path||m.poster_path,"original");
+  const title=escapeHTML(getTitle(m));
+  const overview=escapeHTML(m.overview||"Discover this title on AIDEL TV.");
+  const rating=Number(m.vote_average||0).toFixed(1);
+  const media=getMedia(m);
+
+  return `<div class="hero-slide ${i===0?"active":""}" style="background-image:url('${backdrop}')">
+   <div class="hero-content">
+    <div class="eyebrow">FEATURED ON AIDEL TV</div>
+    <h1>${title}</h1>
+    <div class="hero-meta">
+     <span class="rating-pill">★ ${rating}</span>
+     <span>${escapeHTML(getYear(m))}</span>
+     <span>• ${media==="tv"?"TV SERIES":"MOVIE"}</span>
+    </div>
+    <p>${overview}</p>
+    <div class="hero-actions">
+     <button class="btn btn-primary" data-hero-id="${m.id}" data-hero-media="${media}">More Info</button>
+    </div>
+   </div>
+  </div>`;
+ }).join("");
+
+ $("heroDots").innerHTML=heroMovies.map((_,i)=>
+  `<button class="hero-dot ${i===0?"active":""}" data-index="${i}" aria-label="Go to slide ${i+1}"></button>`
+ ).join("");
+
+ $("heroDots").querySelectorAll(".hero-dot").forEach(b=>
+  b.addEventListener("click",()=>{
+   goToHeroSlide(Number(b.dataset.index));
+   startHeroInterval();
+  })
+ );
+
+ $("heroSlider").querySelectorAll("[data-hero-id]").forEach(b=>
+  b.addEventListener("click",()=>
+   openDetails(b.dataset.heroId,b.dataset.heroMedia)
+  )
+ );
+
  startHeroInterval();
 }
-function goToHeroSlide(index){const slides=document.querySelectorAll(".hero-slide"),dots=document.querySelectorAll(".hero-dot");if(!slides.length)return;currentHeroIndex=(index+slides.length)%slides.length;slides.forEach((s,i)=>s.classList.toggle("active",i===currentHeroIndex));dots.forEach((d,i)=>d.classList.toggle("active",i===currentHeroIndex))}
-function startHeroInterval(){clearInterval(heroInterval);if($("heroSection").style.display==="none"||$("searchResults").classList.contains("active")||$("genrePage").classList.contains("active"))return;heroInterval=setInterval(()=>goToHeroSlide(currentHeroIndex+1),5500)}
-async function loadHero(){try{const d=await tmdb("/trending/all/week");renderHeroSlides((d.results||[]).filter(x=>x.media_type!=="person"&&(x.backdrop_path||x.poster_path)))}catch(e){console.error("Hero slider",e)}}
-async function loadHome(){await Promise.all([loadHero(),loadSection("trendingRow","/trending/all/week",{},"all"),loadSection("nollywoodRow","/discover/movie",{with_origin_country:"NG",sort_by:"popularity.desc",include_adult:"false"}),loadSection("actionRow","/discover/movie",{with_genres:"28",sort_by:"popularity.desc",include_adult:"false"}),loadSection("comedyRow","/discover/movie",{with_genres:"35",sort_by:"popularity.desc",include_adult:"false"}),loadSection("seriesRow","/tv/popular",{},"tv"),loadSection("topRatedRow","/movie/top_rated",{include_adult:"false"})])}
+
+function goToHeroSlide(index){
+ const slides=document.querySelectorAll(".hero-slide");
+ const dots=document.querySelectorAll(".hero-dot");
+
+ if(!slides.length)return;
+
+ currentHeroIndex=(index+slides.length)%slides.length;
+
+ slides.forEach((s,i)=>
+  s.classList.toggle("active",i===currentHeroIndex)
+ );
+
+ dots.forEach((d,i)=>
+  d.classList.toggle("active",i===currentHeroIndex)
+ );
+}
+
+function startHeroInterval(){
+ clearInterval(heroInterval);
+
+ if(
+  $("heroSection").style.display==="none"||
+  $("searchResults").classList.contains("active")||
+  $("genrePage").classList.contains("active")
+ )return;
+
+ heroInterval=setInterval(
+  ()=>goToHeroSlide(currentHeroIndex+1),
+  5500
+ );
+}
+
+async function loadHero(){
+ try{
+  const d=await tmdb("/trending/all/week");
+  renderHeroSlides(
+   (d.results||[]).filter(x=>
+    x.media_type!=="person"&&(x.backdrop_path||x.poster_path)
+   )
+  );
+ }catch(e){
+  console.error("Hero slider",e);
+ }
+}
+
+async function loadHome(){
+ await Promise.all([
+  loadHero(),
+  loadSection("trendingRow","/trending/all/week",{},"all"),
+  loadSection("nollywoodRow","/discover/movie",{
+   with_origin_country:"NG",
+   sort_by:"popularity.desc",
+   include_adult:"false"
+  }),
+  loadSection("actionRow","/discover/movie",{
+   with_genres:"28",
+   sort_by:"popularity.desc",
+   include_adult:"false"
+  }),
+  loadSection("comedyRow","/discover/movie",{
+   with_genres:"35",
+   sort_by:"popularity.desc",
+   include_adult:"false"
+  }),
+  loadSection("seriesRow","/tv/popular",{},"tv"),
+  loadSection("topRatedRow","/movie/top_rated",{
+   include_adult:"false"
+  })
+ ]);
+}
 
 /* GENRES */
+
 async function loadGenres(){
- const list=$("genreList");try{const data=await tmdb("/genre/movie/list");genreList=data.genres||[];if(!genreList.length){list.innerHTML='<div class="status">Genres are not available right now.</div>';return}list.innerHTML=genreList.map(g=>`<button class="genre-chip" type="button" data-genre-id="${g.id}">${escapeHTML(g.name)}</button>`).join("");list.querySelectorAll("[data-genre-id]").forEach(b=>b.addEventListener("click",()=>openGenre(Number(b.dataset.genreId))))}catch(e){list.innerHTML=`<div class="status error">Could not load genres. ${escapeHTML(e.message)}</div>`}
+ const list=$("genreList");
+
+ try{
+  const data=await tmdb("/genre/movie/list");
+  genreList=data.genres||[];
+
+  if(!genreList.length){
+   list.innerHTML='<div class="status">Genres are not available right now.</div>';
+   return;
+  }
+
+  list.innerHTML=genreList.map(g=>
+   `<button class="genre-chip" type="button" data-genre-id="${g.id}">${escapeHTML(g.name)}</button>`
+  ).join("");
+
+  list.querySelectorAll("[data-genre-id]").forEach(b=>
+   b.addEventListener("click",()=>
+    openGenre(Number(b.dataset.genreId))
+   )
+  );
+ }catch(e){
+  list.innerHTML=`<div class="status error">Could not load genres. ${escapeHTML(e.message)}</div>`;
+ }
 }
-function showGenrePage(){clearInterval(heroInterval);$("heroSection").style.display="none";$("sections").style.display="none";$("searchResults").classList.remove("active");$("archiveResults").classList.remove("active");$("commonsResults").classList.remove("active");$("genrePage").classList.add("active")}
-function openGenre(id){const genre=genreList.find(g=>Number(g.id)===Number(id));if(!genre)return;currentGenre=genre;currentGenrePage=1;$("genrePageTitle").textContent=genre.name+" Movies";$("genrePageSubtitle").textContent="Explore movies in the "+genre.name+" genre.";$("genreList").querySelectorAll(".genre-chip").forEach(b=>b.classList.toggle("active",Number(b.dataset.genreId)===id));showGenrePage();$("searchInput").value="";loadGenrePage(1);window.scrollTo({top:0,behavior:"smooth"})}
+
+function showGenrePage(){
+ clearInterval(heroInterval);
+ $("heroSection").style.display="none";
+ $("sections").style.display="none";
+ $("searchResults").classList.remove("active");
+ $("archiveResults").classList.remove("active");
+ $("commonsResults").classList.remove("active");
+ $("genrePage").classList.add("active");
+}
+
+function openGenre(id){
+ const genre=genreList.find(g=>Number(g.id)===Number(id));
+ if(!genre)return;
+
+ currentGenre=genre;
+ currentGenrePage=1;
+
+ $("genrePageTitle").textContent=genre.name+" Movies";
+ $("genrePageSubtitle").textContent="Explore movies in the "+genre.name+" genre.";
+
+ $("genreList").querySelectorAll(".genre-chip").forEach(b=>
+  b.classList.toggle("active",Number(b.dataset.genreId)===id)
+ );
+
+ showGenrePage();
+ $("searchInput").value="";
+ loadGenrePage(1);
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
 async function fetchGenrePageItems(id,page,isCurrent){
- const start=(page-1)*GENRE_PAGE_SIZE,apiPage=Math.floor(start/TMDB_PAGE_SIZE)+1,offset=start%TMDB_PAGE_SIZE;
- const first=await tmdb("/discover/movie",{with_genres:id,sort_by:"popularity.desc",include_adult:"false",page:apiPage});if(!isCurrent())return null;
- const total=Number(first.total_results)||0,available=Math.max(0,Math.min(total,TMDB_PAGE_SIZE*TMDB_MAX_PAGES)-start);let items=(first.results||[]).slice(offset,offset+GENRE_PAGE_SIZE);
- if(items.length<GENRE_PAGE_SIZE&&items.length<available&&apiPage<TMDB_MAX_PAGES){const next=await tmdb("/discover/movie",{with_genres:id,sort_by:"popularity.desc",include_adult:"false",page:apiPage+1});if(!isCurrent())return null;items=items.concat((next.results||[]).slice(0,GENRE_PAGE_SIZE-items.length))}
+ const start=(page-1)*GENRE_PAGE_SIZE;
+ const apiPage=Math.floor(start/TMDB_PAGE_SIZE)+1;
+ const offset=start%TMDB_PAGE_SIZE;
+
+ const first=await tmdb("/discover/movie",{
+  with_genres:id,
+  sort_by:"popularity.desc",
+  include_adult:"false",
+  page:apiPage
+ });
+
+ if(!isCurrent())return null;
+
+ const total=Number(first.total_results)||0;
+ const available=Math.max(
+  0,
+  Math.min(total,TMDB_PAGE_SIZE*TMDB_MAX_PAGES)-start
+ );
+
+ let items=(first.results||[]).slice(offset,offset+GENRE_PAGE_SIZE);
+
+ if(
+  items.length<GENRE_PAGE_SIZE&&
+  items.length<available&&
+  apiPage<TMDB_MAX_PAGES
+ ){
+  const next=await tmdb("/discover/movie",{
+   with_genres:id,
+   sort_by:"popularity.desc",
+   include_adult:"false",
+   page:apiPage+1
+  });
+
+  if(!isCurrent())return null;
+
+  items=items.concat(
+   (next.results||[]).slice(0,GENRE_PAGE_SIZE-items.length)
+  );
+ }
+
  return {items,total};
 }
+
 async function loadGenrePage(page){
- if(!currentGenre)return;page=Math.max(1,Math.min(Number(page)||1,Math.ceil(10000/GENRE_PAGE_SIZE)));const request=++genreRequest,id=currentGenre.id,isCurrent=()=>request===genreRequest&&currentGenre&&Number(currentGenre.id)===Number(id);currentGenrePage=page;
- $("genreGrid").innerHTML='<div class="status">Loading movies in this genre...</div>';$("genrePagination").innerHTML="";$("genrePageInfo").textContent="";
- try{const result=await fetchGenrePageItems(id,page,isCurrent);if(!result||!isCurrent())return;const totalPages=Math.max(1,Math.ceil(Math.min(result.total,TMDB_PAGE_SIZE*TMDB_MAX_PAGES)/GENRE_PAGE_SIZE));if(!result.items.length){$("genreGrid").innerHTML='<div class="status">No movies were found on this page.</div>'}else $("genreGrid").innerHTML=result.items.map(x=>makeCard(x,"movie")).join("");$("genrePageInfo").textContent=`Page ${page} of ${totalPages} • ${(result.total||0).toLocaleString()} movies found`;renderGenrePagination(totalPages,page)}catch(e){if(isCurrent())$("genreGrid").innerHTML=`<div class="status error">${escapeHTML(e.message)}<button class="retry-button" id="retryGenre">Retry</button></div>`;$("retryGenre")?.addEventListener("click",()=>loadGenrePage(page))}
+ if(!currentGenre)return;
+
+ page=Math.max(
+  1,
+  Math.min(Number(page)||1,Math.ceil(10000/GENRE_PAGE_SIZE))
+ );
+
+ const request=++genreRequest;
+ const id=currentGenre.id;
+
+ const isCurrent=()=>request===genreRequest&&
+  currentGenre&&Number(currentGenre.id)===Number(id);
+
+ currentGenrePage=page;
+
+ $("genreGrid").innerHTML='<div class="status">Loading movies in this genre...</div>';
+ $("genrePagination").innerHTML="";
+ $("genrePageInfo").textContent="";
+
+ try{
+  const result=await fetchGenrePageItems(id,page,isCurrent);
+  if(!result||!isCurrent())return;
+
+  const totalPages=Math.max(
+   1,
+   Math.ceil(Math.min(result.total,TMDB_PAGE_SIZE*TMDB_MAX_PAGES)/GENRE_PAGE_SIZE)
+  );
+
+  if(!result.items.length){
+   $("genreGrid").innerHTML='<div class="status">No movies were found on this page.</div>';
+  }else{
+   $("genreGrid").innerHTML=result.items.map(x=>makeCard(x,"movie")).join("");
+  }
+
+  $("genrePageInfo").textContent=
+   `Page ${page} of ${totalPages} • ${(result.total||0).toLocaleString()} movies found`;
+
+  renderGenrePagination(totalPages,page);
+
+ }catch(e){
+  if(isCurrent()){
+   $("genreGrid").innerHTML=`<div class="status error">${escapeHTML(e.message)}<button class="retry-button" id="retryGenre">Retry</button></div>`;
+  }
+
+  $("retryGenre")?.addEventListener("click",()=>loadGenrePage(page));
+ }
 }
-function renderGenrePagination(total,current){const holder=$("genrePagination");if(total<=1){holder.innerHTML="";return}const pages=new Set([1,total]);for(let p=Math.max(1,current-2);p<=Math.min(total,current+2);p++)pages.add(p);let html=`<button class="genre-page-button" data-page="${current-1}" ${current<=1?"disabled":""}>‹</button>`,prev=0;[...pages].sort((a,b)=>a-b).forEach(p=>{if(prev&&p-prev>1)html+='<span style="color:#777">…</span>';html+=`<button class="genre-page-button ${p===current?"active":""}" data-page="${p}">${p}</button>`;prev=p});html+=`<button class="genre-page-button" data-page="${current+1}" ${current>=total?"disabled":""}>›</button>`;holder.innerHTML=html;holder.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>{const p=Number(b.dataset.page);if(p>=1&&p<=total&&p!==currentGenrePage){loadGenrePage(p);$("genrePage").scrollIntoView({behavior:"smooth"})}}))}
-function backFromGenre(){genreRequest++;currentGenre=null;$("genrePage").classList.remove("active");$("genreList").querySelectorAll(".genre-chip").forEach(b=>b.classList.remove("active"));$("heroSection").style.display="";$("sections").style.display="";startHeroInterval();window.scrollTo({top:0,behavior:"smooth"})}
+
+function renderGenrePagination(total,current){
+ const holder=$("genrePagination");
+
+ if(total<=1){
+  holder.innerHTML="";
+  return;
+ }
+
+ const pages=new Set([1,total]);
+
+ for(let p=Math.max(1,current-2);p<=Math.min(total,current+2);p++){
+  pages.add(p);
+ }
+
+ let html=`<button class="genre-page-button" data-page="${current-1}" ${current<=1?"disabled":""}>‹</button>`;
+ let prev=0;
+
+ [...pages].sort((a,b)=>a-b).forEach(p=>{
+  if(prev&&p-prev>1)html+='<span style="color:#777">…</span>';
+
+  html+=`<button class="genre-page-button ${p===current?"active":""}" data-page="${p}">${p}</button>`;
+  prev=p;
+ });
+
+ html+=`<button class="genre-page-button" data-page="${current+1}" ${current>=total?"disabled":""}>›</button>`;
+
+ holder.innerHTML=html;
+
+ holder.querySelectorAll("[data-page]").forEach(b=>
+  b.addEventListener("click",()=>{
+   const p=Number(b.dataset.page);
+
+   if(p>=1&&p<=total&&p!==currentGenrePage){
+    loadGenrePage(p);
+    $("genrePage").scrollIntoView({behavior:"smooth"});
+   }
+  })
+ );
+}
+
+function backFromGenre(){
+ genreRequest++;
+ currentGenre=null;
+
+ $("genrePage").classList.remove("active");
+
+ $("genreList").querySelectorAll(".genre-chip").forEach(b=>
+  b.classList.remove("active")
+ );
+
+ $("heroSection").style.display="";
+ $("sections").style.display="";
+
+ startHeroInterval();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
 
 /* INTERNET ARCHIVE SEARCH, METADATA AND PLAYBACK */
-const IA_SEARCH_URL="https://archive.org/advancedsearch.php",IA_METADATA_URL="https://archive.org/metadata/";
-function archiveVideoFiles(files){const extensions=["mp4","webm","ogv","m4v","mov","mkv"];return (files||[]).filter(f=>f?.name&&!f.private&&extensions.includes(String(f.name).split(".").pop().toLowerCase())).sort((a,b)=>{const rank=f=>({mp4:0,webm:1,ogv:2,m4v:3,mov:4,mkv:5})[String(f.name).split(".").pop().toLowerCase()]??9;return rank(a)-rank(b)||(Number(b.size)||0)-(Number(a.size)||0)})}
-function archiveFileURL(identifier,filename){return "https://archive.org/download/"+encodeURIComponent(identifier)+"/"+String(filename).split("/").map(encodeURIComponent).join("/")}
-async function getArchiveMetadata(identifier){const r=await fetch(IA_METADATA_URL+encodeURIComponent(identifier));if(!r.ok)throw new Error("Internet Archive metadata request failed.");return r.json()}
+
+const IA_SEARCH_URL="https://archive.org/advancedsearch.php";
+const IA_METADATA_URL="https://archive.org/metadata/";
+
+function archiveVideoFiles(files){
+ const extensions=["mp4","webm","ogv","m4v","mov","mkv"];
+
+ return (files||[])
+  .filter(f=>
+   f?.name&&
+   !f.private&&
+   extensions.includes(String(f.name).split(".").pop().toLowerCase())
+  )
+  .sort((a,b)=>{
+   const rank=f=>({
+    mp4:0,webm:1,ogv:2,m4v:3,mov:4,mkv:5
+   })[String(f.name).split(".").pop().toLowerCase()]??9;
+
+   return rank(a)-rank(b)||(Number(b.size)||0)-(Number(a.size)||0);
+  });
+}
+
+function archiveFileURL(identifier,filename){
+ return "https://archive.org/download/"+
+  encodeURIComponent(identifier)+"/"+
+  String(filename).split("/").map(encodeURIComponent).join("/");
+}
+
+async function getArchiveMetadata(identifier){
+ const r=await fetch(IA_METADATA_URL+encodeURIComponent(identifier));
+
+ if(!r.ok)throw new Error("Internet Archive metadata request failed.");
+
+ return r.json();
+}
+
 function getArchiveLicence(metadata){
- const meta=metadata?.metadata||{},fields=[meta.licenseurl,meta.license,meta.rights,meta.license_url].filter(v=>v!=null&&String(v).trim()).map(v=>String(v).trim());
- if(!fields.length)return {allowed:false,label:"Licence not identified",url:""};
- const vals=fields.map(raw=>({raw,value:raw.toLowerCase().replace(/\\/g,"/")}));
- if(vals.some(x=>/by-nc|by[\s_-]*nc|non[\s_-]*commercial|attribution[\s_-]*noncommercial/.test(x.value)))return {allowed:false,label:"NonCommercial or restricted licence",url:""};
- for(const {raw,value} of vals){
-  if(/creativecommons\.org\/publicdomain\/zero|creativecommons\.org\/licenses\/cc0|\bcc0\b|public[\s_-]*domain/.test(value))return {allowed:true,label:raw,url:/^https?:\/\//i.test(raw)?raw:""};
-  const match=value.match(/creativecommons\.org\/licenses\/(by(?:-sa|-nd)?)(?:\/|$)/);
-  if(match)return {allowed:true,label:"Creative Commons "+match[1].toUpperCase(),url:raw};
-  if(/\bcc[\s_-]*by[\s_-]*(sa|nd)\b|\bcc[\s_-]*by\b|creative commons attribution/.test(value))return {allowed:true,label:raw,url:/^https?:\/\//i.test(raw)?raw:""};
+ const meta=metadata?.metadata||{};
+
+ const fields=[
+  meta.licenseurl,
+  meta.license,
+  meta.rights,
+  meta.license_url
+ ]
+ .filter(v=>v!=null&&String(v).trim())
+ .map(v=>String(v).trim());
+
+ if(!fields.length){
+  return {
+   allowed:false,
+   label:"Licence not identified",
+   url:""
+  };
  }
- return {allowed:false,label:"No recognised redistribution licence",url:""};
+
+ const vals=fields.map(raw=>({
+  raw,
+  value:raw.toLowerCase().replace(/\\/g,"/")
+ }));
+
+ if(vals.some(x=>
+  /by-nc|by[\s_-]*nc|non[\s_-]*commercial|attribution[\s_-]*noncommercial/.test(x.value)
+ )){
+  return {
+   allowed:false,
+   label:"NonCommercial or restricted licence",
+   url:""
+  };
+ }
+
+ for(const {raw,value} of vals){
+  if(/creativecommons\.org\/publicdomain\/zero|creativecommons\.org\/licenses\/cc0|\bcc0\b|public[\s_-]*domain/.test(value)){
+   return {
+    allowed:true,
+    label:raw,
+    url:/^https?:\/\//i.test(raw)?raw:""
+   };
+  }
+
+  const match=value.match(
+   /creativecommons\.org\/licenses\/(by(?:-sa|-nd)?)(?:\/|$)/
+  );
+
+  if(match){
+   return {
+    allowed:true,
+    label:"Creative Commons "+match[1].toUpperCase(),
+    url:raw
+   };
+  }
+
+  if(/\bcc[\s_-]*by[\s_-]*(sa|nd)\b|\bcc[\s_-]*by\b|creative commons attribution/.test(value)){
+   return {
+    allowed:true,
+    label:raw,
+    url:/^https?:\/\//i.test(raw)?raw:""
+   };
+  }
+ }
+
+ return {
+  allowed:false,
+  label:"No recognised redistribution licence",
+  url:""
+ };
 }
+
 function buildArchiveQueries(query){
- const clean=String(query||"").replace(/[\\"]/g," ").replace(/[()[\]{}:+!^~*?]/g," ").replace(/\s+/g," ").trim().slice(0,90);if(!clean)return [];
- const phrase=clean,tokens=phrase.split(/\s+/).filter(Boolean).slice(0,6),all=tokens.map(t=>`title:${t}`).join(" AND ");
- return [`mediatype:movies AND title:"${phrase}"`,`mediatype:movies AND (title:"${phrase}" OR description:"${phrase}")`,all?`mediatype:movies AND (${all})`:null].filter(Boolean);
+ const clean=String(query||"")
+  .replace(/[\\"]/g," ")
+  .replace(/[()[\]{}:+!^~*?]/g," ")
+  .replace(/\s+/g," ")
+  .trim()
+  .slice(0,90);
+
+ if(!clean)return [];
+
+ const phrase=clean;
+ const tokens=phrase.split(/\s+/).filter(Boolean).slice(0,6);
+ const all=tokens.map(t=>`title:${t}`).join(" AND ");
+
+ return [
+  `mediatype:movies AND title:"${phrase}"`,
+  `mediatype:movies AND (title:"${phrase}" OR description:"${phrase}")`,
+  all?`mediatype:movies AND (${all})`:null
+ ].filter(Boolean);
 }
-async function fetchArchiveSearchResults(q){const p=new URLSearchParams();p.set("q",q);p.set("fl[]","identifier");p.append("fl[]","title");p.append("fl[]","year");p.append("fl[]","description");p.set("rows","12");p.set("page","1");p.set("output","json");p.set("sort[]","downloads desc");const r=await fetch(IA_SEARCH_URL+"?"+p);if(!r.ok)throw new Error("Internet Archive search is temporarily unavailable.");const d=await r.json();return d.response?.docs||[]}
-function formatArchiveSize(size){const b=Number(size)||0;if(!b)return "Size unavailable";if(b>=1073741824)return (b/1073741824).toFixed(2)+" GB";if(b>=1048576)return (b/1048576).toFixed(1)+" MB";return (b/1024).toFixed(0)+" KB"}
-function downloadArchiveFile(url){const u=new URL(url);u.searchParams.set("download","1");window.open(u.toString(),"_blank","noopener")}
+
+async function fetchArchiveSearchResults(q){
+ const p=new URLSearchParams();
+
+ p.set("q",q);
+ p.set("fl[]","identifier");
+ p.append("fl[]","title");
+ p.append("fl[]","year");
+ p.append("fl[]","description");
+ p.set("rows","12");
+ p.set("page","1");
+ p.set("output","json");
+ p.set("sort[]","downloads desc");
+
+ const r=await fetch(IA_SEARCH_URL+"?"+p);
+
+ if(!r.ok){
+  throw new Error("Internet Archive search is temporarily unavailable.");
+ }
+
+ const d=await r.json();
+
+ return d.response?.docs||[];
+}
+
+function formatArchiveSize(size){
+ const b=Number(size)||0;
+
+ if(!b)return "Size unavailable";
+ if(b>=1073741824)return (b/1073741824).toFixed(2)+" GB";
+ if(b>=1048576)return (b/1048576).toFixed(1)+" MB";
+
+ return (b/1024).toFixed(0)+" KB";
+}
+
+function downloadArchiveFile(url){
+ const u=new URL(url);
+ u.searchParams.set("download","1");
+
+ window.open(u.toString(),"_blank","noopener");
+}
+
 async function searchInternetArchive(query,requestId){
- const section=$("archiveResults"),grid=$("archiveGrid");section.classList.add("active");grid.innerHTML='<div class="status">Searching Internet Archive...</div>';
+ const section=$("archiveResults");
+ const grid=$("archiveGrid");
+
+ section.classList.add("active");
+ grid.innerHTML='<div class="status">Searching Internet Archive...</div>';
+
  try{
-  const queries=buildArchiveQueries(query);if(!queries.length)throw new Error("Enter a movie title to search.");
-  const combined=[],seen=new Set();let lastError=null;
-  for(const q of queries){if(requestId!==activeSearchRequest)return;try{const docs=await fetchArchiveSearchResults(q);if(requestId!==activeSearchRequest)return;for(const item of docs)if(item.identifier&&!seen.has(item.identifier)){seen.add(item.identifier);combined.push(item)}if(combined.length>=12)break}catch(e){lastError=e;console.warn("Archive search",e)}}
-  if(requestId!==activeSearchRequest)return;const docs=combined.slice(0,12);
-  if(!docs.length){if(lastError)throw lastError;grid.innerHTML='<div class="status">No matching Internet Archive films were found. Try a shorter title.</div>';return}
-  grid.innerHTML=docs.map((x,i)=>`<article class="archive-card" data-archive-index="${i}"><div class="archive-meta">INTERNET ARCHIVE${x.year?" • "+escapeHTML(x.year):""}</div><h3>${escapeHTML(x.title||x.identifier)}</h3><p>${escapeHTML(String(x.description||"No description supplied.").replace(/<[^>]*>/g," ").slice(0,190))}</p><p class="archive-status">Checking video files and licence...</p><div class="archive-actions"><button class="archive-watch" disabled>Watch</button><a class="archive-link" href="https://archive.org/details/${encodeURIComponent(x.identifier)}" target="_blank" rel="noopener">Item details</a></div><div class="archive-files"></div><video class="archive-player" controls playsinline preload="none" hidden></video></article>`).join("");
-  const cards=[...grid.querySelectorAll(".archive-card")];let cursor=0;
-  const workers=Array.from({length:Math.min(4,cards.length)},async()=>{while(cursor<cards.length){const i=cursor++,card=cards[i],item=docs[i];try{
-   const metadata=await getArchiveMetadata(item.identifier);if(requestId!==activeSearchRequest)return;
-   const files=archiveVideoFiles(metadata.files||[]),status=card.querySelector(".archive-status"),watch=card.querySelector(".archive-watch"),video=card.querySelector("video"),holder=card.querySelector(".archive-files");
-   if(!files.length){status.textContent="No supported video file found.";continue}
-   const licence=getArchiveLicence(metadata),playable=files.find(f=>["mp4","webm","ogv","m4v"].includes(String(f.name).split(".").pop().toLowerCase()));
-   if(playable){const url=archiveFileURL(item.identifier,playable.name);watch.disabled=false;watch.onclick=()=>{if(video.hidden){video.src=url;video.hidden=false;video.play().catch(()=>{});watch.textContent="Hide player"}else{video.pause();video.removeAttribute("src");video.load();video.hidden=true;watch.textContent="Watch"}}}else watch.textContent="No browser-playable file";
-   status.innerHTML=`${files.length} video file${files.length===1?"":"s"} found • <span class="${licence.allowed?"archive-license":""}">${licence.allowed?"Licence identified: "+escapeHTML(licence.label):"Download unavailable: "+escapeHTML(licence.label)}</span>`;
-   holder.innerHTML=files.map((f,index)=>{const name=String(f.name),ext=name.split(".").pop().toUpperCase();return `<div class="archive-file-option"><div class="archive-file-info"><strong>${escapeHTML(name)}</strong><small>${ext} • ${formatArchiveSize(f.size)}</small></div><button type="button" data-file-index="${index}" ${licence.allowed?"":"disabled"}>${licence.allowed?"Download":"Not approved"}</button></div>`}).join("");
-   holder.querySelectorAll("[data-file-index]").forEach(b=>b.addEventListener("click",()=>{if(!licence.allowed)return;const f=files[Number(b.dataset.fileIndex)];if(f)downloadArchiveFile(archiveFileURL(item.identifier,f.name))}));
-   if(!licence.allowed){const note=document.createElement("p");note.className="archive-note";note.textContent="A recognised redistribution licence was not found. Open the item details to review the rights.";holder.appendChild(note)}
-  }catch(e){if(requestId!==activeSearchRequest)return;card.querySelector(".archive-status").textContent="Could not check this item. Open Item details.";console.warn("Archive item",e)}}});
+  const queries=buildArchiveQueries(query);
+
+  if(!queries.length){
+   throw new Error("Enter a movie title to search.");
+  }
+
+  const combined=[];
+  const seen=new Set();
+  let lastError=null;
+
+  for(const q of queries){
+   if(requestId!==activeSearchRequest)return;
+
+   try{
+    const docs=await fetchArchiveSearchResults(q);
+
+    if(requestId!==activeSearchRequest)return;
+
+    for(const item of docs){
+     if(item.identifier&&!seen.has(item.identifier)){
+      seen.add(item.identifier);
+      combined.push(item);
+     }
+    }
+
+    if(combined.length>=12)break;
+
+   }catch(e){
+    lastError=e;
+    console.warn("Archive search",e);
+   }
+  }
+
+  if(requestId!==activeSearchRequest)return;
+
+  const docs=combined.slice(0,12);
+
+  if(!docs.length){
+   if(lastError)throw lastError;
+
+   grid.innerHTML=
+    '<div class="status">No matching Internet Archive films were found. Try a shorter title.</div>';
+
+   return;
+  }
+
+  grid.innerHTML=docs.map((x,i)=>
+   `<article class="archive-card" data-archive-index="${i}">
+    <div class="archive-meta">INTERNET ARCHIVE${x.year?" • "+escapeHTML(x.year):""}</div>
+    <h3>${escapeHTML(x.title||x.identifier)}</h3>
+    <p>${escapeHTML(String(x.description||"No description supplied.").replace(/<[^>]*>/g," ").slice(0,190))}</p>
+    <p class="archive-status">Checking video files and licence...</p>
+    <div class="archive-actions">
+     <button class="archive-watch" disabled>Watch</button>
+     <a class="archive-link" href="https://archive.org/details/${encodeURIComponent(x.identifier)}" target="_blank" rel="noopener">Item details</a>
+    </div>
+    <div class="archive-files"></div>
+    <video class="archive-player" controls playsinline preload="none" hidden></video>
+   </article>`
+  ).join("");
+
+  const cards=[...grid.querySelectorAll(".archive-card")];
+  let cursor=0;
+
+  const workers=Array.from(
+   {length:Math.min(4,cards.length)},
+   async()=>{
+    while(cursor<cards.length){
+     const i=cursor++;
+     const card=cards[i];
+     const item=docs[i];
+
+     try{
+      const metadata=await getArchiveMetadata(item.identifier);
+
+      if(requestId!==activeSearchRequest)return;
+
+      const files=archiveVideoFiles(metadata.files||[]);
+      const status=card.querySelector(".archive-status");
+      const watch=card.querySelector(".archive-watch");
+      const video=card.querySelector("video");
+      const holder=card.querySelector(".archive-files");
+
+      if(!files.length){
+       status.textContent="No supported video file found.";
+       continue;
+      }
+
+      const licence=getArchiveLicence(metadata);
+
+      const playable=files.find(f=>
+       ["mp4","webm","ogv","m4v"].includes(
+        String(f.name).split(".").pop().toLowerCase()
+       )
+      );
+
+      if(playable){
+       const url=archiveFileURL(item.identifier,playable.name);
+
+       watch.disabled=false;
+
+       watch.onclick=()=>{
+        if(video.hidden){
+         video.src=url;
+         video.hidden=false;
+         video.play().catch(()=>{});
+         watch.textContent="Hide player";
+        }else{
+         video.pause();
+         video.removeAttribute("src");
+         video.load();
+         video.hidden=true;
+         watch.textContent="Watch";
+        }
+       };
+
+      }else{
+       watch.textContent="No browser-playable file";
+      }
+
+      status.innerHTML=
+       `${files.length} video file${files.length===1?"":"s"} found • <span class="${licence.allowed?"archive-license":""}">${licence.allowed?"Licence identified: "+escapeHTML(licence.label):"Download unavailable: "+escapeHTML(licence.label)}</span>`;
+
+      holder.innerHTML=files.map((f,index)=>{
+       const name=String(f.name);
+       const ext=name.split(".").pop().toUpperCase();
+
+       return `<div class="archive-file-option">
+        <div class="archive-file-info">
+         <strong>${escapeHTML(name)}</strong>
+         <small>${ext} • ${formatArchiveSize(f.size)}</small>
+        </div>
+        <button type="button" data-file-index="${index}" ${licence.allowed?"":"disabled"}>
+         ${licence.allowed?"Download":"Not approved"}
+        </button>
+       </div>`;
+      }).join("");
+
+      holder.querySelectorAll("[data-file-index]").forEach(b=>
+       b.addEventListener("click",()=>{
+        if(!licence.allowed)return;
+
+        const f=files[Number(b.dataset.fileIndex)];
+
+        if(f){
+         downloadArchiveFile(
+          archiveFileURL(item.identifier,f.name)
+         );
+        }
+       })
+      );
+
+      if(!licence.allowed){
+       const note=document.createElement("p");
+
+       note.className="archive-note";
+       note.textContent=
+        "A recognised redistribution licence was not found. Open the item details to review the rights.";
+
+       holder.appendChild(note);
+      }
+
+     }catch(e){
+      if(requestId!==activeSearchRequest)return;
+
+      card.querySelector(".archive-status").textContent=
+       "Could not check this item. Open Item details.";
+
+      console.warn("Archive item",e);
+     }
+    }
+   }
+  );
+
   await Promise.all(workers);
- }catch(e){if(requestId!==activeSearchRequest)return;grid.innerHTML=`<div class="status error">${escapeHTML(e.message||"Internet Archive search failed.")} Check your connection and try again.</div>`;console.warn(e)}
+
+ }catch(e){
+  if(requestId!==activeSearchRequest)return;
+
+  grid.innerHTML=
+   `<div class="status error">${escapeHTML(e.message||"Internet Archive search failed.")} Check your connection and try again.</div>`;
+
+  console.warn(e);
+ }
 }
 
 /* WIKIMEDIA COMMONS — DOWNLOADS REQUIRE AN EXPLICIT SUPABASE APPROVAL RECORD */
+
 const COMMONS_API="https://commons.wikimedia.org/w/api.php";
+
 async function searchWikimediaCommons(query,requestId){
- const section=$("commonsResults"),grid=$("commonsGrid");section.classList.add("active");grid.innerHTML='<div class="status">Searching Wikimedia Commons...</div>';
+ const section=$("commonsResults");
+ const grid=$("commonsGrid");
+
+ section.classList.add("active");
+ grid.innerHTML='<div class="status">Searching Wikimedia Commons...</div>';
+
  try{
-  const clean=String(query||"").trim().slice(0,90);if(!clean)throw new Error("Enter a movie title to search.");
-  const p=new URLSearchParams({action:"query",list:"search",srnamespace:"6",srsearch:clean+" filemime:video",srlimit:"10",format:"json",origin:"*"});
-  const r=await fetch(COMMONS_API+"?"+p);if(!r.ok)throw new Error("Wikimedia Commons search is unavailable.");const d=await r.json();if(requestId!==activeSearchRequest)return;const results=d.query?.search||[];
-  if(!results.length){grid.innerHTML='<div class="status">No matching Commons video files were found.</div>';return}
-  grid.innerHTML=results.map((x,i)=>`<article class="archive-card"><div class="archive-meta">WIKIMEDIA COMMONS</div><h3>${escapeHTML(x.title.replace(/^File:/i,""))}</h3><p class="commons-status">Checking file information and AIDEL TV approval...</p><div class="archive-actions"><button class="archive-watch" disabled>Watch</button><button class="archive-download" disabled>Not approved</button><a class="archive-link" href="https://commons.wikimedia.org/wiki/${encodeURIComponent(x.title.replace(/ /g,"_"))}" target="_blank" rel="noopener">Licence details</a></div><video class="archive-player" controls playsinline preload="none" hidden></video></article>`).join("");
+  const clean=String(query||"").trim().slice(0,90);
+
+  if(!clean){
+   throw new Error("Enter a movie title to search.");
+  }
+
+  const p=new URLSearchParams({
+   action:"query",
+   list:"search",
+   srnamespace:"6",
+   srsearch:clean+" filemime:video",
+   srlimit:"10",
+   format:"json",
+   origin:"*"
+  });
+
+  const r=await fetch(COMMONS_API+"?"+p);
+
+  if(!r.ok){
+   throw new Error("Wikimedia Commons search is unavailable.");
+  }
+
+  const d=await r.json();
+
+  if(requestId!==activeSearchRequest)return;
+
+  const results=d.query?.search||[];
+
+  if(!results.length){
+   grid.innerHTML=
+    '<div class="status">No matching Commons video files were found.</div>';
+
+   return;
+  }
+
+  grid.innerHTML=results.map((x,i)=>
+   `<article class="archive-card">
+    <div class="archive-meta">WIKIMEDIA COMMONS</div>
+    <h3>${escapeHTML(x.title.replace(/^File:/i,""))}</h3>
+    <p class="commons-status">Checking file information and AIDEL TV approval...</p>
+    <div class="archive-actions">
+     <button class="archive-watch" disabled>Watch</button>
+     <button class="archive-download" disabled>Not approved</button>
+     <a class="archive-link" href="https://commons.wikimedia.org/wiki/${encodeURIComponent(x.title.replace(/ /g,"_"))}" target="_blank" rel="noopener">Licence details</a>
+    </div>
+    <video class="archive-player" controls playsinline preload="none" hidden></video>
+   </article>`
+  ).join("");
+
   const cards=[...grid.querySelectorAll(".archive-card")];
-  await Promise.all(cards.map(async(card,i)=>{const item=results[i];try{
-   const ip=new URLSearchParams({action:"query",prop:"imageinfo",titles:item.title,iiprop:"url|extmetadata|mime",format:"json",origin:"*"}),ir=await fetch(COMMONS_API+"?"+ip);if(!ir.ok)throw new Error("File information unavailable.");const idata=await ir.json();if(requestId!==activeSearchRequest)return;
-   const page=Object.values(idata.query?.pages||{})[0],file=page?.imageinfo?.[0],status=card.querySelector(".commons-status"),watch=card.querySelector(".archive-watch"),download=card.querySelector(".archive-download"),video=card.querySelector("video");
-   if(!file?.url||!file.mime?.startsWith("video/")){status.textContent="No supported video file found.";return}
-   const filename=item.title.replace(/^File:/i,""),identifier="commons:"+item.title,ext=filename.split(".").pop().toLowerCase();if(!["webm","ogv","mp4"].includes(ext)){status.textContent="Unsupported browser video format.";return}
-   const licence=file.extmetadata?.LicenseShortName?.value||"Licence not identified";
-   const {data:approval,error}=await supabase.from("movie_download_rights").select("id,rights_basis").eq("media_type","archive").eq("archive_identifier",identifier).eq("file_name",filename).eq("approved",true).maybeSingle();
-   if(requestId!==activeSearchRequest)return;
-   watch.disabled=false;watch.onclick=()=>{if(video.hidden){video.src=file.url;video.hidden=false;video.play().catch(()=>{});watch.textContent="Hide player"}else{video.pause();video.removeAttribute("src");video.load();video.hidden=true;watch.textContent="Watch"}};
-   if(error){status.textContent="Video found • "+licence+" • Could not verify AIDEL TV approval.";download.textContent="Approval unavailable";return}
-   if(!approval||!approval.rights_basis||!String(approval.rights_basis).trim()){status.textContent="Found • "+licence+" • Not approved for AIDEL TV downloads.";return}
-   status.textContent="AIDEL TV approved • "+approval.rights_basis+" • "+licence;status.classList.add("archive-license");download.disabled=false;download.textContent="Download";download.onclick=()=>window.open(file.url,"_blank","noopener");
-  }catch(e){if(requestId!==activeSearchRequest)return;card.querySelector(".commons-status").textContent="Could not verify this Commons file.";console.warn(e)}}));
- }catch(e){if(requestId!==activeSearchRequest)return;grid.innerHTML=`<div class="status error">${escapeHTML(e.message||"Wikimedia Commons search failed.")}</div>`}
+
+  await Promise.all(cards.map(async(card,i)=>{
+   const item=results[i];
+
+   try{
+    const ip=new URLSearchParams({
+     action:"query",
+     prop:"imageinfo",
+     titles:item.title,
+     iiprop:"url|extmetadata|mime",
+     format:"json",
+     origin:"*"
+    });
+
+    const ir=await fetch(COMMONS_API+"?"+ip);
+
+    if(!ir.ok){
+     throw new Error("File information unavailable.");
+    }
+
+    const idata=await ir.json();
+
+    if(requestId!==activeSearchRequest)return;
+
+    const page=Object.values(idata.query?.pages||{})[0];
+    const file=page?.imageinfo?.[0];
+
+    const status=card.querySelector(".commons-status");
+    const watch=card.querySelector(".archive-watch");
+    const download=card.querySelector(".archive-download");
+    const video=card.querySelector("video");
+
+    if(!file?.url||!file.mime?.startsWith("video/")){
+     status.textContent="No supported video file found.";
+     return;
+    }
+
+    const filename=item.title.replace(/^File:/i,"");
+    const identifier="commons:"+item.title;
+    const ext=filename.split(".").pop().toLowerCase();
+
+    if(!["webm","ogv","mp4"].includes(ext)){
+     status.textContent="Unsupported browser video format.";
+     return;
+    }
+
+    const licence=
+     file.extmetadata?.LicenseShortName?.value||
+     "Licence not identified";
+
+    const {data:approval,error}=await supabase
+     .from("movie_download_rights")
+     .select("id,rights_basis")
+     .eq("media_type","archive")
+     .eq("archive_identifier",identifier)
+     .eq("file_name",filename)
+     .eq("approved",true)
+     .maybeSingle();
+
+    if(requestId!==activeSearchRequest)return;
+
+    watch.disabled=false;
+
+    watch.onclick=()=>{
+     if(video.hidden){
+      video.src=file.url;
+      video.hidden=false;
+      video.play().catch(()=>{});
+      watch.textContent="Hide player";
+     }else{
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+      video.hidden=true;
+      watch.textContent="Watch";
+     }
+    };
+
+    if(error){
+     status.textContent=
+      "Video found • "+licence+" • Could not verify AIDEL TV approval.";
+
+     download.textContent="Approval unavailable";
+     return;
+    }
+
+    if(!approval||!approval.rights_basis||!String(approval.rights_basis).trim()){
+     status.textContent=
+      "Found • "+licence+" • Not approved for AIDEL TV downloads.";
+
+     return;
+    }
+
+    status.textContent=
+     "AIDEL TV approved • "+approval.rights_basis+" • "+licence;
+
+    status.classList.add("archive-license");
+    download.disabled=false;
+    download.textContent="Download";
+
+    download.onclick=()=>{
+     window.open(file.url,"_blank","noopener");
+    };
+
+   }catch(e){
+    if(requestId!==activeSearchRequest)return;
+
+    card.querySelector(".commons-status").textContent=
+     "Could not verify this Commons file.";
+
+    console.warn(e);
+   }
+  }));
+
+ }catch(e){
+  if(requestId!==activeSearchRequest)return;
+
+  grid.innerHTML=
+   `<div class="status error">${escapeHTML(e.message||"Wikimedia Commons search failed.")}</div>`;
+ }
 }
 
 /* SEARCH */
-function hideHomepageForSearch(){clearInterval(heroInterval);$("heroSection").style.display="none";$("sections").style.display="none";$("genrePage").classList.remove("active")}
+
+function hideHomepageForSearch(){
+ clearInterval(heroInterval);
+
+ $("heroSection").style.display="none";
+ $("sections").style.display="none";
+ $("genrePage").classList.remove("active");
+}
+
 async function searchMovies(query){
- const request=++activeSearchRequest;hideHomepageForSearch();$("searchInput").value=query;$("searchResults").classList.add("active");$("searchCount").textContent="Searching...";$("searchGrid").innerHTML='<div class="status">Searching TMDB...</div>';
- searchInternetArchive(query,request);searchWikimediaCommons(query,request);
- try{const d=await tmdb("/search/multi",{query,include_adult:"false"});if(request!==activeSearchRequest)return;const items=(d.results||[]).filter(x=>x.media_type!=="person"&&x.poster_path&&x.id);$("searchCount").textContent=items.length+" results";if(!items.length){$("searchGrid").innerHTML='<div class="status">No movies or series found. Try another search.</div>';return}$("searchGrid").innerHTML=items.map(x=>makeCard(x,getMedia(x),getMedia(x)==="tv")).join("");loadSeasonCounts(items,()=>request===activeSearchRequest)}catch(e){if(request!==activeSearchRequest)return;$("searchCount").textContent="Search error";showError($("searchGrid"),e,()=>searchMovies(query))}
+ const request=++activeSearchRequest;
+
+ hideHomepageForSearch();
+
+ $("searchInput").value=query;
+ $("searchResults").classList.add("active");
+ $("searchCount").textContent="Searching...";
+ $("searchGrid").innerHTML='<div class="status">Searching TMDB...</div>';
+
+ searchInternetArchive(query,request);
+ searchWikimediaCommons(query,request);
+
+ try{
+  const d=await tmdb("/search/multi",{
+   query,
+   include_adult:"false"
+  });
+
+  if(request!==activeSearchRequest)return;
+
+  const items=(d.results||[]).filter(x=>
+   x.media_type!=="person"&&x.poster_path&&x.id
+  );
+
+  $("searchCount").textContent=items.length+" results";
+
+  if(!items.length){
+   $("searchGrid").innerHTML=
+    '<div class="status">No movies or series found. Try another search.</div>';
+
+   return;
+  }
+
+  $("searchGrid").innerHTML=items.map(x=>
+   makeCard(x,getMedia(x),getMedia(x)==="tv")
+  ).join("");
+
+  loadSeasonCounts(
+   items,
+   ()=>request===activeSearchRequest
+  );
+
+ }catch(e){
+  if(request!==activeSearchRequest)return;
+
+  $("searchCount").textContent="Search error";
+
+  showError(
+   $("searchGrid"),
+   e,
+   ()=>searchMovies(query)
+  );
+ }
 }
 
 /* SERIES SEASONS AND EPISODES */
-function seasonPoster(season,series){return imageURL(season.poster_path||series.poster_path)}
-async function showSeriesSeasons(series){
- const area=$("seasonArea"),seasons=(series.seasons||[]).filter(s=>Number(s.season_number)>=0);
- if(!seasons.length){area.innerHTML='<h3 style="margin-top:24px">Seasons</h3><p style="color:#999;margin-top:10px">No season information is available.</p>';return}
- area.innerHTML=`<h3 style="margin-top:24px">All Seasons (${Number(series.number_of_seasons??0)} seasons • ${Number(series.number_of_episodes||0)} episodes)</h3><div class="season-grid" id="seasonGrid"></div>`;
- $("seasonGrid").innerHTML=seasons.map(s=>`<article class="season-card" tabindex="0" role="button" data-season="${s.season_number}"><img src="${seasonPoster(s,series)}" alt="${escapeHTML(s.name||"Season "+s.season_number)}" onerror="this.onerror=null;this.src='${FALLBACK_POSTER}'"><h4>${escapeHTML(s.name||"Season "+s.season_number)}</h4><p style="padding:0 9px 10px;color:#aaa;font-size:11px">${s.episode_count||0} Episodes</p></article>`).join("");
- $("seasonGrid").querySelectorAll(".season-card").forEach(card=>{const open=()=>showSeasonEpisodes(series,Number(card.dataset.season));card.addEventListener("click",open);card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}})});
+
+function seasonPoster(season,series){
+ return imageURL(season.poster_path||series.poster_path);
 }
+
+async function showSeriesSeasons(series){
+ const area=$("seasonArea");
+ const seasons=(series.seasons||[]).filter(s=>Number(s.season_number)>=0);
+
+ if(!seasons.length){
+  area.innerHTML=
+   '<h3 style="margin-top:24px">Seasons</h3><p style="color:#999;margin-top:10px">No season information is available.</p>';
+
+  return;
+ }
+
+ area.innerHTML=
+  `<h3 style="margin-top:24px">All Seasons (${Number(series.number_of_seasons??0)} seasons • ${Number(series.number_of_episodes||0)} episodes)</h3>
+   <div class="season-grid" id="seasonGrid"></div>`;
+
+ $("seasonGrid").innerHTML=seasons.map(s=>
+  `<article class="season-card" tabindex="0" role="button" data-season="${s.season_number}">
+   <img src="${seasonPoster(s,series)}" alt="${escapeHTML(s.name||"Season "+s.season_number)}" onerror="this.onerror=null;this.src='${FALLBACK_POSTER}'">
+   <h4>${escapeHTML(s.name||"Season "+s.season_number)}</h4>
+   <p style="padding:0 9px 10px;color:#aaa;font-size:11px">${s.episode_count||0} Episodes</p>
+  </article>`
+ ).join("");
+
+ $("seasonGrid").querySelectorAll(".season-card").forEach(card=>{
+  const open=()=>showSeasonEpisodes(
+   series,
+   Number(card.dataset.season)
+  );
+
+  card.addEventListener("click",open);
+
+  card.addEventListener("keydown",e=>{
+   if(e.key==="Enter"||e.key===" "){
+    e.preventDefault();
+    open();
+   }
+  });
+ });
+}
+
 async function showSeasonEpisodes(series,seasonNumber){
- const area=$("seasonArea"),token=detailRequest;area.innerHTML=`<div class="season-heading"><h3>Season ${seasonNumber} Episodes</h3><button class="back-season" id="backSeasons">← All Seasons</button></div><div class="status">Loading episodes...</div>`;$("backSeasons").onclick=()=>showSeriesSeasons(series);
+ const area=$("seasonArea");
+ const token=detailRequest;
+
+ area.innerHTML=
+  `<div class="season-heading">
+   <h3>Season ${seasonNumber} Episodes</h3>
+   <button class="back-season" id="backSeasons">← All Seasons</button>
+  </div>
+  <div class="status">Loading episodes...</div>`;
+
+ $("backSeasons").onclick=()=>showSeriesSeasons(series);
+
  try{
-  const data=await tmdb(`/tv/${series.id}/season/${seasonNumber}`);if(token!==detailRequest)return;const episodes=data.episodes||[];
-  area.innerHTML=`<div class="season-heading"><h3>${escapeHTML(data.name||"Season "+seasonNumber)} — ${episodes.length} Episodes</h3><button class="back-season" id="backSeasons">← All Seasons</button></div><div class="episode-grid" id="episodeGrid"></div>`;$("backSeasons").onclick=()=>showSeriesSeasons(series);
-  if(!episodes.length){$("episodeGrid").innerHTML='<div class="status">No episodes listed for this season.</div>';return}
-  $("episodeGrid").innerHTML=episodes.map(ep=>`<article class="episode-card"><img src="${imageURL(ep.still_path,"w500")}" alt="${escapeHTML(ep.name)}" onerror="this.onerror=null;this.src='${imageURL(data.poster_path||series.poster_path)}'"><h4>${String(ep.episode_number).padStart(2,"0")}. ${escapeHTML(ep.name||"Episode")}</h4><p>${escapeHTML(ep.overview||"Episode description unavailable.")}</p><div class="episode-file-status" style="padding:0 9px 8px;color:#aaa;font-size:11px">Checking AIDEL TV storage...</div><video class="episode-player" controls playsinline preload="metadata" hidden></video><button class="episode-download" disabled>Checking file...</button></article>`).join("");
-  const cards=[...$("episodeGrid").querySelectorAll(".episode-card")];
-  await Promise.all(cards.map(async(card,index)=>{const ep=episodes[index],button=card.querySelector("button"),video=card.querySelector("video"),status=card.querySelector(".episode-file-status");try{
-   const file=await findEpisodeFile(series.id,seasonNumber,ep.episode_number);if(token!==detailRequest)return;if(!file){status.textContent="Not uploaded yet";button.textContent="Not Available Yet";return}
-   const url=file.publicURL||publicFileURL(file.storagePath),ext=file.name.split(".").pop().toLowerCase();status.textContent="Uploaded to AIDEL TV • File available";button.disabled=false;button.textContent="⬇ Download Episode";button.onclick=()=>downloadFile(file.storagePath,file.name);
-   if(["mp4","webm","mov","m4v","ogv"].includes(ext)){video.hidden=false;video.src=url}else status.textContent+=" • Download to play this format";
-  }catch(e){status.textContent=storageErrorMessage(e);button.textContent="Check unavailable";console.warn(e)}}));
- }catch(e){if(token!==detailRequest)return;area.innerHTML=`<div class="status error">${escapeHTML(e.message||"Could not load episodes.")}<button class="back-season" id="backSeasons">← All Seasons</button></div>`;$("backSeasons").onclick=()=>showSeriesSeasons(series)}
+  const data=await tmdb(
+   `/tv/${series.id}/season/${seasonNumber}`
+  );
+
+  if(token!==detailRequest)return;
+
+  const episodes=data.episodes||[];
+
+  area.innerHTML=
+   `<div class="season-heading">
+    <h3>${escapeHTML(data.name||"Season "+seasonNumber)} — ${episodes.length} Episodes</h3>
+    <button class="back-season" id="backSeasons">← All Seasons</button>
+   </div>
+   <div class="episode-grid" id="episodeGrid"></div>`;
+
+  $("backSeasons").onclick=()=>showSeriesSeasons(series);
+
+  if(!episodes.length){
+   $("episodeGrid").innerHTML=
+    '<div class="status">No episodes listed for this season.</div>';
+
+   return;
+  }
+
+  $("episodeGrid").innerHTML=episodes.map(ep=>
+   `<article class="episode-card">
+    <img src="${imageURL(ep.still_path,"w500")}" alt="${escapeHTML(ep.name)}" onerror="this.onerror=null;this.src='${imageURL(data.poster_path||series.poster_path)}'">
+    <h4>${String(ep.episode_number).padStart(2,"0")}. ${escapeHTML(ep.name||"Episode")}</h4>
+    <p>${escapeHTML(ep.overview||"Episode description unavailable.")}</p>
+    <div class="episode-file-status" style="padding:0 9px 8px;color:#aaa;font-size:11px">Checking AIDEL TV storage...</div>
+    <video class="episode-player" controls playsinline preload="metadata" hidden></video>
+    <button class="episode-download" disabled>Checking file...</button>
+   </article>`
+  ).join("");
+
+  const cards=[
+   ...$("episodeGrid").querySelectorAll(".episode-card")
+  ];
+
+  await Promise.all(cards.map(async(card,index)=>{
+   const ep=episodes[index];
+   const button=card.querySelector("button");
+   const video=card.querySelector("video");
+   const status=card.querySelector(".episode-file-status");
+
+   try{
+    const file=await findEpisodeFile(
+     series.id,
+     seasonNumber,
+     ep.episode_number
+    );
+
+    if(token!==detailRequest)return;
+
+    if(!file){
+     status.textContent="Not uploaded yet";
+     button.textContent="Not Available Yet";
+     return;
+    }
+
+    const url=file.publicURL||publicFileURL(file.storagePath);
+    const ext=file.name.split(".").pop().toLowerCase();
+
+    status.textContent="Uploaded to AIDEL TV • File available";
+
+    button.disabled=false;
+    button.textContent="⬇ Download Episode";
+
+    button.onclick=()=>downloadFile(
+     file.storagePath,
+     file.name
+    );
+
+    if(["mp4","webm","mov","m4v","ogv"].includes(ext)){
+     video.hidden=false;
+     video.src=url;
+    }else{
+     status.textContent+=" • Download to play this format";
+    }
+
+   }catch(e){
+    status.textContent=storageErrorMessage(e);
+    button.textContent="Check unavailable";
+    console.warn(e);
+   }
+  }));
+
+ }catch(e){
+  if(token!==detailRequest)return;
+
+  area.innerHTML=
+   `<div class="status error">
+    ${escapeHTML(e.message||"Could not load episodes.")}
+    <button class="back-season" id="backSeasons">← All Seasons</button>
+   </div>`;
+
+  $("backSeasons").onclick=()=>showSeriesSeasons(series);
+ }
 }
 
 /* DETAILS AND MODAL */
+
 async function openDetails(id,media){
- if(!detailHistoryActive){history.pushState({aidelDetail:true},"",location.href);detailHistoryActive=true}
- const token=++detailRequest;media=media==="tv"?"tv":"movie";$("movieModal").classList.add("open");$("movieModal").setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
- $("modalTitle").textContent="Loading...";$("modalOverview").textContent="Getting title information...";$("modalMeta").textContent="";$("modalBackdrop").style.backgroundImage="none";$("trailerArea").innerHTML="";$("seasonArea").innerHTML="";$("downloadButton").disabled=true;$("downloadButton").textContent="Checking...";$("downloadButton").onclick=null;$("downloadMessage").textContent="Checking AIDEL TV storage...";currentDetails=null;
+ if(!detailHistoryActive){
+  history.pushState(
+   {aidelDetail:true},
+   "",
+   location.href
+  );
+
+  detailHistoryActive=true;
+ }
+
+ const token=++detailRequest;
+
+ media=media==="tv"?"tv":"movie";
+
+ $("movieModal").classList.add("open");
+ $("movieModal").setAttribute("aria-hidden","false");
+
+ document.body.style.overflow="hidden";
+
+ $("modalTitle").textContent="Loading...";
+ $("modalOverview").textContent="Getting title information...";
+ $("modalMeta").textContent="";
+ $("modalBackdrop").style.backgroundImage="none";
+ $("trailerArea").innerHTML="";
+ $("seasonArea").innerHTML="";
+
+ $("downloadButton").disabled=true;
+ $("downloadButton").textContent="Checking...";
+ $("downloadButton").onclick=null;
+
+ $("downloadMessage").textContent=
+  "Checking AIDEL TV storage...";
+
+ currentDetails=null;
+
  try{
-  const details=await tmdb("/"+media+"/"+id);if(token!==detailRequest)return;let videos={results:[]};try{videos=await tmdb("/"+media+"/"+id+"/videos")}catch(e){console.warn(e)}if(token!==detailRequest)return;
-  currentDetails={...details,media_type:media};$("modalTitle").textContent=getTitle(details);$("modalOverview").textContent=details.overview||"No description is available.";const basic=getYear(details)+" • ★ "+Number(details.vote_average||0).toFixed(1);
-  if(media==="tv"){$("modalMeta").textContent=basic+" • TV SERIES • "+(details.number_of_seasons||0)+" SEASONS • "+(details.number_of_episodes||0)+" EPISODES";setUnavailable($("downloadButton"),"Download individual episodes from the season and episode list below.");await showSeriesSeasons(details)}else{$("modalMeta").textContent=basic+" • MOVIE";await setupMovieDownload(details,token)}
-  if(token!==detailRequest)return;$("modalBackdrop").style.backgroundImage="linear-gradient(0deg,rgba(0,0,0,.7),transparent),url('"+imageURL(details.backdrop_path||details.poster_path,"w1280")+"')";
-  const trailer=(videos.results||[]).find(v=>v.site==="YouTube"&&(v.type==="Trailer"||v.type==="Teaser"));if(trailer){const frame=document.createElement("iframe");frame.className="trailer";frame.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(trailer.key);frame.title="Movie or series trailer";frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";frame.allowFullscreen=true;$("trailerArea").appendChild(frame)}else $("trailerArea").innerHTML="<p style='color:#888;margin-top:16px'>No official trailer is available for this title.</p>";
- }catch(e){if(token!==detailRequest)return;$("modalTitle").textContent="Unable to load details";$("modalOverview").textContent=e.message}
+  const details=await tmdb("/"+media+"/"+id);
+
+  if(token!==detailRequest)return;
+
+  let videos={results:[]};
+
+  try{
+   videos=await tmdb("/"+media+"/"+id+"/videos");
+  }catch(e){
+   console.warn(e);
+  }
+
+  if(token!==detailRequest)return;
+
+  currentDetails={
+   ...details,
+   media_type:media
+  };
+
+  $("modalTitle").textContent=getTitle(details);
+  $("modalOverview").textContent=
+   details.overview||"No description is available.";
+
+  const basic=
+   getYear(details)+
+   " • ★ "+
+   Number(details.vote_average||0).toFixed(1);
+
+  if(media==="tv"){
+   $("modalMeta").textContent=
+    basic+
+    " • TV SERIES • "+
+    (details.number_of_seasons||0)+
+    " SEASONS • "+
+    (details.number_of_episodes||0)+
+    " EPISODES";
+
+   setUnavailable(
+    $("downloadButton"),
+    "Download individual episodes from the season and episode list below."
+   );
+
+   await showSeriesSeasons(details);
+
+  }else{
+   $("modalMeta").textContent=basic+" • MOVIE";
+
+   // Supabase first, Internet Archive automatically if missing.
+   await setupMovieDownload(details,token);
+  }
+
+  if(token!==detailRequest)return;
+
+  $("modalBackdrop").style.backgroundImage=
+   "linear-gradient(0deg,rgba(0,0,0,.7),transparent),url('"+
+   imageURL(details.backdrop_path||details.poster_path,"w1280")+
+   "')";
+
+  const trailer=(videos.results||[]).find(v=>
+   v.site==="YouTube"&&
+   (v.type==="Trailer"||v.type==="Teaser")
+  );
+
+  if(trailer){
+   const frame=document.createElement("iframe");
+
+   frame.className="trailer";
+   frame.src=
+    "https://www.youtube-nocookie.com/embed/"+
+    encodeURIComponent(trailer.key);
+
+   frame.title="Movie or series trailer";
+
+   frame.allow=
+    "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+
+   frame.allowFullscreen=true;
+
+   $("trailerArea").appendChild(frame);
+
+  }else{
+   $("trailerArea").innerHTML=
+    "<p style='color:#888;margin-top:16px'>No official trailer is available for this title.</p>";
+  }
+
+ }catch(e){
+  if(token!==detailRequest)return;
+
+  $("modalTitle").textContent="Unable to load details";
+  $("modalOverview").textContent=e.message;
+ }
 }
-function closeMovieModal({fromHistory=false}={}){const back=detailHistoryActive&&!fromHistory;detailHistoryActive=false;$("movieModal").classList.remove("open");$("movieModal").setAttribute("aria-hidden","true");$("trailerArea").innerHTML="";$("seasonArea").innerHTML="";document.body.style.overflow="";if(back)history.back()}
-window.addEventListener("popstate",()=>{if($("movieModal").classList.contains("open"))closeMovieModal({fromHistory:true})});
-function goBackHome(){closeMovieModal();activeSearchRequest++;$("searchResults").classList.remove("active");$("archiveResults").classList.remove("active");$("commonsResults").classList.remove("active");$("searchInput").value="";$("searchGrid").innerHTML="";$("archiveGrid").innerHTML="";$("commonsGrid").innerHTML="";currentGenre=null;genreRequest++;$("genrePage").classList.remove("active");$("heroSection").style.display="";$("sections").style.display="";$("genreList").querySelectorAll(".genre-chip").forEach(b=>b.classList.remove("active"));startHeroInterval();window.scrollTo({top:0,behavior:"smooth"})}
-function goHome(){if($("movieModal").classList.contains("open")){goBackHome();return}activeSearchRequest++;$("searchInput").value="";$("searchResults").classList.remove("active");$("archiveResults").classList.remove("active");$("commonsResults").classList.remove("active");$("genrePage").classList.remove("active");currentGenre=null;genreRequest++;$("heroSection").style.display="";$("sections").style.display="";startHeroInterval();window.scrollTo({top:0,behavior:"smooth"})}
+
+function closeMovieModal({fromHistory=false}={}){
+ const back=detailHistoryActive&&!fromHistory;
+
+ detailHistoryActive=false;
+
+ $("movieModal").classList.remove("open");
+ $("movieModal").setAttribute("aria-hidden","true");
+
+ $("trailerArea").innerHTML="";
+ $("seasonArea").innerHTML="";
+
+ document.body.style.overflow="";
+
+ if(back)history.back();
+}
+
+window.addEventListener("popstate",()=>{
+ if($("movieModal").classList.contains("open")){
+  closeMovieModal({fromHistory:true});
+ }
+});
+
+function goBackHome(){
+ closeMovieModal();
+
+ activeSearchRequest++;
+
+ $("searchResults").classList.remove("active");
+ $("archiveResults").classList.remove("active");
+ $("commonsResults").classList.remove("active");
+
+ $("searchInput").value="";
+ $("searchGrid").innerHTML="";
+ $("archiveGrid").innerHTML="";
+ $("commonsGrid").innerHTML="";
+
+ currentGenre=null;
+ genreRequest++;
+
+ $("genrePage").classList.remove("active");
+
+ $("heroSection").style.display="";
+ $("sections").style.display="";
+
+ $("genreList").querySelectorAll(".genre-chip").forEach(b=>
+  b.classList.remove("active")
+ );
+
+ startHeroInterval();
+
+ window.scrollTo({
+  top:0,
+  behavior:"smooth"
+ });
+}
+
+function goHome(){
+ if($("movieModal").classList.contains("open")){
+  goBackHome();
+  return;
+ }
+
+ activeSearchRequest++;
+
+ $("searchInput").value="";
+
+ $("searchResults").classList.remove("active");
+ $("archiveResults").classList.remove("active");
+ $("commonsResults").classList.remove("active");
+ $("genrePage").classList.remove("active");
+
+ currentGenre=null;
+ genreRequest++;
+
+ $("heroSection").style.display="";
+ $("sections").style.display="";
+
+ startHeroInterval();
+
+ window.scrollTo({
+  top:0,
+  behavior:"smooth"
+ });
+}
 
 /* EVENTS */
-$("searchForm").addEventListener("submit",e=>{e.preventDefault();const q=$("searchInput").value.trim();if(q)searchMovies(q)});
-$("backHomeButton").addEventListener("click",goBackHome);$("closeMovie").addEventListener("click",()=>closeMovieModal());$("genreBackButton").addEventListener("click",backFromGenre);
-$("homeLogo").addEventListener("click",e=>{e.preventDefault();goHome()});$("homeNav").addEventListener("click",e=>{e.preventDefault();goHome()});
-$("movieModal").addEventListener("click",e=>{if(e.target===$("movieModal"))closeMovieModal()});
-document.addEventListener("click",e=>{const card=e.target.closest(".movie-card");if(card)openDetails(card.dataset.id,card.dataset.media)});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("movieModal").classList.contains("open"))closeMovieModal();if((e.key==="Enter"||e.key===" ")&&e.target.matches(".movie-card")){e.preventDefault();openDetails(e.target.dataset.id,e.target.dataset.media)}});
-$("heroSection").addEventListener("mouseenter",()=>clearInterval(heroInterval));$("heroSection").addEventListener("mouseleave",startHeroInterval);
+
+$("searchForm").addEventListener("submit",e=>{
+ e.preventDefault();
+
+ const q=$("searchInput").value.trim();
+
+ if(q)searchMovies(q);
+});
+
+$("backHomeButton").addEventListener("click",goBackHome);
+
+$("closeMovie").addEventListener("click",()=>{
+ closeMovieModal();
+});
+
+$("genreBackButton").addEventListener("click",backFromGenre);
+
+$("homeLogo").addEventListener("click",e=>{
+ e.preventDefault();
+ goHome();
+});
+
+$("homeNav").addEventListener("click",e=>{
+ e.preventDefault();
+ goHome();
+});
+
+$("movieModal").addEventListener("click",e=>{
+ if(e.target===$("movieModal")){
+  closeMovieModal();
+ }
+});
+
+document.addEventListener("click",e=>{
+ const card=e.target.closest(".movie-card");
+
+ if(card){
+  openDetails(
+   card.dataset.id,
+   card.dataset.media
+  );
+ }
+});
+
+document.addEventListener("keydown",e=>{
+ if(
+  e.key==="Escape"&&
+  $("movieModal").classList.contains("open")
+ ){
+  closeMovieModal();
+ }
+
+ if(
+  (e.key==="Enter"||e.key===" ")&&
+  e.target.matches(".movie-card")
+ ){
+  e.preventDefault();
+
+  openDetails(
+   e.target.dataset.id,
+   e.target.dataset.media
+  );
+ }
+});
+
+$("heroSection").addEventListener(
+ "mouseenter",
+ ()=>clearInterval(heroInterval)
+);
+
+$("heroSection").addEventListener(
+ "mouseleave",
+ startHeroInterval
+);
 
 /* STARTUP */
+
 startWelcomeScreen();
-await Promise.all([loadHome(),loadGenres()]);
+
+await Promise.all([
+ loadHome(),
+ loadGenres()
+]);
+
 </script>
 </body>
 </html>
