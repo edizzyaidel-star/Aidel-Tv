@@ -1247,6 +1247,7 @@ async function searchInternetArchive(query, requestId) {
             status.innerHTML = `\( {files.length} video file \){files.length === 1 ? "" : "s"} found • <span class="archive-license">\( {escapeHTML(licence.label)}</span> \){licenceLink}`;
           } else {
             status.innerHTML = `\( {files.length} video file \){files.length === 1 ? "" : "s"} found • <span style="color:#ff9b9b">Download unavailable: ${escapeHTML(licence.label)}</span>`;
+           
 /* INTERNET ARCHIVE */
 const IA_SEARCH_URL = "https://archive.org/advancedsearch.php";
 const IA_METADATA_URL = "https://archive.org/metadata/";
@@ -1521,86 +1522,484 @@ async function searchInternetArchive(query, requestId) {
 
           const licence = getArchiveLicence(metadata);
           const primaryFile = files.find(f => ["mp4", "webm", "ogv", "m4v"].includes(String(f.name).split(".").pop().toLowerCase())) || files[0];
-          const primaryURL = archiveFileURL(item.identifier, primaryFile.name);
-          const primaryExt = String(primaryFile.name).split(".").pop().toLowerCase();
-          const playable = ["mp4", "webm", "ogv", "m4v"].includes(primaryExt);
+/* INTERNET ARCHIVE — SEARCH, MKV SUPPORT AND LICENCE CHECKS */
+const IA_SEARCH_URL = "https://archive.org/advancedsearch.php";
+const IA_METADATA_URL = "https://archive.org/metadata/";
 
-          if (playable) {
+function archiveVideoFiles(files) {
+  const types = ["mp4", "webm", "ogv", "m4v", "mov", "mkv"];
+
+  return (files || [])
+    .filter(file =>
+      file?.name &&
+      !file.private &&
+      types.includes(String(file.name).split(".").pop().toLowerCase())
+    )
+    .sort((a, b) => {
+      const rank = file => ({
+        mp4: 0, webm: 1, ogv: 2, m4v: 3, mov: 4, mkv: 5
+      })[String(file.name).split(".").pop().toLowerCase()] ?? 9;
+
+      return rank(a) - rank(b) ||
+        (Number(b.size) || 0) - (Number(a.size) || 0);
+    });
+}
+
+function archiveFileURL(identifier, filename) {
+  return "https://archive.org/download/" +
+    encodeURIComponent(identifier) + "/" +
+    String(filename).split("/").map(encodeURIComponent).join("/");
+}
+
+async function getArchiveMetadata(identifier) {
+  const response = await fetch(
+    IA_METADATA_URL + encodeURIComponent(identifier)
+  );
+
+  if (!response.ok) {
+    throw new Error("Internet Archive metadata request failed.");
+  }
+
+  return response.json();
+}
+
+function getArchiveLicence(metadata) {
+  const meta = metadata?.metadata || {};
+
+  const candidates = [
+    meta.licenseurl,
+    meta.license,
+    meta.rights,
+    meta.license_url
+  ].filter(value =>
+    value !== undefined &&
+    value !== null &&
+    String(value).trim() !== ""
+  ).map(value => String(value).trim());
+
+  if (!candidates.length) {
+    return {
+      allowed: false,
+      label: "Licence not identified",
+      url: ""
+    };
+  }
+
+  const values = candidates.map(raw => ({
+    raw,
+    value: raw.toLowerCase().replace(/\\/g, "/").trim()
+  }));
+
+  // Reject NonCommercial licences.
+  if (values.some(({ value }) =>
+    /creativecommons\.org\/licenses\/[^/]*by-nc/.test(value) ||
+    /\bby[\s_-]*nc\b/.test(value) ||
+    /\bnon[\s_-]*commercial\b/.test(value)
+  )) {
+    return {
+      allowed: false,
+      label: "NonCommercial licence — download disabled",
+      url: ""
+    };
+  }
+
+  for (const { raw, value } of values) {
+    if (
+      /creativecommons\.org\/publicdomain\/zero/.test(value) ||
+      /creativecommons\.org\/licenses\/cc0/.test(value) ||
+      /creativecommons\.org\/publicdomain\/mark/.test(value) ||
+      /\bcc0\b/.test(value) ||
+      /\bpublic[\s_-]*domain\b/.test(value)
+    ) {
+      return {
+        allowed: true,
+        label: raw.length > 90 ? "Public Domain / CC0" : raw,
+        url: /^https?:\/\//i.test(raw) ? raw : ""
+      };
+    }
+
+    const match = value.match(
+      /creativecommons\.org\/licenses\/(by(?:-sa|-nd)?)(?:\/|$)/i
+    );
+
+    if (match) {
+      return {
+        allowed: true,
+        label: "Creative Commons " + match[1].toUpperCase(),
+        url: raw
+      };
+    }
+
+    if (
+      /\bcc[\s_-]*by[\s_-]*sa\b/.test(value) ||
+      /\bcc[\s_-]*by[\s_-]*nd\b/.test(value) ||
+      /\bcc[\s_-]*by\b/.test(value) ||
+      /\bcreative commons attribution\b/.test(value)
+    ) {
+      return {
+        allowed: true,
+        label: raw,
+        url: /^https?:\/\//i.test(raw) ? raw : ""
+      };
+    }
+  }
+
+  return {
+    allowed: false,
+    label: "No recognised redistribution licence",
+    url: ""
+  };
+}
+
+function buildArchiveQueries(query) {
+  const clean = String(query || "")
+    .replace(/[\\"]/g, " ")
+    .replace(/[()[\]{}:+!^~*?]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 90);
+
+  if (!clean) return [];
+
+  const tokens = clean.split(/\s+/).filter(Boolean).slice(0, 6);
+
+  return [
+    `mediatype:movies AND title:"${clean}"`,
+    `mediatype:movies AND (title:"${clean}" OR description:"${clean}")`,
+    `mediatype:movies AND (${tokens.map(t => `title:${t}`).join(" AND ")})`,
+    `mediatype:movies AND (${tokens.map(t => `title:${t}`).join(" OR ")})`
+  ];
+}
+
+async function fetchArchiveSearchResults(query) {
+  const params = new URLSearchParams();
+
+  params.set("q", query);
+  params.set("fl[]", "identifier");
+  params.append("fl[]", "title");
+  params.append("fl[]", "year");
+  params.append("fl[]", "description");
+  params.set("rows", "12");
+  params.set("page", "1");
+  params.set("output", "json");
+  params.set("sort[]", "downloads desc");
+
+  const response = await fetch(
+    IA_SEARCH_URL + "?" + params.toString()
+  );
+
+  if (!response.ok) {
+    throw new Error("Internet Archive search is temporarily unavailable.");
+  }
+
+  const data = await response.json();
+  return data.response?.docs || [];
+}
+
+function formatArchiveSize(size) {
+  const bytes = Number(size) || 0;
+
+  if (!bytes) return "Size unavailable";
+  if (bytes >= 1073741824) {
+    return (bytes / 1073741824).toFixed(2) + " GB";
+  }
+  if (bytes >= 1048576) {
+    return (bytes / 1048576).toFixed(1) + " MB";
+  }
+
+  return (bytes / 1024).toFixed(0) + " KB";
+}
+
+function downloadArchiveFile(url, filename) {
+  const downloadURL = new URL(url);
+  downloadURL.searchParams.set("download", "1");
+
+  const link = document.createElement("a");
+  link.href = downloadURL.toString();
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.download = filename || "";
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
+function attachArchivePlayer(video, button, url, filename) {
+  video.hidden = false;
+  video.src = url;
+  video.load();
+
+  button.textContent = "Hide player";
+
+  video.onerror = () => {
+    video.hidden = true;
+    button.textContent = "Playback unavailable";
+    const note = video.parentElement.querySelector(".archive-playback-note");
+
+    if (note) {
+      note.textContent =
+        filename + " could not be played by this browser. Use Download instead.";
+    }
+  };
+
+  video.play().catch(() => {
+    const note = video.parentElement.querySelector(".archive-playback-note");
+
+    if (note) {
+      note.textContent =
+        "If playback does not start, this format or its codecs may not be supported by your browser. Download the file to play it with a compatible video player.";
+    }
+  });
+}
+
+async function searchInternetArchive(query, requestId) {
+  const section = $("archiveResults");
+  const grid = $("archiveGrid");
+
+  section.classList.add("active");
+  grid.innerHTML =
+    '<div class="status">Searching Internet Archive...</div>';
+
+  try {
+    const queries = buildArchiveQueries(query);
+
+    if (!queries.length) {
+      throw new Error("Enter a movie title to search.");
+    }
+
+    const combined = [];
+    const seen = new Set();
+    let lastError = null;
+
+    for (const searchQuery of queries) {
+      if (requestId !== activeSearchRequest) return;
+
+      try {
+        const docs = await fetchArchiveSearchResults(searchQuery);
+
+        if (requestId !== activeSearchRequest) return;
+
+        for (const item of docs) {
+          if (item.identifier && !seen.has(item.identifier)) {
+            seen.add(item.identifier);
+            combined.push(item);
+          }
+        }
+
+        if (combined.length >= 12) break;
+      } catch (error) {
+        lastError = error;
+        console.warn("Archive search attempt failed:", error);
+      }
+    }
+
+    if (requestId !== activeSearchRequest) return;
+
+    const docs = combined.slice(0, 12);
+
+    if (!docs.length) {
+      if (lastError) throw lastError;
+
+      grid.innerHTML =
+        '<div class="status">No matching Internet Archive films found. Try another title.</div>';
+      return;
+    }
+
+    grid.innerHTML = docs.map((item, index) => `
+      <article class="archive-card" data-archive-index="${index}">
+        <div class="archive-meta">
+          INTERNET ARCHIVE${item.year ? " • " + escapeHTML(item.year) : ""}
+        </div>
+
+        <h3>${escapeHTML(item.title || item.identifier)}</h3>
+
+        <p>${escapeHTML(
+          String(item.description || "No description supplied.")
+            .replace(/<[^>]*>/g, " ")
+            .slice(0, 190)
+        )}</p>
+
+        <p class="archive-status">
+          Checking video files and licence...
+        </p>
+
+        <div class="archive-actions">
+          <button class="archive-watch" type="button" disabled>
+            Watch
+          </button>
+
+          <a class="archive-link"
+             href="https://archive.org/details/${encodeURIComponent(item.identifier)}"
+             target="_blank" rel="noopener">
+            Item details
+          </a>
+        </div>
+
+        <p class="archive-playback-note archive-note"></p>
+
+        <div class="archive-files"></div>
+
+        <video class="archive-player"
+               controls playsinline preload="none" hidden></video>
+      </article>
+    `).join("");
+
+    const cards = [...grid.querySelectorAll(".archive-card")];
+    let cursor = 0;
+
+    const workers = Array.from(
+      { length: Math.min(4, cards.length) },
+      async () => {
+        while (cursor < cards.length) {
+          const index = cursor++;
+          const card = cards[index];
+          const item = docs[index];
+
+          try {
+            const metadata = await getArchiveMetadata(item.identifier);
+
+            if (requestId !== activeSearchRequest) return;
+
+            const files = archiveVideoFiles(metadata.files || []);
+            const status = card.querySelector(".archive-status");
+            const watch = card.querySelector(".archive-watch");
+            const video = card.querySelector("video");
+            const fileHolder = card.querySelector(".archive-files");
+            const note = card.querySelector(".archive-playback-note");
+
+            if (!files.length) {
+              status.textContent = "No supported video file found.";
+              watch.disabled = true;
+              continue;
+            }
+
+            const licence = getArchiveLicence(metadata);
+
+            const preferred = files.find(file =>
+              ["mp4", "webm", "ogv", "m4v"].includes(
+                String(file.name).split(".").pop().toLowerCase()
+              )
+            ) || files[0];
+
+            const preferredURL = archiveFileURL(
+              item.identifier,
+              preferred.name
+            );
+
             watch.disabled = false;
             watch.textContent = "Watch";
+
             watch.onclick = () => {
-              if (video.hidden) {
-                video.src = primaryURL;
-                video.hidden = false;
-                video.play().catch(() => {});
-                watch.textContent = "Hide player";
-              } else {
+              if (!video.hidden) {
                 video.pause();
                 video.removeAttribute("src");
                 video.load();
                 video.hidden = true;
                 watch.textContent = "Watch";
+                return;
               }
+
+              attachArchivePlayer(
+                video,
+                watch,
+                preferredURL,
+                preferred.name
+              );
             };
-          } else {
-            watch.textContent = "No browser-playable file";
-            watch.disabled = true;
+
+            status.innerHTML =
+              `${files.length} video file${files.length === 1 ? "" : "s"} found • ` +
+              (licence.allowed
+                ? `<span class="archive-license">${escapeHTML(licence.label)}</span>`
+                : `<span style="color:#ff9b9b">Download unavailable: ${escapeHTML(licence.label)}</span>`);
+
+            if (licence.allowed && licence.url) {
+              status.innerHTML +=
+                ` • <a class="archive-link" href="${escapeHTML(licence.url)}" target="_blank" rel="noopener">Licence</a>`;
+            }
+
+            fileHolder.innerHTML = files.map((file, fileIndex) => {
+              const filename = String(file.name);
+              const extension = filename.split(".").pop().toLowerCase();
+              const url = archiveFileURL(item.identifier, filename);
+
+              return `
+                <div class="archive-file-option">
+                  <div class="archive-file-info">
+                    <strong>${escapeHTML(filename)}</strong>
+                    <small>
+                      ${extension.toUpperCase()} •
+                      ${formatArchiveSize(file.size)}
+                      ${fileIndex === 0 ? " • Preferred format" : ""}
+                    </small>
+                  </div>
+
+                  ${
+                    licence.allowed
+                      ? `<button type="button"
+                           data-archive-download="${fileIndex}">
+                           Download
+                         </button>`
+                      : `<button type="button" disabled>Not approved</button>`
+                  }
+                </div>
+              `;
+            }).join("");
+
+            fileHolder.querySelectorAll("[data-archive-download]")
+              .forEach(button => {
+                button.addEventListener("click", () => {
+                  if (!licence.allowed) return;
+
+                  const file = files[
+                    Number(button.dataset.archiveDownload)
+                  ];
+
+                  if (!file) return;
+
+                  downloadArchiveFile(
+                    archiveFileURL(item.identifier, file.name),
+                    file.name
+                  );
+                });
+              });
+
+            if (files.some(file =>
+              String(file.name).toLowerCase().endsWith(".mkv")
+            )) {
+              note.textContent =
+                "MKV files are available for download when the licence permits it. Playback depends on browser and codec support.";
+            }
+
+            if (!licence.allowed) {
+              const warning = document.createElement("p");
+              warning.className = "archive-note";
+              warning.textContent =
+                "AIDEL TV has not enabled downloads because a recognised redistribution licence could not be confirmed. Visit the Archive item page to review its rights information.";
+              fileHolder.appendChild(warning);
+            }
+
+          } catch (error) {
+            if (requestId !== activeSearchRequest) return;
+
+            card.querySelector(".archive-status").textContent =
+              "Could not check this Archive item. Open Item details to inspect it.";
+
+            console.warn("Internet Archive item:", error);
           }
-
-          if (licence.allowed) {
-            status.classList.add("archive-license");
-            const licenceLink = licence.url
-              ? ` • <a class="archive-link" href="${escapeHTML(licence.url)}" target="_blank" rel="noopener">Licence</a>`
-              : "";
-            status.innerHTML = `\( {files.length} video file \){files.length === 1 ? "" : "s"} found • <span class="archive-license">\( {escapeHTML(licence.label)}</span> \){licenceLink}`;
-          } else {
-            status.innerHTML = `\( {files.length} video file \){files.length === 1 ? "" : "s"} found • <span style="color:#ff9b9b">Download unavailable: ${escapeHTML(licence.label)}</span>`;
-          }
-
-          fileHolder.innerHTML = files.map((file, index) => {
-            const filename = String(file.name);
-            const ext = filename.split(".").pop().toLowerCase();
-            const fileURL = archiveFileURL(item.identifier, filename);
-            const size = formatArchiveSize(file.size);
-            const allowed = licence.allowed;
-            return `<div class="archive-file-option">
-              <div class="archive-file-info">
-                <strong>${escapeHTML(filename)}</strong>
-                <small>${ext.toUpperCase()} • \( {size} \){index === 0 ? " • Preferred format" : ""}</small>
-              </div>
-              <button type="button" \( {allowed ? "" : "disabled"} data-archive-download=" \){index}">${allowed ? "Download" : "Not approved"}</button>
-            </div>`;
-          }).join("");
-
-          fileHolder.querySelectorAll("[data-archive-download]").forEach(button => {
-            button.addEventListener("click", () => {
-              if (!licence.allowed) return;
-              const file = files[Number(button.dataset.archiveDownload)];
-              if (!file) return;
-              downloadArchiveFile(archiveFileURL(item.identifier, file.name), file.name);
-            });
-          });
-
-          if (!licence.allowed) {
-            const note = document.createElement("p");
-            note.className = "archive-note";
-            note.textContent = "This item has no recognised redistribution licence in its metadata. You can still open the Archive item page to review its information.";
-            fileHolder.appendChild(note);
-          }
-
-        } catch (error) {
-          if (requestId !== activeSearchRequest) return;
-          card.querySelector(".archive-status").textContent = "Could not check this Archive item. Open Item details to inspect it.";
-          console.warn("Internet Archive item:", error);
         }
       }
-    });
+    );
 
     await Promise.all(workers);
 
   } catch (error) {
     if (requestId !== activeSearchRequest) return;
-    grid.innerHTML = `<div class="status error">${escapeHTML(error.message || "Internet Archive search failed.")} Check your connection and try again.</div>`;
+
+    grid.innerHTML =
+      `<div class="status error">${escapeHTML(error.message || "Internet Archive search failed.")} Check your connection and try again.</div>`;
+
     console.warn("Internet Archive search:", error);
   }
 }
